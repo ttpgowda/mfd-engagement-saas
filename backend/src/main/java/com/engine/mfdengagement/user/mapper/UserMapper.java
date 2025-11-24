@@ -1,0 +1,36 @@
+package com.engine.mfdengagement.user.mapper;
+
+import com.engine.mfdengagement.user.dto.UserDTO;
+import com.engine.mfdengagement.user.entity.Role;
+import com.engine.mfdengagement.user.entity.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Mapper(componentModel = "spring") // Tells MapStruct to make it a Spring component
+public interface UserMapper {
+
+    @Mapping(source = "tenant.tenantId", target = "tenantId")
+    @Mapping(target = "roles", source = "roles", qualifiedByName = "rolesToNames")
+    UserDTO toDto(User user);
+
+    // If you need to map a list/set of entities
+    Set<UserDTO> toDtoSet(Set<User> users);
+
+    List<UserDTO> toDtoList(List<User> users);
+
+    // Custom mapping method for converting Set<Role> to Set<String>
+    @Named("rolesToNames")
+    default Set<String> mapRolesToNames(Set<Role> roles) {
+        if (roles == null) {
+            return null;
+        }
+        return roles.stream()
+                .map(Role::getName) // Assuming Role has a getName() method
+                .collect(Collectors.toSet());
+    }
+}
