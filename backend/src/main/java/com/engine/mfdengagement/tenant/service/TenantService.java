@@ -21,6 +21,10 @@ public class TenantService {
                 .contactEmail(dto.getContactEmail())
                 .phone(dto.getPhone())
                 .active(dto.isActive())
+                .logoUrl(dto.getLogoUrl())
+                .primaryColor(dto.getPrimaryColor())
+                .secondaryColor(dto.getSecondaryColor())
+                .website(dto.getWebsite())
                 .build();
 
         return tenantRepository.save(tenant);
@@ -42,6 +46,10 @@ public class TenantService {
         existing.setContactEmail(dto.getContactEmail());
         existing.setPhone(dto.getPhone());
         existing.setActive(dto.isActive());
+        existing.setLogoUrl(dto.getLogoUrl());
+        existing.setPrimaryColor(dto.getPrimaryColor());
+        existing.setSecondaryColor(dto.getSecondaryColor());
+        existing.setWebsite(dto.getWebsite());
 
         return tenantRepository.save(existing);
     }

@@ -25,16 +25,13 @@ public class TenantOnboardingRequest {
 
     private String phone; // Optional
     private String subDomain; // Optional, e.g., "acme" for acme.your-app.com
-
     // --- Initial User (Company Admin) Details ---
     @NotBlank(message = "Initial user username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
     @NotBlank(message = "Initial user password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long") // Increased for better security
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$",
-            message = "Password must contain at least one digit, one lowercase, one uppercase, and one special character.")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     @NotBlank(message = "Initial user email is required")

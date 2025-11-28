@@ -29,7 +29,7 @@ public class HibernateMultiTenancyConfig {
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.thewealthweb.srbackend");
+        em.setPackagesToScan("com.engine.mfdengagement");
         em.setJpaVendorAdapter(jpaVendorAdapter);
         em.setJpaPropertyMap(properties);
         return em;

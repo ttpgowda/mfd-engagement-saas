@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -25,8 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     private static final Logger logg = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,11 +37,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = tokenProvider.getUsernameFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
+                    null, userDetails.getAuthorities());
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Set Tenant Context
+            if (userDetails instanceof CustomUserDetails) {
+                String tenantId = ((CustomUserDetails) userDetails).getUser().getTenant().getTenantId();
+                com.engine.mfdengagement.tenant.config.TenantContext.setTenantId(tenantId);
+            }
         }
 
         filterChain.doFilter(request, response);
