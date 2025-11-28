@@ -23,8 +23,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -43,23 +44,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/auth/refresh").permitAll()
-//                        .requestMatchers("/api/users/me").permitAll()
-                                // === Stripe OAuth Endpoints ===
-                                .requestMatchers(antMatcher("/stripe/oauth/callback")).permitAll() // Stripe redirects here, no auth token yet
-                                .requestMatchers(antMatcher("/stripe/oauth/connect")).authenticated() // User must be logged into your app
-                                .requestMatchers(antMatcher("/stripe/oauth/data/**")).authenticated() // Data fetching requires login
-                                // ==============================
-                                .anyRequest().authenticated()
-                )
-
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight checks
+                        // .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger/**").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler(customAccessDeniedHandler)
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-                )
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider());
 
@@ -86,14 +79,14 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // Your frontend
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*")); // Allow all origins for development
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

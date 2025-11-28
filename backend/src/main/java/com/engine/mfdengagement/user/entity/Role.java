@@ -3,6 +3,7 @@ package com.engine.mfdengagement.user.entity;
 import com.engine.mfdengagement.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 
 @Entity
 @Table(name = "roles")

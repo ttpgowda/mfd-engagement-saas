@@ -20,9 +20,9 @@ import java.util.Set;
 @Builder
 
 // Define the filter here. The 'condition' refers to properties of the entity.
-// 'tenant.tenantId' navigates through the 'tenant' ManyToOne relationship to its 'tenantId' property.
-@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantIdentifier", type = String.class))
-@Filter(name = "tenantFilter", condition = "tenant.tenantId = :tenantIdentifier") // Apply the filter condition
+// 'tenant.tenantId' navigates through the 'tenant' ManyToOne relationship to
+// its 'tenantId' property.
+@Filter(name = "tenantFilter", condition = "tenant_id IN (SELECT t.id FROM tenants t WHERE t.tenantid = :tenantIdentifier)")
 public class User extends BaseEntity {
 
     @Id
@@ -31,7 +31,7 @@ public class User extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER) // Many Users to One Tenant
     @JoinColumn(name = "tenant_id", nullable = false) // This creates the foreign key column named 'tenant_id'
-//    @TenantId
+    // @TenantId
     private Tenant tenant;
 
     @Column(unique = true, nullable = false)
@@ -47,10 +47,6 @@ public class User extends BaseEntity {
     private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 }
