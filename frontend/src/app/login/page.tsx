@@ -56,9 +56,9 @@ export default function LoginPage() {
 
             // Simple JWT decode to check role (in production use a library like jwt-decode)
             const payload = JSON.parse(atob(accessToken.split('.')[1]));
-            const roles = payload.roles || [];
-
-            if (roles.includes('ROLE_SUPER_ADMIN')) {
+            const permissions = payload.permissions || [];
+            console.log("permissions: ", permissions);
+            if (permissions.includes('TENANT_MANAGE')) {
                 router.push('/admin/dashboard');
             } else {
                 router.push('/dashboard');
