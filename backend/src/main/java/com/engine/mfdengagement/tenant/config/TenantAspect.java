@@ -28,18 +28,18 @@ public class TenantAspect {
 
         String tenantId = TenantContext.getTenantId();
 
-        // Check if user is SUPER_ADMIN
+        // Check if user is TENANT_MANAGE
         boolean isSuperAdmin = false;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             isSuperAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN"));
+                    .anyMatch(a -> a.getAuthority().equals("TENANT_MANAGE"));
         }
 
         if (isSuperAdmin) {
             // Disable filter for Super Admin
             session.disableFilter("tenantFilter");
-            // System.out.println("SUPER_ADMIN detected in Aspect: Bypassing tenant
+            // System.out.println("TENANT_MANAGE detected in Aspect: Bypassing tenant
             // filter.");
         } else {
             // Enable filter for others
