@@ -28,8 +28,10 @@ public class JwtTokenProvider {
         long jwtExpirationInMs = 3600000;
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
+                .claim("permissions", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .claim("roles", customUserDetails.getUser().getRoles().stream()
+                        .map(role -> role.getName()).collect(Collectors.toList()))
                 .claim("tenantId", customUserDetails.getUser().getTenant().getTenantId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))

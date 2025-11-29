@@ -1,6 +1,5 @@
 package com.engine.mfdengagement.tenant.controller;
 
-
 import com.engine.mfdengagement.tenant.dto.TenantDTO;
 import com.engine.mfdengagement.tenant.entity.Tenant;
 import com.engine.mfdengagement.tenant.service.TenantService;
@@ -14,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tenants")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+@PreAuthorize("hasAuthority('TENANT_MANAGE')")
 public class TenantController {
 
     private final TenantService tenantService;

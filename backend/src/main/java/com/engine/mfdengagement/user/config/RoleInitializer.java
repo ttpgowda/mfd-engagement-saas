@@ -1,34 +1,70 @@
 package com.engine.mfdengagement.user.config;
 
+import com.engine.mfdengagement.user.entity.Permission;
 import com.engine.mfdengagement.user.entity.Role;
+import com.engine.mfdengagement.user.repository.PermissionRepository;
 import com.engine.mfdengagement.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class RoleInitializer implements CommandLineRunner {
 
+    private final PermissionRepository permissionRepository;
     private final RoleRepository roleRepository;
 
     @Override
     public void run(String... args) {
-        List<String> rolesToCheck = List.of(
-                "SUPER_ADMIN",     // Access to everything
-                "COMPANY_ADMIN",   // Manages users & tenants under their company
-                "MANAGER",         // Manages teams/projects
-                "SUPPORT",         // Customer support level access
-                "USER"             // Basic authenticated user
-        );
+        // 1. Create Permissions
+        createPermissionIfNotFound("USER_READ", "Read user details");
+        createPermissionIfNotFound("USER_WRITE", "Create or update users");
+        createPermissionIfNotFound("TENANT_MANAGE", "Manage tenants (Super Admin only)");
+        createPermissionIfNotFound("TEAM_MANAGE", "Manage teams and projects");
+        createPermissionIfNotFound("MUTUAL_FUND_READ", "Read mutual fund data");
+        createPermissionIfNotFound("LEAD_READ", "Read leads");
+        createPermissionIfNotFound("LEAD_WRITE", "Create or update leads");
+        createPermissionIfNotFound("ROLE_READ", "Read roles and permissions");
+        createPermissionIfNotFound("ROLE_WRITE", "Manage roles and permissions");
 
-        for (String roleName : rolesToCheck) {
-            roleRepository.findByName(roleName).orElseGet(() -> {
-                Role role = Role.builder().name(roleName).build();
-                return roleRepository.save(role);
-            });
+        // 2. Define Roles and Assign Permissions
+        createRoleIfNotFound("SUPER_ADMIN", List.of(
+                "USER_READ", "USER_WRITE", "TENANT_MANAGE", "TEAM_MANAGE",
+                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE"));
+        createRoleIfNotFound("COMPANY_ADMIN", List.of(
+                "USER_READ", "USER_WRITE", "TEAM_MANAGE",
+                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE"));
+        createRoleIfNotFound("MANAGER", List.of("USER_READ", "TEAM_MANAGE", "LEAD_READ", "LEAD_WRITE"));
+        createRoleIfNotFound("SUPPORT", List.of("USER_READ", "LEAD_READ"));
+        createRoleIfNotFound("USER", List.of("USER_READ"));
+    }
+
+    private void createPermissionIfNotFound(String name, String description) {
+        permissionRepository.findByName(name).orElseGet(() -> {
+            Permission permission = Permission.builder()
+                    .name(name)
+                    .description(description)
+                    .build();
+            return permissionRepository.save(permission);
+        });
+    }
+
+    private void createRoleIfNotFound(String roleName, List<String> permissionNames) {
+        Role role = roleRepository.findByName(roleName).orElse(null);
+        if (role == null) {
+            role = Role.builder().name(roleName).build();
         }
+
+        Set<Permission> permissions = new HashSet<>();
+        for (String permName : permissionNames) {
+            permissionRepository.findByName(permName).ifPresent(permissions::add);
+        }
+        role.setPermissions(permissions);
+        roleRepository.save(role);
     }
 }

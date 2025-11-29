@@ -4,6 +4,7 @@ import com.engine.mfdengagement.lead.dto.LeadDTO;
 import com.engine.mfdengagement.lead.service.LeadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,26 +17,31 @@ public class LeadController {
     private final LeadService leadService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('LEAD_WRITE')")
     public ResponseEntity<LeadDTO> createLead(@RequestBody LeadDTO leadDTO) {
         return ResponseEntity.ok(leadService.createLead(leadDTO));
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('LEAD_READ')")
     public ResponseEntity<List<LeadDTO>> getAllLeads() {
         return ResponseEntity.ok(leadService.getAllLeads());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('LEAD_READ')")
     public ResponseEntity<LeadDTO> getLeadById(@PathVariable Long id) {
         return ResponseEntity.ok(leadService.getLeadById(id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('LEAD_WRITE')")
     public ResponseEntity<LeadDTO> updateLead(@PathVariable Long id, @RequestBody LeadDTO leadDTO) {
         return ResponseEntity.ok(leadService.updateLead(id, leadDTO));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('LEAD_WRITE')")
     public ResponseEntity<Void> deleteLead(@PathVariable Long id) {
         leadService.deleteLead(id);
         return ResponseEntity.noContent().build();

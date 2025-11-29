@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/mutual-funds")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', ROLE_SUPER_ADMIN)")
+@PreAuthorize("hasAuthority('MUTUAL_FUND_READ')")
 public class MutualFundController {
 
     private final MutualFundService mutualFundService;
