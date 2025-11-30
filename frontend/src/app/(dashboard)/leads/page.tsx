@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { LeadService } from '@/services/api';
+import { LeadService } from '@/services/leadService';
+import { UserService } from '@/services/api';
 import { DataTable } from '@/components/ui/data-table';
 import { columns } from './columns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,16 +34,26 @@ const leadFormSchema = z.object({
     email: z.string().email().optional().or(z.literal('')),
     phone: z.string().optional(),
     source: z.string().optional(),
-    status: z.string().optional(),
+    status: z.enum(['NEW', 'CONTACTED', 'QUALIFIED', 'CONVERTED', 'LOST']).optional(),
 });
 
 export default function LeadsPage() {
     const queryClient = useQueryClient();
     const [isOpen, setIsOpen] = useState(false);
+    const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+    const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+    const [selectedLead, setSelectedLead] = useState<any>(null);
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
 
     const { data: leads, isLoading } = useQuery({
         queryKey: ['leads'],
         queryFn: LeadService.getAllLeads,
+    });
+
+    const { data: users } = useQuery({
+        queryKey: ['users'],
+        queryFn: UserService.getAllUsers, // Ensure UserService is imported
     });
 
     const createLeadMutation = useMutation({
@@ -51,6 +62,24 @@ export default function LeadsPage() {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             setIsOpen(false);
             form.reset();
+        },
+    });
+
+    const assignLeadMutation = useMutation({
+        mutationFn: ({ leadId, userId }: { leadId: number; userId: number }) =>
+            LeadService.assignLead(leadId, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['leads'] });
+            setAssignDialogOpen(false);
+        },
+    });
+
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ leadId, status }: { leadId: number; status: string }) =>
+            LeadService.updateStatus(leadId, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['leads'] });
+            setStatusDialogOpen(false);
         },
     });
 
@@ -67,6 +96,19 @@ export default function LeadsPage() {
 
     function onSubmit(values: z.infer<typeof leadFormSchema>) {
         createLeadMutation.mutate(values);
+    }
+
+    // Event Listeners
+    if (typeof window !== 'undefined') {
+        window.addEventListener('open-assign-lead', (e: any) => {
+            setSelectedLead(e.detail);
+            setAssignDialogOpen(true);
+        });
+        window.addEventListener('open-update-status', (e: any) => {
+            setSelectedLead(e.detail);
+            setSelectedStatus(e.detail.status);
+            setStatusDialogOpen(true);
+        });
     }
 
     return (
@@ -157,6 +199,85 @@ export default function LeadsPage() {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Assign Dialog */}
+            <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Assign Lead: {selectedLead?.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Select User</label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={selectedUserId}
+                                onChange={(e) => setSelectedUserId(e.target.value)}
+                            >
+                                <option value="">Select a user...</option>
+                                {users?.map((user: any) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.fullName || user.username}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <Button
+                            className="w-full"
+                            onClick={() => {
+                                if (selectedLead && selectedUserId) {
+                                    assignLeadMutation.mutate({
+                                        leadId: selectedLead.id,
+                                        userId: parseInt(selectedUserId),
+                                    });
+                                }
+                            }}
+                            disabled={assignLeadMutation.isPending || !selectedUserId}
+                        >
+                            {assignLeadMutation.isPending ? 'Assigning...' : 'Assign'}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Status Dialog */}
+            <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Update Status: {selectedLead?.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Status</label>
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
+                            >
+                                <option value="NEW">NEW</option>
+                                <option value="CONTACTED">CONTACTED</option>
+                                <option value="QUALIFIED">QUALIFIED</option>
+                                <option value="CONVERTED">CONVERTED</option>
+                                <option value="LOST">LOST</option>
+                            </select>
+                        </div>
+                        <Button
+                            className="w-full"
+                            onClick={() => {
+                                if (selectedLead && selectedStatus) {
+                                    updateStatusMutation.mutate({
+                                        leadId: selectedLead.id,
+                                        status: selectedStatus,
+                                    });
+                                }
+                            }}
+                            disabled={updateStatusMutation.isPending}
+                        >
+                            {updateStatusMutation.isPending ? 'Updating...' : 'Update Status'}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
