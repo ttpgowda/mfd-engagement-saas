@@ -26,6 +26,10 @@ public class Lead extends BaseEntity {
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to_id")
+    private com.engine.mfdengagement.user.entity.User assignedTo;
+
     private String name;
 
     private String phone;
@@ -34,5 +38,9 @@ public class Lead extends BaseEntity {
 
     private String source; // e.g., "SIP Calculator", "WhatsApp"
 
-    private String status; // e.g., "NEW", "CONTACTED", "CONVERTED"
+    @Enumerated(EnumType.STRING)
+    private LeadStatus status;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
 }

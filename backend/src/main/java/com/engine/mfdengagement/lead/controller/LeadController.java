@@ -46,4 +46,17 @@ public class LeadController {
         leadService.deleteLead(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/assign/{userId}")
+    @PreAuthorize("hasAuthority('LEAD_WRITE')")
+    public ResponseEntity<LeadDTO> assignLead(@PathVariable Long id, @PathVariable Long userId) {
+        return ResponseEntity.ok(leadService.assignLead(id, userId));
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('LEAD_WRITE')")
+    public ResponseEntity<LeadDTO> updateStatus(@PathVariable Long id,
+            @RequestParam com.engine.mfdengagement.lead.entity.LeadStatus status) {
+        return ResponseEntity.ok(leadService.updateStatus(id, status));
+    }
 }
