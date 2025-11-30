@@ -52,18 +52,7 @@ export const TenantSchema = z.object({
 
 export type Tenant = z.infer<typeof TenantSchema>;
 
-// --- Lead Schemas ---
-export const LeadSchema = z.object({
-    id: z.number().optional(),
-    name: z.string(),
-    phone: z.string().optional(),
-    email: z.string().email().optional(),
-    source: z.string().optional(),
-    status: z.string().optional(),
-    tenantId: z.string().optional(),
-});
-
-export type Lead = z.infer<typeof LeadSchema>;
+// LeadService moved to @/services/leadService.ts
 
 export interface Page<T> {
     content: T[];
@@ -112,12 +101,7 @@ export const TenantService = {
         return response.data;
     },
     getCurrentTenant: async (tenantId: string) => {
-        // In a real app, this might come from the domain or a specific endpoint
-        // For now, we'll assume we can fetch by ID or use a 'me' endpoint if implemented
-        // Since we don't have a 'get by domain' endpoint yet, we'll mock or use getById if known
-        // But wait, the user asked to integrate. Let's assume we use the first tenant for demo or fetch by ID.
-        // Let's add a method to get all tenants for admin, or get specific tenant.
-        const response = await api.get<Tenant>(`/tenants/${tenantId}`); // Assuming we know the ID
+        const response = await api.get<Tenant>(`/tenants/${tenantId}`);
         return response.data;
     },
     updateTenant: async (id: number, data: Tenant) => {
@@ -130,17 +114,6 @@ export const TenantService = {
     }
 };
 
-export const LeadService = {
-    createLead: async (data: Lead) => {
-        const response = await api.post<Lead>('/leads', data);
-        return response.data;
-    },
-    getAllLeads: async () => {
-        const response = await api.get<Lead[]>('/leads');
-        return response.data;
-    }
-};
-
 // --- User Schemas ---
 export const UserSchema = z.object({
     id: z.number().optional(),
@@ -148,8 +121,8 @@ export const UserSchema = z.object({
     email: z.string().email(),
     fullName: z.string().optional(),
     enabled: z.boolean().optional(),
-    roles: z.array(z.string()).optional(), // Simplified role handling
-    password: z.string().optional(), // For creation
+    roles: z.array(z.string()).optional(),
+    password: z.string().optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;
