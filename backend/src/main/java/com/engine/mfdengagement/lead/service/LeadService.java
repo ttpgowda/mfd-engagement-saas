@@ -2,6 +2,7 @@ package com.engine.mfdengagement.lead.service;
 
 import com.engine.mfdengagement.lead.dto.LeadDTO;
 import com.engine.mfdengagement.lead.entity.Lead;
+import com.engine.mfdengagement.lead.entity.LeadStatus;
 import com.engine.mfdengagement.lead.repository.LeadRepository;
 import com.engine.mfdengagement.security.CustomUserDetails;
 import com.engine.mfdengagement.tenant.entity.Tenant;
@@ -17,20 +18,20 @@ import java.util.stream.Collectors;
 public class LeadService {
 
     private final LeadRepository leadRepository;
+    private final com.engine.mfdengagement.user.repository.UserRepository userRepository;
 
     public LeadDTO createLead(LeadDTO dto) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        Tenant tenant = userDetails.getUser().getTenant();
-
-        Lead lead = Lead.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .phone(dto.getPhone())
-                .source(dto.getSource())
-                .status(dto.getStatus() != null ? dto.getStatus() : "NEW")
-                .tenant(tenant)
-                .build();
+        Lead lead = new Lead();
+        lead.setName(dto.getName());
+        lead.setPhone(dto.getPhone());
+        lead.setEmail(dto.getEmail());
+        lead.setSource(dto.getSource());
+        lead.setStatus(dto.getStatus() != null ? dto.getStatus() : LeadStatus.NEW);
+        lead.setNotes(dto.getNotes());
+        
+        if (dto.getAssignedToId() != null) {
+             userRepository.findById(dto.getAssignedToId()).ifPresent(lead::setAssignedTo);
+        }
 
         Lead savedLead = leadRepository.save(lead);
         return mapToDTO(savedLead);
@@ -44,21 +45,22 @@ public class LeadService {
 
     public LeadDTO getLeadById(Long id) {
         Lead lead = leadRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lead not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Lead not found"));
         return mapToDTO(lead);
     }
 
     public LeadDTO updateLead(Long id, LeadDTO dto) {
         Lead lead = leadRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lead not found with id: " + id));
-
+                .orElseThrow(() -> new RuntimeException("Lead not found"));
+        
         lead.setName(dto.getName());
-        lead.setEmail(dto.getEmail());
         lead.setPhone(dto.getPhone());
+        lead.setEmail(dto.getEmail());
         lead.setSource(dto.getSource());
         if (dto.getStatus() != null) {
             lead.setStatus(dto.getStatus());
         }
+        lead.setNotes(dto.getNotes());
 
         Lead updatedLead = leadRepository.save(lead);
         return mapToDTO(updatedLead);
@@ -67,16 +69,34 @@ public class LeadService {
     public void deleteLead(Long id) {
         leadRepository.deleteById(id);
     }
+    
+    public LeadDTO updateStatus(Long id, LeadStatus status) {
+        Lead lead = leadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lead not found"));
+        lead.setStatus(status);
+        return mapToDTO(leadRepository.save(lead));
+    }
+
+    public LeadDTO assignLead(Long leadId, Long userId) {
+        Lead lead = leadRepository.findById(leadId)
+                .orElseThrow(() -> new RuntimeException("Lead not found"));
+        com.engine.mfdengagement.user.entity.User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        lead.setAssignedTo(user);
+        return mapToDTO(leadRepository.save(lead));
+    }
 
     private LeadDTO mapToDTO(Lead lead) {
-        LeadDTO dto = new LeadDTO();
-        dto.setId(lead.getId());
-        dto.setName(lead.getName());
-        dto.setEmail(lead.getEmail());
-        dto.setPhone(lead.getPhone());
-        dto.setSource(lead.getSource());
-        dto.setStatus(lead.getStatus());
-        dto.setTenantId(lead.getTenant().getTenantId());
-        return dto;
+        return LeadDTO.builder()
+                .id(lead.getId())
+                .name(lead.getName())
+                .phone(lead.getPhone())
+                .email(lead.getEmail())
+                .source(lead.getSource())
+                .status(lead.getStatus())
+                .notes(lead.getNotes())
+                .assignedToId(lead.getAssignedTo() != null ? lead.getAssignedTo().getId() : null)
+                .assignedToName(lead.getAssignedTo() != null ? lead.getAssignedTo().getUsername() : null)
+                .build();
     }
 }
