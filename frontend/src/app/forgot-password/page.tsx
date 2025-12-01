@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
             await AuthService.forgotPassword(values.email);
             setStatus('success');
             setMessage('If an account exists with that email, we have sent a password reset link.');
-        } catch (err: any) {
+        } catch (err) {
             console.error(err);
             setStatus('error');
             setMessage('Failed to send reset email. Please try again.');

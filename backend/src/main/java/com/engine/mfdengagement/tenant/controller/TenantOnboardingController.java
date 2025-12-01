@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/onboard-tenant") // New dedicated endpoint
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('TENANT_MANAGE')")
 public class TenantOnboardingController {
 
     private final TenantOnboardingService tenantOnboardingService;
 
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')") // Only SUPER_ADMIN can use this
+//    @PreAuthorize("hasRole('SUPER_ADMIN')") // Only SUPER_ADMIN can use this
     public ResponseEntity<Tenant> onboardNewTenant(@Valid @RequestBody TenantOnboardingRequest request) {
         Tenant newTenant = tenantOnboardingService.onboardNewTenant(request);
         // Returning the created tenant is useful for the client to confirm

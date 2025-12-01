@@ -23,15 +23,20 @@ api.interceptors.request.use(
 
 // Response interceptor to handle 401/403
 // Response interceptor to handle 401/403
-let isRefreshing = false;
-let failedQueue: any[] = [];
+interface FailedRequest {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}
 
-const processQueue = (error: any, token: string | null = null) => {
+let isRefreshing = false;
+let failedQueue: FailedRequest[] = [];
+
+const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      if (token) prom.resolve(token);
     }
   });
 
@@ -87,7 +92,7 @@ api.interceptors.response.use(
         processQueue(null, accessToken);
         return api(originalRequest);
       } catch (err) {
-        processQueue(err, null);
+        processQueue(err as Error, null);
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         window.location.href = '/login';

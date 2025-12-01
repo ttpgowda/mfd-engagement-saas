@@ -63,7 +63,7 @@ export default function LoginPage() {
             } else {
                 router.push('/dashboard');
             }
-        } catch (err: any) {
+        } catch (err) {
             console.error(err);
             setError('Invalid credentials or tenant ID');
         }

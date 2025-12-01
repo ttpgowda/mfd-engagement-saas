@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { LeadService } from '@/services/leadService';
-import { UserService } from '@/services/api';
+import { Lead, LeadService } from '@/services/leadService';
+import { User, UserService } from '@/services/api';
 import { DataTable } from '@/components/ui/data-table';
 import { columns } from './columns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,7 +42,7 @@ export default function LeadsPage() {
     const [isOpen, setIsOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [statusDialogOpen, setStatusDialogOpen] = useState(false);
-    const [selectedLead, setSelectedLead] = useState<any>(null);
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<string>("");
 
@@ -100,13 +100,17 @@ export default function LeadsPage() {
 
     // Event Listeners
     if (typeof window !== 'undefined') {
-        window.addEventListener('open-assign-lead', (e: any) => {
-            setSelectedLead(e.detail);
+        window.addEventListener('open-assign-lead', (e: Event) => {
+            const customEvent = e as CustomEvent<Lead>;
+            setSelectedLead(customEvent.detail);
             setAssignDialogOpen(true);
         });
-        window.addEventListener('open-update-status', (e: any) => {
-            setSelectedLead(e.detail);
-            setSelectedStatus(e.detail.status);
+        window.addEventListener('open-update-status', (e: Event) => {
+            const customEvent = e as CustomEvent<Lead>;
+            setSelectedLead(customEvent.detail);
+            if (customEvent.detail.status) {
+                setSelectedStatus(customEvent.detail.status);
+            }
             setStatusDialogOpen(true);
         });
     }
@@ -215,7 +219,7 @@ export default function LeadsPage() {
                                 onChange={(e) => setSelectedUserId(e.target.value)}
                             >
                                 <option value="">Select a user...</option>
-                                {users?.map((user: any) => (
+                                {users?.map((user: User) => (
                                     <option key={user.id} value={user.id}>
                                         {user.fullName || user.username}
                                     </option>
@@ -227,7 +231,7 @@ export default function LeadsPage() {
                             onClick={() => {
                                 if (selectedLead && selectedUserId) {
                                     assignLeadMutation.mutate({
-                                        leadId: selectedLead.id,
+                                        leadId: selectedLead.id!,
                                         userId: parseInt(selectedUserId),
                                     });
                                 }
@@ -266,7 +270,7 @@ export default function LeadsPage() {
                             onClick={() => {
                                 if (selectedLead && selectedStatus) {
                                     updateStatusMutation.mutate({
-                                        leadId: selectedLead.id,
+                                        leadId: selectedLead.id!,
                                         status: selectedStatus,
                                     });
                                 }
