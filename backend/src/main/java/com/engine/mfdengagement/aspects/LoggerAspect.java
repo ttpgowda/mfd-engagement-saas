@@ -18,7 +18,7 @@ public class LoggerAspect {
 
     private final Logger logger = Logger.getLogger(LoggerAspect.class.getName());
 
-    @Around("execution(* com.thewealthweb..service..*(..))")
+    @Around("execution(* com.engine..service..*(..))")
     public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
         logger.info(joinPoint.getSignature().toString() + " method execution start");
         Instant start = Instant.now();
@@ -33,7 +33,7 @@ public class LoggerAspect {
         return result;
     }
 
-    @Around("@annotation(com.thewealthweb.crmbackend.LogAspect)")
+    @Around("@annotation(com.engine.mfdengagement.LogAspect)")
     public Object logWithAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {
         logger.info(joinPoint.toString() + " method execution start");
         Instant start = Instant.now();
@@ -49,14 +49,14 @@ public class LoggerAspect {
     }
 
     //@AfterThrowing(value = "execution(* com.thewealthweb.crmbackend.services.*.*(..))",throwing = "ex")
-    @AfterThrowing(value = "execution(* com.thewealthweb..service..*(..))", throwing = "ex")
+    @AfterThrowing(value = "execution(* com.engine..service..*(..))", throwing = "ex")
     public void logException(JoinPoint joinPoint, Exception ex) {
         logger.log(Level.SEVERE,joinPoint.getSignature()+ " An exception thrown with the help of" +
                 " @AfterThrowing which happened due to : "+ex.getMessage());
     }
 
     //@AfterReturning(value = "execution(* com.thewealthweb.crmbackend.services.*.*(..))",returning = "retVal")
-    @AfterReturning(value = "execution(* com.thewealthweb..service..*(..))", returning = "retVal")
+    @AfterReturning(value = "execution(* com.engine..service..*(..))", returning = "retVal")
     public void logStatus(JoinPoint joinPoint,Object retVal) {
         logger.log(Level.INFO,joinPoint.getSignature()+ " Method successfully processed with the status " +
                 retVal.toString());

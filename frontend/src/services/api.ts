@@ -108,7 +108,7 @@ export const TenantService = {
         const response = await api.put<Tenant>(`/tenants/${id}`, data);
         return response.data;
     },
-    onboardTenant: async (data: any) => {
+    onboardTenant: async (data: OnboardTenantRequest) => {
         const response = await api.post<Tenant>('/onboard-tenant', data);
         return response.data;
     }
@@ -149,12 +149,37 @@ export const UserService = {
     }
 };
 
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface RegisterRequest {
+    email: string;
+    password: string;
+    fullName: string;
+    role?: string;
+    tenantId?: string;
+}
+
+export interface OnboardTenantRequest {
+    tenantId: string;
+    tenantName: string;
+    contactEmail: string;
+    phone?: string;
+    subDomain?: string;
+    username: string;
+    userEmail: string;
+    password: string;
+    fullName: string;
+}
+
 export const AuthService = {
-    login: async (data: any) => {
+    login: async (data: LoginRequest) => {
         const response = await api.post('/auth/login', data);
         return response.data;
     },
-    register: async (data: any) => {
+    register: async (data: RegisterRequest) => {
         const response = await api.post('/auth/signup', data);
         return response.data;
     },

@@ -10,5 +10,5 @@ ____________________________________________________________________
 
     :: MFD-Engagement-SaaS :: (Powered by Spring Boot)
     :: Data Source: PostgreSQL (amfi_db)
-    :: Application Version: @project.version@
+    :: Application Version: @0.1
 ____________________________________________________________________

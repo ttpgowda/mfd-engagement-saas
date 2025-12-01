@@ -21,6 +21,14 @@ public class CustomUserDetails implements UserDetails {
                 .flatMap(role -> role.getPermissions().stream())
                 .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toSet());
+
+       /* // Add roles as authorities
+        user.getRoles().forEach(role -> {
+            String roleName = role.getName().startsWith("ROLE_") ? role.getName() : "ROLE_" + role.getName();
+            authorities.add(new SimpleGrantedAuthority(roleName));
+        });
+
+        this.authorities = authorities;*/
     }
 
     @Override

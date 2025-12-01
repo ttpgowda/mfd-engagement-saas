@@ -57,7 +57,7 @@ function ResetPasswordContent() {
             await AuthService.resetPassword(token, values.password);
             setStatus('success');
             setMessage('Password reset successfully. You can now login with your new password.');
-        } catch (err: any) {
+        } catch (err) {
             console.error(err);
             setStatus('error');
             setMessage('Failed to reset password. The token may be invalid or expired.');
