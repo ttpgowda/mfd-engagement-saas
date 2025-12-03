@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function StudioPage() {
     const [selectedScheme, setSelectedScheme] = useState<string>('');
@@ -29,12 +28,15 @@ export default function StudioPage() {
     const { data: schemes } = useQuery({
         queryKey: ['schemes'],
         queryFn: () => MutualFundService.getAllSchemes(),
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     const { data: analytics } = useQuery({
         queryKey: ['analytics', selectedScheme],
         queryFn: () => MutualFundService.getSchemeAnalytics(Number(selectedScheme)),
-        enabled: !!selectedScheme,
+        enabled: !!selectedScheme && typeof window !== 'undefined' && !!localStorage.getItem('token'),
+        retry: false,
     });
 
     const selectedSchemeData = schemes?.content?.find(
@@ -42,12 +44,12 @@ export default function StudioPage() {
     );
 
     return (
-        <div className="flex-1 space-y-4 p-8 pt-6">
-            <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight">Content Studio</h2>
+        <div className="flex-1 space-y-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Content Studio</h2>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+                <Card className="lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Create Smart Content</CardTitle>
                         <CardDescription>
@@ -100,7 +102,7 @@ export default function StudioPage() {
                         </Button>
                     </CardFooter>
                 </Card>
-                <Card className="col-span-3">
+                <Card className="lg:col-span-3">
                     <CardHeader>
                         <CardTitle>Preview</CardTitle>
                     </CardHeader>

@@ -48,6 +48,8 @@ export default function UsersPage() {
     const { data: users, isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: UserService.getAllUsers,
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     const createUserMutation = useMutation({

@@ -30,6 +30,7 @@ interface FailedRequest {
 
 let isRefreshing = false;
 let failedQueue: FailedRequest[] = [];
+let hasRedirected = false; // Prevent multiple redirects
 
 const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -41,6 +42,20 @@ const processQueue = (error: Error | null, token: string | null = null) => {
   });
 
   failedQueue = [];
+};
+
+const clearAuthAndRedirect = () => {
+  if (hasRedirected) return; // Prevent multiple redirects
+  hasRedirected = true;
+
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+  document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+  // Use a small timeout to ensure cleanup completes
+  setTimeout(() => {
+    window.location.href = '/login';
+  }, 100);
 };
 
 api.interceptors.response.use(
@@ -69,9 +84,7 @@ api.interceptors.response.use(
 
       if (!refreshToken) {
         // No refresh token, logout
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        clearAuthAndRedirect();
         return Promise.reject(error);
       }
 
@@ -93,9 +106,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         processQueue(err as Error, null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        clearAuthAndRedirect();
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
