@@ -49,11 +49,15 @@ export default function LeadsPage() {
     const { data: leads, isLoading } = useQuery({
         queryKey: ['leads'],
         queryFn: LeadService.getAllLeads,
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     const { data: users } = useQuery({
         queryKey: ['users'],
-        queryFn: UserService.getAllUsers, // Ensure UserService is imported
+        queryFn: UserService.getAllUsers,
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     const createLeadMutation = useMutation({
