@@ -19,6 +19,7 @@ public class LeadService {
 
     private final LeadRepository leadRepository;
     private final com.engine.mfdengagement.user.repository.UserRepository userRepository;
+    private final com.engine.mfdengagement.tenant.repository.TenantRepository tenantRepository;
 
     public LeadDTO createLead(LeadDTO dto) {
         Lead lead = new Lead();
@@ -28,9 +29,14 @@ public class LeadService {
         lead.setSource(dto.getSource());
         lead.setStatus(dto.getStatus() != null ? dto.getStatus() : LeadStatus.NEW);
         lead.setNotes(dto.getNotes());
-        
+
+        String tenantId = com.engine.mfdengagement.tenant.config.TenantContext.getTenantId();
+        Tenant tenant = tenantRepository.findByTenantId(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant not found"));
+        lead.setTenant(tenant);
+
         if (dto.getAssignedToId() != null) {
-             userRepository.findById(dto.getAssignedToId()).ifPresent(lead::setAssignedTo);
+            userRepository.findById(dto.getAssignedToId()).ifPresent(lead::setAssignedTo);
         }
 
         Lead savedLead = leadRepository.save(lead);
@@ -52,7 +58,7 @@ public class LeadService {
     public LeadDTO updateLead(Long id, LeadDTO dto) {
         Lead lead = leadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lead not found"));
-        
+
         lead.setName(dto.getName());
         lead.setPhone(dto.getPhone());
         lead.setEmail(dto.getEmail());
@@ -69,7 +75,7 @@ public class LeadService {
     public void deleteLead(Long id) {
         leadRepository.deleteById(id);
     }
-    
+
     public LeadDTO updateStatus(Long id, LeadStatus status) {
         Lead lead = leadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lead not found"));
