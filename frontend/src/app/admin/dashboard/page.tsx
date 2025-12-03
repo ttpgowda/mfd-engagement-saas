@@ -19,6 +19,8 @@ export default function AdminDashboardPage() {
     const { data: tenants, isLoading } = useQuery({
         queryKey: ['tenants'],
         queryFn: TenantService.getAllTenants,
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     return (

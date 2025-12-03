@@ -16,6 +16,8 @@ export default function FundsPage() {
     const { data: schemesPage } = useQuery({
         queryKey: ['schemes', pagination.pageIndex, pagination.pageSize],
         queryFn: () => MutualFundService.getAllSchemes(pagination.pageIndex, pagination.pageSize),
+        retry: false,
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
     });
 
     const schemes = schemesPage?.content || [];
