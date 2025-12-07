@@ -52,8 +52,8 @@ export default function SwpCalculatorView() {
         researchService.getCategories().then(cats => {
             setCategories(cats);
             const hybridCat = cats.find(c => c.includes("Hybrid") || c.includes("Balanced"));
-            if(hybridCat) setCategory(hybridCat);
-            else if(cats.length) setCategory(cats[0]);
+            if (hybridCat) setCategory(hybridCat);
+            else if (cats.length) setCategory(cats[0]);
         });
     }, []);
 
@@ -77,9 +77,9 @@ export default function SwpCalculatorView() {
                 frequency
             });
             setResult(res);
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
-            const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+            const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
             setError(msg);
         } finally {
             setLoading(false);
@@ -228,13 +228,13 @@ export default function SwpCalculatorView() {
                                 <AreaChart data={result.ledger} margin={{ top: 10, right: 0, left: 20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
-                                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="date" tickFormatter={(val) => new Date(val).getFullYear().toString()} minTickGap={50} tick={{fontSize: 12, fill: '#888'}} />
-                                    <YAxis tickFormatter={(val) => `₹${val/1000}k`} tick={{fontSize: 12, fill: '#888'}} />
-                                    <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString()} formatter={(val: number) => fmt(val)} contentStyle={{borderRadius:'8px'}}/>
+                                    <XAxis dataKey="date" tickFormatter={(val) => new Date(val).getFullYear().toString()} minTickGap={50} tick={{ fontSize: 12, fill: '#888' }} />
+                                    <YAxis tickFormatter={(val) => `₹${val / 1000}k`} tick={{ fontSize: 12, fill: '#888' }} />
+                                    <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString()} formatter={(val: number) => fmt(val)} contentStyle={{ borderRadius: '8px' }} />
                                     <Legend />
                                     <Area type="monotone" dataKey="currentValue" name="Fund Value" stroke="#2563eb" fill="url(#colorValue)" strokeWidth={2} />
                                     {/* Optional: Add Invested Line */}
@@ -252,26 +252,26 @@ export default function SwpCalculatorView() {
                         <div className="overflow-x-auto max-h-[500px]">
                             <table className="w-full text-sm text-left relative">
                                 <thead className="bg-muted/50 text-muted-foreground font-medium text-xs uppercase sticky top-0 z-10 backdrop-blur-md">
-                                <tr>
-                                    <th className="px-6 py-3">Date</th>
-                                    <th className="px-6 py-3 text-right">NAV</th>
-                                    <th className="px-6 py-3 text-right text-emerald-600">Cash Flow</th>
-                                    <th className="px-6 py-3 text-right">Units Balance</th>
-                                    <th className="px-6 py-3 text-right">Fund Value</th>
-                                </tr>
+                                    <tr>
+                                        <th className="px-6 py-3">Date</th>
+                                        <th className="px-6 py-3 text-right">NAV</th>
+                                        <th className="px-6 py-3 text-right text-emerald-600">Cash Flow</th>
+                                        <th className="px-6 py-3 text-right">Units Balance</th>
+                                        <th className="px-6 py-3 text-right">Fund Value</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
-                                {result.ledger.map((row, idx) => (
-                                    <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                                        <td className="px-6 py-3 font-medium whitespace-nowrap">{new Date(row.date).toLocaleDateString()}</td>
-                                        <td className="px-6 py-3 text-right text-muted-foreground">{row.nav.toFixed(4)}</td>
-                                        <td className={`px-6 py-3 text-right font-mono font-medium ${row.cashFlow > 0 ? 'text-emerald-600' : 'text-slate-500'}`}>
-                                            {row.cashFlow > 0 ? '+' : ''}{fmt(row.cashFlow)}
-                                        </td>
-                                        <td className="px-6 py-3 text-right text-muted-foreground">{row.balanceUnits.toFixed(3)}</td>
-                                        <td className="px-6 py-3 text-right font-bold text-foreground">{fmt(row.currentValue)}</td>
-                                    </tr>
-                                ))}
+                                    {result.ledger.map((row, idx) => (
+                                        <tr key={idx} className="hover:bg-muted/10 transition-colors">
+                                            <td className="px-6 py-3 font-medium whitespace-nowrap">{new Date(row.date).toLocaleDateString()}</td>
+                                            <td className="px-6 py-3 text-right text-muted-foreground">{row.nav.toFixed(4)}</td>
+                                            <td className={`px-6 py-3 text-right font-mono font-medium ${row.cashFlow > 0 ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                                {row.cashFlow > 0 ? '+' : ''}{fmt(row.cashFlow)}
+                                            </td>
+                                            <td className="px-6 py-3 text-right text-muted-foreground">{row.balanceUnits.toFixed(3)}</td>
+                                            <td className="px-6 py-3 text-right font-bold text-foreground">{fmt(row.currentValue)}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -282,7 +282,15 @@ export default function SwpCalculatorView() {
     );
 }
 
-function SummaryCard({ label, value, subLabel, color = "text-foreground", bold }: any) {
+interface SummaryCardProps {
+    label: string;
+    value: number;
+    subLabel?: string;
+    color?: string;
+    bold?: boolean;
+}
+
+function SummaryCard({ label, value, subLabel, color = "text-foreground", bold }: SummaryCardProps) {
     const fmt = (val: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
     return (
         <Card className="bg-card border-border/50 shadow-sm">

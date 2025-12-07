@@ -8,23 +8,33 @@ export const calculateSipVsLumpsum = (
     const monthlyRate = rate / 100 / 12;
     const yearlyRate = rate / 100;
 
+    // 1. Define the shape of the data object
+    type StrategySnapshot = {
+        year: string;
+        value: number;
+        type: string;
+    };
+
     // Scenario A: Lumpsum (One-time investment of the total amount)
-    let lumpsumData = [];
+    // 2. Explicitly type the array
+    const lumpsumData: StrategySnapshot[] = [];
     let currentLumpsum = investmentAmount;
 
     // Scenario B: SIP (Spreading the total amount over the duration)
     // Monthly SIP amount = Total Amount / (Years * 12)
     const monthlySipAmount = investmentAmount / (years * 12);
-    let sipData = [];
+
+    // 2. Explicitly type the array
+    const sipData: StrategySnapshot[] = [];
     let currentSipCorpus = 0;
-    let totalSipInvested = 0;
+    // totalSipInvested removed as it was unused
 
     for (let year = 1; year <= years; year++) {
         // --- Lumpsum Calc ---
         currentLumpsum = currentLumpsum * (1 + yearlyRate);
 
         const displayLumpsum = inflationAdjusted
-            ? currentLumpsum / Math.pow(1 + inflationRate/100, year)
+            ? currentLumpsum / Math.pow(1 + inflationRate / 100, year)
             : currentLumpsum;
 
         lumpsumData.push({
@@ -36,11 +46,11 @@ export const calculateSipVsLumpsum = (
         // --- SIP Calc ---
         for (let month = 1; month <= 12; month++) {
             currentSipCorpus = (currentSipCorpus + monthlySipAmount) * (1 + monthlyRate);
-            totalSipInvested += monthlySipAmount;
+            // totalSipInvested += monthlySipAmount; // Removed
         }
 
         const displaySip = inflationAdjusted
-            ? currentSipCorpus / Math.pow(1 + inflationRate/100, year)
+            ? currentSipCorpus / Math.pow(1 + inflationRate / 100, year)
             : currentSipCorpus;
 
         sipData.push({

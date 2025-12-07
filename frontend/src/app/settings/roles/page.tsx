@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -28,22 +28,23 @@ export default function RolesPage() {
     const [editingRole, setEditingRole] = useState<Role | undefined>(undefined);
     const { toast } = useToast();
 
-    useEffect(() => {
-        loadRoles();
-    }, []);
-
-    const loadRoles = async () => {
+    const loadRoles = useCallback(async () => {
         try {
             const data = await roleService.getAllRoles();
             setRoles(data);
-        } catch (error) {
+        } catch {
             toast({
                 title: 'Error',
                 description: 'Failed to load roles',
                 variant: 'destructive',
             });
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadRoles();
+    }, [loadRoles]);
 
     const handleEdit = (role: Role) => {
         setEditingRole(role);
@@ -56,7 +57,7 @@ export default function RolesPage() {
             await roleService.deleteRole(id);
             toast({ title: 'Success', description: 'Role deleted successfully' });
             loadRoles();
-        } catch (error) {
+        } catch {
             toast({
                 title: 'Error',
                 description: 'Failed to delete role',

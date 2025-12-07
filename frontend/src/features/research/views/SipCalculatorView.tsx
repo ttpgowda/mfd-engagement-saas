@@ -24,6 +24,7 @@ import {
 } from 'recharts';
 import { researchService, HistoricalSipResponse, SchemeDropdownDto } from '@/services/researchService';
 import { cn } from "@/lib/utils";
+import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 export default function SipCalculatorView() {
     // --- State ---
@@ -40,6 +41,8 @@ export default function SipCalculatorView() {
     const [isStepUp, setIsStepUp] = useState(false);
     const [stepUpPercent, setStepUpPercent] = useState(10);
 
+    const [error, setError] = useState<string | null>(null);
+
     // Results
     const [result, setResult] = useState<HistoricalSipResponse | null>(null);
     const [loading, setLoading] = useState(false);
@@ -48,7 +51,7 @@ export default function SipCalculatorView() {
     useEffect(() => {
         researchService.getCategories().then(cats => {
             setCategories(cats);
-            if(cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
+            if (cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
         });
     }, []);
 
@@ -85,6 +88,8 @@ export default function SipCalculatorView() {
             setResult(res);
         } catch (err) {
             console.error(err);
+            const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -92,6 +97,12 @@ export default function SipCalculatorView() {
 
     // Helper for Combobox
     const [openCombo, setOpenCombo] = useState(false);
+
+    interface ChartPoint {
+        date: string;
+        invested: number;
+        [key: string]: string | number;
+    }
 
     // Chart Data Preparation (Merge multiple lines)
     const chartData = React.useMemo(() => {
@@ -101,7 +112,7 @@ export default function SipCalculatorView() {
         const baseData = result.results[0].chartData;
 
         return baseData.map((point, idx) => {
-            const row: any = { date: point.date, invested: point.invested };
+            const row: ChartPoint = { date: point.date, invested: point.invested };
             // Add value for each fund
             result.results.forEach((res, i) => {
                 // Safety check for index
@@ -260,6 +271,7 @@ export default function SipCalculatorView() {
                 </CardContent>
             </Card>
 
+            <ErrorAlert message={error} />
             {/* Results Section */}
             {result && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -271,30 +283,30 @@ export default function SipCalculatorView() {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/30 text-muted-foreground font-medium border-b border-border/50">
-                                <tr>
-                                    <th className="px-6 py-4">Fund Name</th>
-                                    <th className="px-6 py-4 text-right">Total Invested</th>
-                                    <th className="px-6 py-4 text-right">Current Value</th>
-                                    <th className="px-6 py-4 text-right">Profit</th>
-                                    {/* <th className="px-6 py-4 text-right">XIRR</th> */}
-                                </tr>
+                                    <tr>
+                                        <th className="px-6 py-4">Fund Name</th>
+                                        <th className="px-6 py-4 text-right">Total Invested</th>
+                                        <th className="px-6 py-4 text-right">Current Value</th>
+                                        <th className="px-6 py-4 text-right">Profit</th>
+                                        {/* <th className="px-6 py-4 text-right">XIRR</th> */}
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
-                                {result.results.map((row) => (
-                                    <tr key={row.schemeCode} className="hover:bg-muted/10">
-                                        <td className="px-6 py-4 font-medium">{row.schemeName}</td>
-                                        <td className="px-6 py-4 text-right text-muted-foreground">
-                                            {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.totalInvested))}
-                                        </td>
-                                        <td className="px-6 py-4 text-right font-bold text-foreground">
-                                            {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.currentValue))}
-                                        </td>
-                                        <td className={`px-6 py-4 text-right font-bold ${Number(row.absoluteReturn) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                                            {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.absoluteReturn))}
-                                        </td>
-                                        {/* <td className="px-6 py-4 text-right font-mono">{row.xirr}%</td> */}
-                                    </tr>
-                                ))}
+                                    {result.results.map((row) => (
+                                        <tr key={row.schemeCode} className="hover:bg-muted/10">
+                                            <td className="px-6 py-4 font-medium">{row.schemeName}</td>
+                                            <td className="px-6 py-4 text-right text-muted-foreground">
+                                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.totalInvested))}
+                                            </td>
+                                            <td className="px-6 py-4 text-right font-bold text-foreground">
+                                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.currentValue))}
+                                            </td>
+                                            <td className={`px-6 py-4 text-right font-bold ${Number(row.absoluteReturn) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(row.absoluteReturn))}
+                                            </td>
+                                            {/* <td className="px-6 py-4 text-right font-mono">{row.xirr}%</td> */}
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -313,11 +325,11 @@ export default function SipCalculatorView() {
                                         dataKey="date"
                                         tickFormatter={(val) => new Date(val).getFullYear().toString()}
                                         minTickGap={50}
-                                        tick={{fontSize: 12, fill: '#888'}}
+                                        tick={{ fontSize: 12, fill: '#888' }}
                                     />
                                     <YAxis
-                                        tickFormatter={(val) => `₹${val/1000}k`}
-                                        tick={{fontSize: 12, fill: '#888'}}
+                                        tickFormatter={(val) => `₹${val / 1000}k`}
+                                        tick={{ fontSize: 12, fill: '#888' }}
                                         width={60}
                                     />
                                     <Tooltip

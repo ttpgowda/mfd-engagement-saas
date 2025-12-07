@@ -75,7 +75,7 @@ export default function LeadsPage() {
                 description: "Lead created successfully",
             });
         },
-        onError: (error) => {
+        onError: () => {
             toast({
                 variant: "destructive",
                 title: "Error",
@@ -95,7 +95,7 @@ export default function LeadsPage() {
                 description: "Lead assigned successfully",
             });
         },
-        onError: (error) => {
+        onError: () => {
             toast({
                 variant: "destructive",
                 title: "Error",
@@ -115,7 +115,7 @@ export default function LeadsPage() {
                 description: "Status updated successfully",
             });
         },
-        onError: (error) => {
+        onError: () => {
             toast({
                 variant: "destructive",
                 title: "Error",

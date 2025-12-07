@@ -25,6 +25,7 @@ import {
 import { researchService, StpResponse, SchemeDropdownDto } from '@/services/researchService';
 import { cn } from "@/lib/utils";
 import { Loader2 } from 'lucide-react';
+import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 export default function StpCalculatorView() {
     // Data Loading State
@@ -47,6 +48,7 @@ export default function StpCalculatorView() {
     // Target Fund Selector
     const [targetCat, setTargetCat] = useState("Equity: Large Cap");
     const [targetFund, setTargetFund] = useState<SchemeDropdownDto | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     // Initial Load
     useEffect(() => {
@@ -70,6 +72,8 @@ export default function StpCalculatorView() {
             setResult(res);
         } catch (err) {
             console.error(err);
+            const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -177,7 +181,7 @@ export default function StpCalculatorView() {
                     </div>
                 </CardContent>
             </Card>
-
+            <ErrorAlert message={error} />
             {result && (
                 <div className="space-y-8">
 
@@ -197,20 +201,20 @@ export default function StpCalculatorView() {
                                 <AreaChart data={result.ledger} margin={{ top: 10, right: 0, left: 20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorTarget" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                         </linearGradient>
                                         <linearGradient id="colorSource" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f97316" stopOpacity={0.3}/>
-                                            <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <XAxis dataKey="date" tickFormatter={(val) => new Date(val).getFullYear().toString()} minTickGap={50} tick={{fontSize: 12, fill: '#888'}} />
-                                    <YAxis tickFormatter={(val) => `₹${val/1000}k`} tick={{fontSize: 12, fill: '#888'}} />
+                                    <XAxis dataKey="date" tickFormatter={(val) => new Date(val).getFullYear().toString()} minTickGap={50} tick={{ fontSize: 12, fill: '#888' }} />
+                                    <YAxis tickFormatter={(val) => `₹${val / 1000}k`} tick={{ fontSize: 12, fill: '#888' }} />
                                     <Tooltip
                                         labelFormatter={(v) => new Date(v).toLocaleDateString()}
                                         formatter={(val: number) => fmt(val)}
-                                        contentStyle={{borderRadius: '8px', border:'1px solid #e2e8f0'}}
+                                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
                                     />
                                     <Legend />
                                     <Area type="monotone" dataKey="targetMarketValue" name="Target Fund (Equity)" stackId="1" stroke="#10b981" fill="url(#colorTarget)" />
@@ -233,59 +237,59 @@ export default function StpCalculatorView() {
                         <div className="overflow-x-auto max-h-[500px]">
                             <table className="w-full text-sm text-left relative">
                                 <thead className="bg-muted/50 text-muted-foreground font-medium text-xs uppercase sticky top-0 z-10 backdrop-blur-md">
-                                <tr>
-                                    <th className="px-4 py-3 min-w-[100px]">Date</th>
-                                    <th className="px-4 py-3 text-center border-l border-border/50 bg-orange-50/50 dark:bg-orange-900/10 text-orange-700 dark:text-orange-400">
-                                        Source Fund (Sell)
-                                    </th>
-                                    <th className="px-4 py-3 text-center border-l border-border/50 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400">
-                                        Target Fund (Buy)
-                                    </th>
-                                    <th className="px-4 py-3 text-right border-l border-border/50">Total Value</th>
-                                </tr>
+                                    <tr>
+                                        <th className="px-4 py-3 min-w-[100px]">Date</th>
+                                        <th className="px-4 py-3 text-center border-l border-border/50 bg-orange-50/50 dark:bg-orange-900/10 text-orange-700 dark:text-orange-400">
+                                            Source Fund (Sell)
+                                        </th>
+                                        <th className="px-4 py-3 text-center border-l border-border/50 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400">
+                                            Target Fund (Buy)
+                                        </th>
+                                        <th className="px-4 py-3 text-right border-l border-border/50">Total Value</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
-                                {result.ledger.map((row, idx) => (
-                                    <tr key={idx} className="hover:bg-muted/10 transition-colors">
-                                        <td className="px-4 py-3 font-medium whitespace-nowrap text-muted-foreground">
-                                            {new Date(row.date).toLocaleDateString()}
-                                            <div className="text-[10px] uppercase mt-0.5 opacity-60">{row.type.replace('_', ' ')}</div>
-                                        </td>
-                                        <td className="px-4 py-3 border-l border-border/50">
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="text-muted-foreground">
-                                                    {/* SAFE CHECK: Handle potential nulls in NAV */}
-                                                    NAV: {row.sourceNav ? row.sourceNav.toFixed(2) : '-'}
-                                                </span>
-                                                <span className="text-orange-600 font-mono">
-                                                    {row.unitsSold && row.unitsSold > 0 ? `-${row.unitsSold.toFixed(2)} Units` : '-'}
-                                                </span>
-                                            </div>
-                                            <div className="text-right font-mono text-xs font-medium text-orange-700 dark:text-orange-400">
-                                                {fmt(row.sourceMarketValue)}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 border-l border-border/50">
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="text-muted-foreground">
-                                                    {/* FIX: Ensure targetNav is not null before toFixed() */}
-                                                    NAV: {row.targetNav ? row.targetNav.toFixed(2) : '-'}
-                                                </span>
-                                                <span className="text-emerald-600 font-mono">
-                                                    {row.unitsBought && row.unitsBought > 0 ? `+${row.unitsBought.toFixed(2)} Units` : '-'}
-                                                </span>
-                                            </div>
-                                            <div className="text-right font-mono text-xs font-medium text-emerald-700 dark:text-emerald-400">
-                                                {fmt(row.targetMarketValue)}
-                                            </div>
-                                        </td>
+                                    {result.ledger.map((row, idx) => (
+                                        <tr key={idx} className="hover:bg-muted/10 transition-colors">
+                                            <td className="px-4 py-3 font-medium whitespace-nowrap text-muted-foreground">
+                                                {new Date(row.date).toLocaleDateString()}
+                                                <div className="text-[10px] uppercase mt-0.5 opacity-60">{row.type.replace('_', ' ')}</div>
+                                            </td>
+                                            <td className="px-4 py-3 border-l border-border/50">
+                                                <div className="flex justify-between text-xs mb-1">
+                                                    <span className="text-muted-foreground">
+                                                        {/* SAFE CHECK: Handle potential nulls in NAV */}
+                                                        NAV: {row.sourceNav ? row.sourceNav.toFixed(2) : '-'}
+                                                    </span>
+                                                    <span className="text-orange-600 font-mono">
+                                                        {row.unitsSold && row.unitsSold > 0 ? `-${row.unitsSold.toFixed(2)} Units` : '-'}
+                                                    </span>
+                                                </div>
+                                                <div className="text-right font-mono text-xs font-medium text-orange-700 dark:text-orange-400">
+                                                    {fmt(row.sourceMarketValue)}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 border-l border-border/50">
+                                                <div className="flex justify-between text-xs mb-1">
+                                                    <span className="text-muted-foreground">
+                                                        {/* FIX: Ensure targetNav is not null before toFixed() */}
+                                                        NAV: {row.targetNav ? row.targetNav.toFixed(2) : '-'}
+                                                    </span>
+                                                    <span className="text-emerald-600 font-mono">
+                                                        {row.unitsBought && row.unitsBought > 0 ? `+${row.unitsBought.toFixed(2)} Units` : '-'}
+                                                    </span>
+                                                </div>
+                                                <div className="text-right font-mono text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                                                    {fmt(row.targetMarketValue)}
+                                                </div>
+                                            </td>
 
-                                        {/* Total */}
-                                        <td className="px-4 py-3 text-right border-l border-border/50 font-mono font-bold text-foreground">
-                                            {fmt(row.totalPortfolioValue)}
-                                        </td>
-                                    </tr>
-                                ))}
+                                            {/* Total */}
+                                            <td className="px-4 py-3 text-right border-l border-border/50 font-mono font-bold text-foreground">
+                                                {fmt(row.totalPortfolioValue)}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -298,7 +302,15 @@ export default function StpCalculatorView() {
 
 // --- Helper Components ---
 
-function SummaryCard({ label, value, subLabel, color = "text-foreground", bold }: any) {
+interface SummaryCardProps {
+    label: string;
+    value: number;
+    subLabel?: string;
+    color?: string;
+    bold?: boolean;
+}
+
+function SummaryCard({ label, value, subLabel, color = "text-foreground", bold }: SummaryCardProps) {
     const fmt = (val: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
     return (
         <Card className="bg-card border-border/50 shadow-sm">
@@ -311,12 +323,19 @@ function SummaryCard({ label, value, subLabel, color = "text-foreground", bold }
     );
 }
 
-function FundCombobox({ category, selected, onSelect, placeholder }: any) {
+interface FundComboboxProps {
+    category: string;
+    selected: SchemeDropdownDto | null;
+    onSelect: (scheme: SchemeDropdownDto) => void;
+    placeholder: string;
+}
+
+function FundCombobox({ category, selected, onSelect, placeholder }: FundComboboxProps) {
     const [open, setOpen] = useState(false);
     const [list, setList] = useState<SchemeDropdownDto[]>([]);
 
     useEffect(() => {
-        if(open && category) {
+        if (open && category) {
             researchService.getSchemesByCategory(category).then(setList);
         }
     }, [open, category]);

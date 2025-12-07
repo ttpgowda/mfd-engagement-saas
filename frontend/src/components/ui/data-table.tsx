@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import {
     ColumnDef,
     flexRender,
@@ -35,7 +37,7 @@ export function DataTable<TData, TValue>({
     pagination,
     onPaginationChange,
 }: DataTableProps<TData, TValue>) {
-    const table = useReactTable({
+    const tableOptions = React.useMemo(() => ({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
@@ -46,7 +48,10 @@ export function DataTable<TData, TValue>({
             ...(pagination && { pagination }),
         },
         onPaginationChange,
-    });
+    }), [data, columns, pageCount, pagination, onPaginationChange]);
+
+    // eslint-disable-next-line react-hooks/incompatible-library
+    const table = useReactTable(tableOptions);
 
     return (
         <div className="space-y-4">

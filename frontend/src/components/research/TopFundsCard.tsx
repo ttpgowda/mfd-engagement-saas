@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { ArrowUpRight, Trophy, ChevronRight, Loader2 } from 'lucide-react';
+import { Trophy, ChevronRight, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { researchService, TopFundsResponse } from '@/services/researchService';
@@ -74,9 +74,9 @@ export default function TopFundsCard() {
                                     <div className={`
                                         flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold shrink-0
                                         ${index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                                        index === 1 ? 'bg-zinc-100 text-zinc-700' :
-                                            index === 2 ? 'bg-orange-100 text-orange-700' :
-                                                'bg-slate-50 text-slate-500'}
+                                            index === 1 ? 'bg-zinc-100 text-zinc-700' :
+                                                index === 2 ? 'bg-orange-100 text-orange-700' :
+                                                    'bg-slate-50 text-slate-500'}
                                     `}>
                                         {index + 1}
                                     </div>

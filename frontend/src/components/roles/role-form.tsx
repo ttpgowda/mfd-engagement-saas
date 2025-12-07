@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,22 +21,23 @@ export function RoleForm({ role, onSuccess, onCancel }: RoleFormProps) {
     const [allPermissions, setAllPermissions] = useState<Permission[]>([]);
     const { toast } = useToast();
 
-    useEffect(() => {
-        loadPermissions();
-    }, []);
-
-    const loadPermissions = async () => {
+    const loadPermissions = useCallback(async () => {
         try {
             const data = await roleService.getAllPermissions();
             setAllPermissions(data);
-        } catch (error) {
+        } catch {
             toast({
                 title: 'Error',
                 description: 'Failed to load permissions',
                 variant: 'destructive',
             });
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadPermissions();
+    }, [loadPermissions]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +56,7 @@ export function RoleForm({ role, onSuccess, onCancel }: RoleFormProps) {
                 toast({ title: 'Success', description: 'Role created successfully' });
             }
             onSuccess();
-        } catch (error) {
+        } catch {
             toast({
                 title: 'Error',
                 description: 'Failed to save role',
