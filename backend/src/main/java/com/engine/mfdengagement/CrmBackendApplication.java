@@ -10,14 +10,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		"com.engine.mfdengagement.user.entity",
 		"com.engine.mfdengagement.tenant.entity",
 		"com.engine.mfdengagement.lead.entity",
-		"com.engine.mfdengagement.mutualfund.domain",
+		"com.engine.mfdengagement.research.model",
 		"com.engine.mfdengagement.common.entity"
 })
 @EnableJpaRepositories(basePackages = {
 		"com.engine.mfdengagement.user.repository",
 		"com.engine.mfdengagement.tenant.repository",
 		"com.engine.mfdengagement.lead.repository",
-		"com.engine.mfdengagement.mutualfund.repository"
+		"com.engine.mfdengagement.research.repository"
 })
 public class CrmBackendApplication {
 

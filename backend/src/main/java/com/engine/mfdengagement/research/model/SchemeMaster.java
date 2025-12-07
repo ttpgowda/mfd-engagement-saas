@@ -1,4 +1,4 @@
-package com.engine.mfdengagement.mutualfund.domain;
+package com.engine.mfdengagement.research.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,6 +7,7 @@ import lombok.Data;
 @Table(name = "scheme_master")
 @Data
 public class SchemeMaster {
+
     @Id
     @Column(name = "\"schemeCode\"")
     private Long schemeCode;
@@ -31,4 +32,7 @@ public class SchemeMaster {
 
     @Column(name = "isin_div_reinvestment")
     private String isinDivReinvestment;
+
+    @Column(name = "benchmark_code")
+    private Long benchmarkCode;
 }
