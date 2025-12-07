@@ -3,16 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Overview } from '@/components/dashboard/overview';
 import { RecentSales } from '@/components/dashboard/recent-sales';
-import { MutualFundService } from '@/services/api';
-import { useQuery } from '@tanstack/react-query';
+
+
 
 export default function DashboardPage() {
-    const { data: analytics } = useQuery({
-        queryKey: ['analytics'],
-        queryFn: () => MutualFundService.getAllAnalytics(),
-        retry: false,
-        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
-    });
+
 
     return (
         <div className="flex-1 space-y-4">
