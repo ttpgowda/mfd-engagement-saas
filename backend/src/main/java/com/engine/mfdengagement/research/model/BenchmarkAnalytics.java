@@ -1,4 +1,4 @@
-package com.engine.mfdengagement.mutualfund.domain;
+package com.engine.mfdengagement.research.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,23 +6,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "scheme_analytics")
+@Table(name = "benchmark_analytics")
 @Data
-public class SchemeAnalytics {
-    @Id
-    @Column(name = "scheme_code")
-    private Long schemeCode;
+public class BenchmarkAnalytics {
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "scheme_code")
-    private SchemeMaster schemeMaster;
+    @Id
+    @Column(name = "benchmark_code")
+    private Long benchmarkCode;
 
     @Column(name = "last_updated")
     private LocalDate lastUpdated;
 
-    @Column(name = "nav_current")
-    private BigDecimal navCurrent;
+    @Column(name = "close_current")
+    private BigDecimal closeCurrent;
 
     @Column(name = "return_1y")
     private BigDecimal return1y;
@@ -41,4 +37,13 @@ public class SchemeAnalytics {
 
     @Column(name = "sharpe_ratio")
     private BigDecimal sharpeRatio;
+
+    @Column(name = "std_dev_1y")
+    private BigDecimal stdDev1y;
+
+    @Column(name = "std_dev_3y")
+    private BigDecimal stdDev3y;
+
+    @Column(name = "std_dev_5y")
+    private BigDecimal stdDev5y;
 }

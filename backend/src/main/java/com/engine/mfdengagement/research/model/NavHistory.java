@@ -1,4 +1,4 @@
-package com.engine.mfdengagement.mutualfund.domain;
+package com.engine.mfdengagement.research.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,9 +6,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "nav_history")
-@IdClass(NavHistoryId.class)
 @Data
+@IdClass(NavHistoryId.class)
 public class NavHistory {
+
     @Id
     @Column(name = "scheme_code")
     private Long schemeCode;
