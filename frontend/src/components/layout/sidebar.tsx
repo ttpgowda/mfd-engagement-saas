@@ -21,13 +21,8 @@ const sidebarItems = [
         icon: LayoutDashboard,
     },
     {
-        title: 'Content Studio',
-        href: '/studio',
-        icon: PenTool,
-    },
-    {
-        title: 'Fund Explorer',
-        href: '/funds',
+        title: 'Mutual Fund Research',
+        href: '/research',
         icon: Search,
     },
     {

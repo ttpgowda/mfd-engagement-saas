@@ -27,7 +27,8 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { useState, useEffect } from 'react';
 
 const leadFormSchema = z.object({
     name: z.string().min(2, "Name is required"),
@@ -38,12 +39,15 @@ const leadFormSchema = z.object({
 });
 
 export default function LeadsPage() {
+    const { toast } = useToast();
     const queryClient = useQueryClient();
     const [isOpen, setIsOpen] = useState(false);
     const [assignDialogOpen, setAssignDialogOpen] = useState(false);
     const [statusDialogOpen, setStatusDialogOpen] = useState(false);
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-    const [selectedUserId, setSelectedUserId] = useState<string>("");
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+    // placeholder removed
+
     const [selectedStatus, setSelectedStatus] = useState<string>("");
 
     const { data: leads, isLoading } = useQuery({
@@ -66,7 +70,18 @@ export default function LeadsPage() {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             setIsOpen(false);
             form.reset();
+            toast({
+                title: "Success",
+                description: "Lead created successfully",
+            });
         },
+        onError: (error) => {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to create lead",
+            });
+        }
     });
 
     const assignLeadMutation = useMutation({
@@ -75,7 +90,18 @@ export default function LeadsPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             setAssignDialogOpen(false);
+            toast({
+                title: "Success",
+                description: "Lead assigned successfully",
+            });
         },
+        onError: (error) => {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to assign lead",
+            });
+        }
     });
 
     const updateStatusMutation = useMutation({
@@ -84,7 +110,18 @@ export default function LeadsPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['leads'] });
             setStatusDialogOpen(false);
+            toast({
+                title: "Success",
+                description: "Status updated successfully",
+            });
         },
+        onError: (error) => {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to update status",
+            });
+        }
     });
 
     const form = useForm<z.infer<typeof leadFormSchema>>({
@@ -103,21 +140,30 @@ export default function LeadsPage() {
     }
 
     // Event Listeners
-    if (typeof window !== 'undefined') {
-        window.addEventListener('open-assign-lead', (e: Event) => {
+    useEffect(() => {
+        const handleAssignLead = (e: Event) => {
             const customEvent = e as CustomEvent<Lead>;
             setSelectedLead(customEvent.detail);
             setAssignDialogOpen(true);
-        });
-        window.addEventListener('open-update-status', (e: Event) => {
+        };
+
+        const handleUpdateStatus = (e: Event) => {
             const customEvent = e as CustomEvent<Lead>;
             setSelectedLead(customEvent.detail);
             if (customEvent.detail.status) {
                 setSelectedStatus(customEvent.detail.status);
             }
             setStatusDialogOpen(true);
-        });
-    }
+        };
+
+        window.addEventListener('open-assign-lead', handleAssignLead);
+        window.addEventListener('open-update-status', handleUpdateStatus);
+
+        return () => {
+            window.removeEventListener('open-assign-lead', handleAssignLead);
+            window.removeEventListener('open-update-status', handleUpdateStatus);
+        };
+    }, []);
 
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
@@ -219,8 +265,12 @@ export default function LeadsPage() {
                             <label className="text-sm font-medium">Select User</label>
                             <select
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                value={selectedUserId}
-                                onChange={(e) => setSelectedUserId(e.target.value)}
+                                value={selectedUserId ?? ''}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const parsed = parseInt(val);
+                                    setSelectedUserId(val && !isNaN(parsed) ? parsed : null);
+                                }}
                             >
                                 <option value="">Select a user...</option>
                                 {users?.map((user: User) => (
@@ -233,14 +283,14 @@ export default function LeadsPage() {
                         <Button
                             className="w-full"
                             onClick={() => {
-                                if (selectedLead && selectedUserId) {
+                                if (selectedLead && selectedUserId !== null && !isNaN(selectedUserId)) {
                                     assignLeadMutation.mutate({
                                         leadId: selectedLead.id!,
-                                        userId: parseInt(selectedUserId),
+                                        userId: selectedUserId,
                                     });
                                 }
                             }}
-                            disabled={assignLeadMutation.isPending || !selectedUserId}
+                            disabled={assignLeadMutation.isPending || selectedUserId === null}
                         >
                             {assignLeadMutation.isPending ? 'Assigning...' : 'Assign'}
                         </Button>

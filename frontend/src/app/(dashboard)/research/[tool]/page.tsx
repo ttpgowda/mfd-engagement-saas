@@ -1,29 +1,29 @@
 import { notFound } from "next/navigation";
-import { getCalculator, CALCULATORS } from "@/features/calculators/registry"; // Import the full list
+import { getResearchTool, RESEARCH_TOOLS } from "@/features/research/registry";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import {shuffleArray} from "@/utils/array";
+import { shuffleArray } from "@/utils/array";
 
 interface PageProps {
     params: Promise<{
-        type: string;
+        tool: string;
     }>;
 }
 
-export default async function CalculatorPage(props: PageProps) {
+export default async function ResearchToolPage(props: PageProps) {
     const params = await props.params;
-    const calculator = getCalculator(params.type);
+    const tool = getResearchTool(params.tool);
 
-    if (!calculator) {
+    if (!tool) {
         return notFound();
     }
 
-    const ActiveComponent = calculator.component;
+    const ActiveComponent = tool.component;
 
-    const availableCalculators = CALCULATORS.filter(c => c.id !== params.type);
+    const availableCalculators = RESEARCH_TOOLS.filter(c => c.id !== params.tool);
     const shuffledCalculators = shuffleArray(availableCalculators);
-    const relatedCalculators = shuffledCalculators.slice(0, 6);
+    const otherTools = shuffledCalculators.slice(0, 6);
 
     return (
         <div className="p-6 space-y-8 max-w-6xl mx-auto">
@@ -32,37 +32,37 @@ export default async function CalculatorPage(props: PageProps) {
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                            <calculator.icon className="h-6 w-6" />
+                            <tool.icon className="h-6 w-6" />
                         </div>
-                        {calculator.title}
+                        {tool.title}
                     </h1>
-                    <p className="text-muted-foreground mt-1 ml-1">{calculator.description}</p>
+                    <p className="text-muted-foreground mt-1 ml-1">{tool.description}</p>
                 </div>
             </div>
 
-            {/* 2. Main Calculator UI */}
+            {/* 2. Main Tool UI */}
             <ActiveComponent />
 
             {/* 3. Recommended Tools Section */}
             <div className="pt-12 mt-12 border-t border-border/40">
                 <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    Explore Other Tools
+                    Explore Other Research Tools
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {relatedCalculators.map((calc) => (
-                        <Link href={`/calculators/${calc.id}`} key={calc.id} className="group">
+                    {otherTools.map((t) => (
+                        <Link href={`/research/${t.id}`} key={t.id} className="group">
                             <Card className="h-full hover:shadow-md transition-all hover:border-primary/50 cursor-pointer bg-muted/20">
                                 <CardHeader>
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="p-2 bg-background rounded-md shadow-sm group-hover:text-primary transition-colors">
-                                            <calc.icon className="h-5 w-5" />
+                                            <t.icon className="h-5 w-5" />
                                         </div>
                                         <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" />
                                     </div>
-                                    <CardTitle className="text-base">{calc.title}</CardTitle>
+                                    <CardTitle className="text-base">{t.title}</CardTitle>
                                     <CardDescription className="line-clamp-2 text-xs">
-                                        {calc.description}
+                                        {t.description}
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
