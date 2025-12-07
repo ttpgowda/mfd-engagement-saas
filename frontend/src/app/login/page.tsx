@@ -53,6 +53,8 @@ export default function LoginPage() {
             // Set cookie for middleware
             // eslint-disable-next-line react-hooks/immutability
             document.cookie = `token=${accessToken}; path=/; max-age=86400; SameSite=Strict`; // 1 day expiration
+            // eslint-disable-next-line react-hooks/immutability
+            document.cookie = `refreshToken=${refreshToken}; path=/; max-age=604800; SameSite=Strict`; // 7 days expiration
 
             // Simple JWT decode to check role (in production use a library like jwt-decode)
             const payload = JSON.parse(atob(accessToken.split('.')[1]));
