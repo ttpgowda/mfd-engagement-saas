@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-    Scale, Landmark, TrendingUp, ArrowRight, Percent, Search, Check, AlertCircle
+    Scale, Landmark, TrendingUp, Search, Check
 } from 'lucide-react';
 import {
     Card, CardContent, CardHeader, CardTitle, CardDescription
@@ -43,6 +43,7 @@ export default function FdVsDebtView() {
     const [data, setData] = useState<FdVsDebtResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [comboOpen, setComboOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Initial Load
     useEffect(() => {
@@ -50,7 +51,7 @@ export default function FdVsDebtView() {
             setCategories(cats);
             // Default to a Debt category if available
             const debtCat = cats.find(c => c.toLowerCase().includes("debt")) || cats[0];
-            if(debtCat) setCategory(debtCat);
+            if (debtCat) setCategory(debtCat);
         });
     }, []);
 
@@ -74,16 +75,14 @@ export default function FdVsDebtView() {
                 taxRate
             });
             setData(res);
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
-            const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+            const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
             setError(msg);
         } finally {
             setLoading(false);
         }
     };
-
-    const [error, setError] = useState<string | null>(null);
 
     const fmt = (val: number) => new Intl.NumberFormat('en-IN', {
         style: 'currency', currency: 'INR', maximumFractionDigits: 0
@@ -243,8 +242,8 @@ export default function FdVsDebtView() {
                             <CardTitle className="text-xl">Analysis Summary</CardTitle>
                             <CardDescription>
                                 {data.debtWins
-                                    ? <span className="text-emerald-600 font-bold flex items-center justify-center gap-1"><TrendingUp className="w-4 h-4"/> Debt Fund Wins by {fmt(data.wealthDifference)}</span>
-                                    : <span className="text-orange-600 font-bold flex items-center justify-center gap-1"><Landmark className="w-4 h-4"/> Fixed Deposit Wins by {fmt(Math.abs(data.wealthDifference))}</span>}
+                                    ? <span className="text-emerald-600 font-bold flex items-center justify-center gap-1"><TrendingUp className="w-4 h-4" /> Debt Fund Wins by {fmt(data.wealthDifference)}</span>
+                                    : <span className="text-orange-600 font-bold flex items-center justify-center gap-1"><Landmark className="w-4 h-4" /> Fixed Deposit Wins by {fmt(Math.abs(data.wealthDifference))}</span>}
                             </CardDescription>
                         </CardHeader>
                     </Card>
@@ -289,28 +288,28 @@ export default function FdVsDebtView() {
                         <div className="p-0 overflow-x-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/30 text-muted-foreground font-medium">
-                                <tr>
-                                    <th className="px-6 py-3">Metric</th>
-                                    <th className="px-6 py-3 text-right">Fixed Deposit</th>
-                                    <th className="px-6 py-3 text-right text-emerald-700 dark:text-emerald-400">Debt Fund</th>
-                                </tr>
+                                    <tr>
+                                        <th className="px-6 py-3">Metric</th>
+                                        <th className="px-6 py-3 text-right">Fixed Deposit</th>
+                                        <th className="px-6 py-3 text-right text-emerald-700 dark:text-emerald-400">Debt Fund</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
-                                <tr className="hover:bg-muted/10">
-                                    <td className="px-6 py-3 font-medium text-muted-foreground">Pre-Tax Profit</td>
-                                    <td className="px-6 py-3 text-right font-mono">{fmt(data.fdPreTaxProfit)}</td>
-                                    <td className="px-6 py-3 text-right font-mono font-bold">{fmt(data.debtPreTaxProfit)}</td>
-                                </tr>
-                                <tr className="hover:bg-muted/10">
-                                    <td className="px-6 py-3 font-medium text-muted-foreground">Tax Payable ({taxRate}%)</td>
-                                    <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.fdTaxLiability)}</td>
-                                    <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.debtTaxLiability)}</td>
-                                </tr>
-                                <tr className="bg-muted/5 font-bold">
-                                    <td className="px-6 py-3 text-foreground">Net Post-Tax Profit</td>
-                                    <td className="px-6 py-3 text-right text-orange-600">{fmt(data.fdPostTaxValue - amount)}</td>
-                                    <td className="px-6 py-3 text-right text-emerald-600">{fmt(data.debtPostTaxValue - amount)}</td>
-                                </tr>
+                                    <tr className="hover:bg-muted/10">
+                                        <td className="px-6 py-3 font-medium text-muted-foreground">Pre-Tax Profit</td>
+                                        <td className="px-6 py-3 text-right font-mono">{fmt(data.fdPreTaxProfit)}</td>
+                                        <td className="px-6 py-3 text-right font-mono font-bold">{fmt(data.debtPreTaxProfit)}</td>
+                                    </tr>
+                                    <tr className="hover:bg-muted/10">
+                                        <td className="px-6 py-3 font-medium text-muted-foreground">Tax Payable ({taxRate}%)</td>
+                                        <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.fdTaxLiability)}</td>
+                                        <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.debtTaxLiability)}</td>
+                                    </tr>
+                                    <tr className="bg-muted/5 font-bold">
+                                        <td className="px-6 py-3 text-foreground">Net Post-Tax Profit</td>
+                                        <td className="px-6 py-3 text-right text-orange-600">{fmt(data.fdPostTaxValue - amount)}</td>
+                                        <td className="px-6 py-3 text-right text-emerald-600">{fmt(data.debtPostTaxValue - amount)}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -322,7 +321,23 @@ export default function FdVsDebtView() {
 }
 
 // Helper Component for Result Cards
-function ResultCard({ title, subTitle, icon: Icon, colorClass, bgClass, data, isWinner }: any) {
+interface ResultCardProps {
+    title: string;
+    subTitle?: string;
+    icon: React.ElementType;
+    colorClass: string;
+    bgClass: string;
+    data: {
+        maturity: number;
+        profit?: number;
+        tax?: number;
+        postTax: number;
+        xirr: number;
+    };
+    isWinner?: boolean;
+}
+
+function ResultCard({ title, subTitle, icon: Icon, colorClass, bgClass, data, isWinner }: ResultCardProps) {
     const fmt = (val: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
 
     return (
@@ -361,6 +376,4 @@ function ResultCard({ title, subTitle, icon: Icon, colorClass, bgClass, data, is
             </CardContent>
         </Card>
     );
-
-
 }

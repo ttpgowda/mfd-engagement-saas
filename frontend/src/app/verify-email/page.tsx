@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { AuthService } from '@/services/api';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -11,15 +11,12 @@ import { Suspense } from 'react';
 
 function VerifyEmailContent() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const token = searchParams.get('token');
-    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-    const [message, setMessage] = useState('');
+    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>(!token ? 'error' : 'verifying');
+    const [message, setMessage] = useState(!token ? 'Invalid verification link.' : '');
 
     useEffect(() => {
         if (!token) {
-            setStatus('error');
-            setMessage('Invalid verification link.');
             return;
         }
 

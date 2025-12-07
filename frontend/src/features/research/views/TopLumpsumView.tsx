@@ -69,7 +69,7 @@ export default function TopLumpsumView() {
                 setData(res);
             } catch (err) {
                 console.error(err);
-                const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+                const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
                 setError(msg);
             } finally {
                 setLoading(false);

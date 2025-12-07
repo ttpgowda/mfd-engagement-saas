@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { AuthService } from '@/services/api';
 import { useState } from 'react';
 
@@ -30,7 +30,6 @@ const formSchema = z.object({
 import { Suspense } from 'react';
 
 function ResetPasswordContent() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');

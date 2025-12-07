@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-    LayoutDashboard, ArrowUpDown, Info, TrendingUp, AlertTriangle
+    LayoutDashboard, ArrowUpDown, Info
 } from 'lucide-react';
 import {
-    Card, CardContent, CardHeader, CardTitle, CardDescription
+    Card, CardContent, CardHeader, CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -37,8 +37,10 @@ export default function CategoryMonitorView() {
     // Sorting Logic
     const sortedData = React.useMemo(() => {
         if (!data) return [];
-        return [...data].sort((a: any, b: any) => {
+        return [...data].sort((a: CategoryMonitorResponse, b: CategoryMonitorResponse) => {
+            // @ts-expect-error - dynamic key access
             if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+            // @ts-expect-error - dynamic key access
             if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
             return 0;
         });
@@ -147,7 +149,14 @@ export default function CategoryMonitorView() {
 }
 
 // Sub-components
-const SortableHead = ({ label, sortKey, activeSort, onSort }: any) => (
+interface SortableHeadProps {
+    label: string;
+    sortKey: string;
+    activeSort: { key: string; direction: 'asc' | 'desc' };
+    onSort: (key: string) => void;
+}
+
+const SortableHead = ({ label, sortKey, activeSort, onSort }: SortableHeadProps) => (
     <TableHead
         className="text-right cursor-pointer hover:bg-muted/50 transition-colors w-[100px]"
         onClick={() => onSort(sortKey)}
@@ -160,7 +169,13 @@ const SortableHead = ({ label, sortKey, activeSort, onSort }: any) => (
 );
 
 // FIX APPLIED HERE: Added check for undefined
-const DataCell = ({ val, getStyle, bold }: any) => (
+interface DataCellProps {
+    val: number | null | undefined;
+    getStyle: (val: number | null | undefined) => string;
+    bold?: boolean;
+}
+
+const DataCell = ({ val, getStyle, bold }: DataCellProps) => (
     <TableCell className={`text-right font-mono text-sm border-l border-border/30 ${getStyle(val)} ${bold ? 'bg-muted/20' : ''}`}>
         {(val !== null && val !== undefined) ? `${val.toFixed(2)}%` : '-'}
     </TableCell>

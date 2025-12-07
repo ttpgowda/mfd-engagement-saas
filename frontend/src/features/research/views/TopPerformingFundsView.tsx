@@ -55,9 +55,9 @@ export default function TopPerformingFundsView() {
             try {
                 const res = await researchService.getTopPerformingFunds(request);
                 setData(res);
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error("Failed to fetch top funds", err);
-                const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+                const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
                 setError(msg);
             } finally {
                 setLoading(false);
@@ -69,7 +69,7 @@ export default function TopPerformingFundsView() {
     const handleSort = (field: string) => {
         setRequest(prev => ({
             ...prev,
-            sortBy: field as any,
+            sortBy: field as TopFundsRequest['sortBy'],
             sortDirection: prev.sortBy === field && prev.sortDirection === 'DESC' ? 'ASC' : 'DESC'
         }));
     };
@@ -117,8 +117,8 @@ export default function TopPerformingFundsView() {
                         <SelectTrigger className="h-10 bg-card border-input/60 shadow-sm w-full">
                             {/* TRUNCATION FIX: Wraps text to prevent layout breaking on mobile */}
                             <span className="truncate text-left block w-full pr-2">
-                        <SelectValue placeholder="Select Category" />
-                    </span>
+                                <SelectValue placeholder="Select Category" />
+                            </span>
                         </SelectTrigger>
                         <SelectContent>
                             {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -177,48 +177,48 @@ export default function TopPerformingFundsView() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-muted/50 text-muted-foreground font-medium border-b border-border/50">
-                        <tr>
-                            <th className="px-6 py-4 w-[35%] min-w-[250px]">Scheme Name</th>
-                            <SortHeader label="1Y" field="return_1y" req={request} onClick={handleSort} />
-                            <SortHeader label="3Y" field="return_3y" req={request} onClick={handleSort} />
-                            <SortHeader label="5Y" field="return_5y" req={request} onClick={handleSort} />
-                            <SortHeader label="Inception" field="return_inception" req={request} onClick={handleSort} />
-                            <th className="px-6 py-4 text-center">Vol. (StdDev)</th>
-                        </tr>
+                            <tr>
+                                <th className="px-6 py-4 w-[35%] min-w-[250px]">Scheme Name</th>
+                                <SortHeader label="1Y" field="return_1y" req={request} onClick={handleSort} />
+                                <SortHeader label="3Y" field="return_3y" req={request} onClick={handleSort} />
+                                <SortHeader label="5Y" field="return_5y" req={request} onClick={handleSort} />
+                                <SortHeader label="Inception" field="return_inception" req={request} onClick={handleSort} />
+                                <th className="px-6 py-4 text-center">Vol. (StdDev)</th>
+                            </tr>
                         </thead>
                         <tbody className="divide-y divide-border/40">
-                        {loading ? (
-                            <tr>
-                                <td colSpan={6} className="h-40 text-center">
-                                    <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
-                                        <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
-                                        <span>Analyzing Funds...</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        ) : !data?.funds.length ? (
-                            <tr>
-                                <td colSpan={6} className="h-32 text-center text-muted-foreground">No funds found in this category.</td>
-                            </tr>
-                        ) : (
-                            data.funds.map((fund) => (
-                                <tr key={fund.schemeCode} className="hover:bg-muted/30 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <div className="font-semibold text-foreground group-hover:text-emerald-600 transition-colors cursor-pointer">
-                                            {fund.schemeName}
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={6} className="h-40 text-center">
+                                        <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
+                                            <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
+                                            <span>Analyzing Funds...</span>
                                         </div>
-                                        <div className="text-xs text-muted-foreground mt-0.5">Code: {fund.schemeCode}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right"><ReturnCell value={fund.return1y} /></td>
-                                    <td className="px-6 py-4 text-right bg-muted/20 font-medium"><ReturnCell value={fund.return3y} /></td>
-                                    <td className="px-6 py-4 text-right"><ReturnCell value={fund.return5y} /></td>
-                                    <td className="px-6 py-4 text-right"><ReturnCell value={fund.returnInception} /></td>
-                                    <td className="px-6 py-4 text-center text-muted-foreground">
-                                        {fund.stdDev ? fund.stdDev.toFixed(2) : '-'}
                                     </td>
                                 </tr>
-                            ))
-                        )}
+                            ) : !data?.funds.length ? (
+                                <tr>
+                                    <td colSpan={6} className="h-32 text-center text-muted-foreground">No funds found in this category.</td>
+                                </tr>
+                            ) : (
+                                data.funds.map((fund) => (
+                                    <tr key={fund.schemeCode} className="hover:bg-muted/30 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="font-semibold text-foreground group-hover:text-emerald-600 transition-colors cursor-pointer">
+                                                {fund.schemeName}
+                                            </div>
+                                            <div className="text-xs text-muted-foreground mt-0.5">Code: {fund.schemeCode}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right"><ReturnCell value={fund.return1y} /></td>
+                                        <td className="px-6 py-4 text-right bg-muted/20 font-medium"><ReturnCell value={fund.return3y} /></td>
+                                        <td className="px-6 py-4 text-right"><ReturnCell value={fund.return5y} /></td>
+                                        <td className="px-6 py-4 text-right"><ReturnCell value={fund.returnInception} /></td>
+                                        <td className="px-6 py-4 text-center text-muted-foreground">
+                                            {fund.stdDev ? fund.stdDev.toFixed(2) : '-'}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -233,7 +233,7 @@ export default function TopPerformingFundsView() {
                             <Button
                                 variant="outline" size="sm"
                                 disabled={request.page === 0}
-                                onClick={() => setRequest(p => ({...p, page: p.page - 1}))}
+                                onClick={() => setRequest(p => ({ ...p, page: p.page - 1 }))}
                             >
                                 <ChevronLeft className="w-4 h-4" />
                             </Button>
@@ -241,7 +241,7 @@ export default function TopPerformingFundsView() {
                             <Button
                                 variant="outline" size="sm"
                                 disabled={request.page >= data.totalPages - 1}
-                                onClick={() => setRequest(p => ({...p, page: p.page + 1}))}
+                                onClick={() => setRequest(p => ({ ...p, page: p.page + 1 }))}
                             >
                                 <ChevronRight className="w-4 h-4" />
                             </Button>
@@ -265,7 +265,14 @@ function StatBox({ label, value, border }: { label: string, value: number | unde
     );
 }
 
-function SortHeader({ label, field, req, onClick }: any) {
+interface SortHeaderProps {
+    label: string;
+    field: string;
+    req: TopFundsRequest;
+    onClick: (field: string) => void;
+}
+
+function SortHeader({ label, field, req, onClick }: SortHeaderProps) {
     const isActive = req.sortBy === field;
     return (
         <th

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { GraduationCap, Coins, TrendingUp, Target } from "lucide-react";
+import { Coins, TrendingUp, Target } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { calculateChildEducation } from "../logic/child-education";
 
@@ -61,7 +61,7 @@ export default function ChildEducationView() {
                         <Input type="number" value={currentCost} onChange={(e) => setCurrentCost(Number(e.target.value))} />
                     </div>
                     <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Child's Current Age</Label><span className="text-sm font-medium">{childAge} Years</span></div>
+                        <div className="flex justify-between"><Label>Child&apos;s Current Age</Label><span className="text-sm font-medium">{childAge} Years</span></div>
                         <Slider value={[childAge]} onValueChange={(v) => setChildAge(v[0])} min={0} max={collegeStartAge - 1} step={1} />
                     </div>
                     <div className="space-y-4">

@@ -1,7 +1,23 @@
 import api from '@/lib/axios';
 import { z } from 'zod';
 
+export const TenantSchema = z.object({
+    id: z.number().int().positive().optional(),
+    tenantId: z.string().uuid(),
+    name: z.string().min(1, "Tenant name is required"),
+    contactEmail: z.string().email(),
+    phone: z.string().optional(),
+    active: z.boolean().default(true).optional(),
+    subDomain: z.string().optional(),
+    logoUrl: z.string().url().optional(),
 
+    primaryColor: z.string().optional(),
+
+    secondaryColor: z.string().optional(),
+    website: z.string().url().optional(),
+});
+
+export type Tenant = z.infer<typeof TenantSchema>;
 
 export const TenantService = {
     getAllTenants: async () => {

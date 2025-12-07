@@ -25,7 +25,7 @@ api.interceptors.request.use(
 // Response interceptor to handle 401/403
 interface FailedRequest {
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }
 
 let isRefreshing = false;

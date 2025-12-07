@@ -5,15 +5,21 @@ export function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value || '';
     const path = request.nextUrl.pathname;
 
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const permissions = payload.permissions || [];
+
     const isPublicPath = path === '/login' || path === '/register' || path === '/';
 
-    // Check if token exists and is not empty (basic validation)
     const hasValidToken = token && token.trim().length > 0;
 
     if (hasValidToken) {
-        // User has a token, redirect away from public paths
         if (isPublicPath) {
-            return NextResponse.redirect(new URL('/dashboard', request.url));
+            if (permissions.includes('TENANT_MANAGE')) {
+                return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+
+            } else {
+                return NextResponse.redirect(new URL('/dashboard', request.url));
+            }
         }
     } else {
         // No valid token

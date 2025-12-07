@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,17 +8,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+interface SipResult {
+    totalInvested: number;
+    currentValue: number;
+    profit: number;
+    chartData: {
+        date: string;
+        currentValue: number;
+        investedAmount: number;
+    }[];
+}
+
 interface SipCalculatorProps {
-    onSimulate: (amount: number, years: number) => Promise<any>;
+    onSimulate: (amount: number, years: number) => Promise<SipResult>;
 }
 
 export function SipCalculator({ onSimulate }: SipCalculatorProps) {
     const [amount, setAmount] = useState(5000);
     const [years, setYears] = useState(5);
-    const [result, setResult] = useState<any>(null);
+    const [result, setResult] = useState<SipResult | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const handleSimulate = async () => {
+    const handleSimulate = useCallback(async () => {
         setLoading(true);
         try {
             const data = await onSimulate(amount, years);
@@ -28,7 +39,7 @@ export function SipCalculator({ onSimulate }: SipCalculatorProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [amount, years, onSimulate]);
 
     useEffect(() => {
         // Debounce simulation or run on button click
@@ -37,7 +48,7 @@ export function SipCalculator({ onSimulate }: SipCalculatorProps) {
         // Let's stick to a button for clarity or auto-calc if performance allows.
         // Given it's an API call, button is safer.
         handleSimulate();
-    }, []); // Run once on mount
+    }, [handleSimulate]); // Run once on mount
 
     return (
         <Card className="w-full backdrop-blur-md bg-white/80 dark:bg-black/80">

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-    LineChart, ArrowUpDown, Info, Activity
+    ArrowUpDown, Info, Activity
 } from 'lucide-react';
 import {
     Card, CardContent, CardHeader, CardTitle
@@ -29,9 +29,9 @@ export default function BenchmarkMonitorView() {
             try {
                 const res = await researchService.getBenchmarkMonitor();
                 setData(res);
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err);
-                const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+                const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
                 setError(msg);
 
             } finally {
@@ -43,8 +43,10 @@ export default function BenchmarkMonitorView() {
 
     const sortedData = React.useMemo(() => {
         if (!data) return [];
-        return [...data].sort((a: any, b: any) => {
+        return [...data].sort((a: BenchmarkMonitorResponse, b: BenchmarkMonitorResponse) => {
+            // @ts-expect-error - dynamic key access
             if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+            // @ts-expect-error - dynamic key access
             if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
             return 0;
         });
@@ -155,7 +157,14 @@ export default function BenchmarkMonitorView() {
     );
 }
 
-const SortableHead = ({ label, sortKey, activeSort, onSort }: any) => (
+interface SortableHeadProps {
+    label: string;
+    sortKey: string;
+    activeSort: { key: string; direction: 'asc' | 'desc' };
+    onSort: (key: string) => void;
+}
+
+const SortableHead = ({ label, sortKey, activeSort, onSort }: SortableHeadProps) => (
     <TableHead
         className="text-right cursor-pointer hover:bg-muted/50 transition-colors w-[110px]"
         onClick={() => onSort(sortKey)}
@@ -167,7 +176,12 @@ const SortableHead = ({ label, sortKey, activeSort, onSort }: any) => (
     </TableHead>
 );
 
-const DataCell = ({ val, getStyle }: any) => (
+interface DataCellProps {
+    val: number | null | undefined;
+    getStyle: (val: number | null | undefined) => string;
+}
+
+const DataCell = ({ val, getStyle }: DataCellProps) => (
     <TableCell className={`text-right font-mono text-sm border-l border-border/30 ${getStyle(val)}`}>
         {(val !== null && val !== undefined) ? `${val.toFixed(2)}%` : '-'}
     </TableCell>

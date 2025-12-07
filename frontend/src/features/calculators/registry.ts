@@ -1,4 +1,4 @@
-import { TrendingUp, Clock, Coins, Scale, TrendingDown, Briefcase, GraduationCap, Target, ArrowDownCircle, Wallet, ShieldAlert, Calendar } from "lucide-react";
+import { TrendingUp, Clock, Coins, Scale, TrendingDown, Briefcase, GraduationCap, Target, ArrowDownCircle, Wallet, ShieldAlert } from "lucide-react";
 import CostOfDelayView from "./views/CostOfDelayView";
 import StepUpSipView from "./views/StepUpSipView";
 import SipCalculatorView from "./views/SipCalculatorView";

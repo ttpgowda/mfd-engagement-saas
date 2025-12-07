@@ -6,9 +6,9 @@ export const calculateSip = (
     inflationRate: number = 6
 ) => {
     const monthlyRate = rate / 100 / 12;
-    const totalMonths = years * 12;
+    // totalMonths removed as it was unused
 
-    let data = [];
+    const data = []; // Changed to const
     let currentCorpus = 0;
     let totalInvested = 0;
 

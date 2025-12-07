@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/command";
 
 import { Check, ChevronDown } from "lucide-react";
-import {ErrorAlert} from "@/components/ui/ErrorAlert";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
 
 // --- Types & Interfaces ---
 type ViewMode = 'bar' | 'radar' | 'alpha';
@@ -65,9 +65,9 @@ export default function TrailingReturnsView() {
                 const cats = await researchService.getCategories();
                 setCategories(cats);
                 if (cats.length > 0) setSelectedCategory(cats[0]);
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error("Failed to init", err);
-                const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+                const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
                 setError(msg);
             } finally {
                 setInitialLoading(false);
@@ -242,8 +242,8 @@ export default function TrailingReturnsView() {
                                 <SelectTrigger className="h-10 bg-card border-input/60 shadow-sm w-full">
                                     {/* TRUNCATION FIX: Wraps text to prevent layout breaking */}
                                     <span className="truncate text-left block w-full pr-2">
-                            <SelectValue placeholder="Category" />
-                        </span>
+                                        <SelectValue placeholder="Category" />
+                                    </span>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {categories.map((cat) => (
@@ -276,8 +276,8 @@ export default function TrailingReturnsView() {
                                     >
                                         {/* TRUNCATION FIX: Removed fixed max-width, used w-full + truncate */}
                                         <span className="truncate w-full text-left mr-2">
-                                {selectedScheme ? selectedScheme.schemeName : "Select Scheme"}
-                            </span>
+                                            {selectedScheme ? selectedScheme.schemeName : "Select Scheme"}
+                                        </span>
                                         <ChevronDown className="h-4 w-4 shrink-0 opacity-60" />
                                     </button>
                                 </PopoverTrigger>
@@ -304,9 +304,9 @@ export default function TrailingReturnsView() {
                                                         setSchemeOpen(false);
                                                     }}
                                                 >
-                                        <span className="truncate w-full">
-                                          {s.schemeName}
-                                        </span>
+                                                    <span className="truncate w-full">
+                                                        {s.schemeName}
+                                                    </span>
                                                     {selectedSchemeCode === s.schemeCode.toString() && (
                                                         <Check className="ml-auto h-4 w-4 shrink-0" />
                                                     )}
@@ -421,8 +421,8 @@ export default function TrailingReturnsView() {
                                     <BarChart data={data?.periods} margin={{ top: 20, right: 10, left: -20, bottom: 0 }} barGap={2}>
                                         <defs>
                                             <linearGradient id="fundGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
-                                                <stop offset="100%" stopColor="#059669" stopOpacity={0.8}/>
+                                                <stop offset="0%" stopColor="#10b981" stopOpacity={1} />
+                                                <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
                                             </linearGradient>
                                         </defs>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
@@ -435,7 +435,7 @@ export default function TrailingReturnsView() {
                                                 return (
                                                     <div className="bg-popover/95 backdrop-blur border border-border p-4 rounded-xl shadow-xl min-w-[150px]">
                                                         <p className="font-bold mb-3 border-b border-border/50 pb-2">{label}</p>
-                                                        {payload.map((entry: any) => (
+                                                        {payload.map((entry: { name: string; value: number | string; fill: string }) => (
                                                             <div key={entry.name} className="flex items-center justify-between gap-4 text-sm mb-2 last:mb-0">
                                                                 <span className="text-muted-foreground flex items-center gap-2">
                                                                     <div className="w-2 h-2 rounded-full" style={{ background: entry.fill }} />

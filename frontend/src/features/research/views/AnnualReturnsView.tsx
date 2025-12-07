@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AnnualPerformanceMatrix } from '@/components/research/AnnualPerformanceMatrix';
 import { researchService, AnnualReturn } from '@/services/researchService';
+import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 export default function AnnualReturnsView() {
     const [data, setData] = useState<AnnualReturn[]>([]);
@@ -15,10 +16,11 @@ export default function AnnualReturnsView() {
                 setLoading(true);
                 const result = await researchService.getAnnualReturns(schemeCode);
                 setData(result);
-            } catch (error) {
-                console.error("Failed to fetch annual returns", error);
-                const msg = err.response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
+            } catch (err) {
+                console.error(err);
+                const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
                 setError(msg);
+
             } finally {
                 setLoading(false);
             }
@@ -30,6 +32,7 @@ export default function AnnualReturnsView() {
 
     return (
         <div className="space-y-4">
+            <ErrorAlert message={error} />
             <div className="p-4 bg-muted/20 rounded-lg">
                 <p className="text-sm text-muted-foreground mb-2">Select Scheme (Demo)</p>
                 <select

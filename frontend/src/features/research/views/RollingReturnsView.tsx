@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-    Waves, Plus, X, Search, Check, Loader2, Calendar
+    Waves, X, Search, Check, Loader2
 } from 'lucide-react';
 import {
     Card, CardContent, CardHeader, CardTitle
@@ -32,7 +32,7 @@ export default function RollingReturnsView() {
     // Config
     const [selectedFunds, setSelectedFunds] = useState<SchemeDropdownDto[]>([]);
     const [period, setPeriod] = useState("3Y");
-    const [startDate, setStartDate] = useState("2015-01-01"); // Default lookback start
+    const [startDate] = useState("2015-01-01"); // Default lookback start
 
     // Data
     const [data, setData] = useState<RollingReturnsResponse | null>(null);
@@ -43,7 +43,7 @@ export default function RollingReturnsView() {
     useEffect(() => {
         researchService.getCategories().then(cats => {
             setCategories(cats);
-            if(cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
+            if (cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
         });
     }, []);
 
@@ -72,8 +72,14 @@ export default function RollingReturnsView() {
         if (!data || !data.funds.length) return [];
         // Align data based on the first fund
         const base = data.funds[0].dataPoints;
-        return base.map((p, idx) => {
-            const point: any = { date: p.date };
+        return base.map((p) => {
+            // Define a type for the dynamic point
+            interface ChartPoint {
+                date: string;
+                [key: string]: string | number;
+            }
+
+            const point: ChartPoint = { date: p.date };
             data.funds.forEach(fund => {
                 const match = fund.dataPoints.find(dp => dp.date === p.date);
                 if (match) point[`fund_${fund.schemeCode}`] = match.returnVal;
@@ -133,7 +139,7 @@ export default function RollingReturnsView() {
                                     >
                                         {/* TRUNCATE FIX: Prevents button from expanding beyond grid column */}
                                         <span className="truncate">Select Fund...</span>
-                                        <Search className="ml-2 h-4 w-4 opacity-50 shrink-0"/>
+                                        <Search className="ml-2 h-4 w-4 opacity-50 shrink-0" />
                                     </Button>
                                 </PopoverTrigger>
 
@@ -150,7 +156,7 @@ export default function RollingReturnsView() {
                                                     }
                                                     setComboOpen(false);
                                                 }}>
-                                                    <Check className={cn("mr-2 h-4 w-4", selectedFunds.find(f => f.schemeCode === s.schemeCode) ? "opacity-100" : "opacity-0")}/>
+                                                    <Check className={cn("mr-2 h-4 w-4", selectedFunds.find(f => f.schemeCode === s.schemeCode) ? "opacity-100" : "opacity-0")} />
                                                     <span className="truncate">{s.schemeName}</span>
                                                 </CommandItem>
                                             ))}
@@ -217,7 +223,7 @@ export default function RollingReturnsView() {
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={chartData} margin={{ top: 20, right: 30, left: 10, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                                    <XAxis dataKey="date" tick={{fontSize: 12}} minTickGap={50} tickFormatter={(val) => new Date(val).getFullYear().toString()}/>
+                                    <XAxis dataKey="date" tick={{ fontSize: 12 }} minTickGap={50} tickFormatter={(val) => new Date(val).getFullYear().toString()} />
                                     <YAxis tickFormatter={(val) => `${val}%`} domain={['auto', 'auto']} />
                                     <Tooltip labelFormatter={(v) => new Date(v).toLocaleDateString()} formatter={(val: number) => `${val.toFixed(2)}%`} />
                                     <Legend />

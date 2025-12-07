@@ -43,7 +43,7 @@ export const calculateRetirementPlanning = (
     // We need to find P where FV = gap
     const monthlyPreRetirementRate = preRetirementReturn / 100 / 12;
     const monthsToRetirement = yearsToRetirement * 12;
-    
+
     let monthlySipRequired = 0;
     if (gap > 0) {
         if (monthlyPreRetirementRate === 0) {
@@ -56,18 +56,16 @@ export const calculateRetirementPlanning = (
     // 6. Generate Chart Data (Growth Phase)
     const chartData = [];
     let currentSavings = currentCorpus;
-    let accumulatedSip = 0;
 
     for (let year = 1; year <= yearsToRetirement; year++) {
         // Grow current savings
         currentSavings = currentSavings * (1 + preRetirementReturn / 100);
-        
+
         // Grow SIP
         // FV of SIP for this year
-        const sipForYear = monthlySipRequired * 12;
         // Approximation for chart: Add yearly SIP and grow previous accumulated
         // More precise: Calculate FV of SIP series up to this year
-        
+
         // Let's use the formula for accumulated SIP value at end of year 'year'
         const months = year * 12;
         let sipValue = 0;

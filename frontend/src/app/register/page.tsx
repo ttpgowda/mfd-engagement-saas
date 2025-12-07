@@ -15,7 +15,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { useState } from 'react';
 
@@ -27,7 +26,6 @@ const formSchema = z.object({
 });
 
 export default function RegisterPage() {
-    const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),

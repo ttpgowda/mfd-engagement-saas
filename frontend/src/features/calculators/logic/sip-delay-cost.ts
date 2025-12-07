@@ -7,13 +7,22 @@ export const calculateSipDelayCost = (
     const monthlyRate = rate / 100 / 12;
     const totalMonths = totalYears * 12;
 
+    // 1. Define the shape of your data object
+    type SipSnapshot = {
+        year: string;
+        corpus: number;
+        invested: number;
+        type: string;
+    };
+
+    // 2. Explicitly type the arrays
     // Timeline 1: Start Now (Invests for full duration)
-    let nowData = [];
+    const nowData: SipSnapshot[] = [];
     let nowCorpus = 0;
     let nowInvested = 0;
 
     // Timeline 2: Start Later (Invests for (Total - Delay) months)
-    let laterData = [];
+    const laterData: SipSnapshot[] = [];
     let laterCorpus = 0;
     let laterInvested = 0;
 

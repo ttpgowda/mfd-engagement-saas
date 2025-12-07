@@ -16,10 +16,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export function AdminNavbar({
-                                className,
-                                ...props
-                            }: React.HTMLAttributes<HTMLElement>) {
+export function AdminNavbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
 
