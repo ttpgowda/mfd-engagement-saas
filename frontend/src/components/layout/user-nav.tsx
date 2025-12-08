@@ -25,7 +25,7 @@ export function UserNav() {
         queryKey: ['currentUser'],
         queryFn: UserService.getCurrentUser,
         retry: false, // Don't retry on 401 errors
-        enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'), // Only fetch if token exists
+        enabled: typeof window !== 'undefined' && (!!localStorage.getItem('token') || document.cookie.includes('token=')), // Fetch if token exists in storage or cookie
     });
 
     const handleLogout = () => {

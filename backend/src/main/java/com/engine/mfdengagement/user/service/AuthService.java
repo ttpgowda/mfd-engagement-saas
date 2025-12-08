@@ -145,7 +145,8 @@ public class AuthService {
     public AuthResponse refreshAccessToken(String refreshTokenStr) {
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenStr)
                 .map(refreshTokenService::verifyExpiration)
-                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+                .orElseThrow(() -> new org.springframework.security.authentication.BadCredentialsException(
+                        "Invalid refresh token"));
 
         User user = refreshToken.getUser();
         UserDetails userDetails = new CustomUserDetails(user);

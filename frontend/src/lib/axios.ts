@@ -7,10 +7,20 @@ const api = axios.create({
   },
 });
 
+// Helper to get cookie value
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+};
+
 // Request interceptor to add JWT token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // Prioritize cookie as it's updated by middleware
+    const token = getCookie('token') || localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -89,8 +99,8 @@ api.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/refresh', null, {
-          params: { token: refreshToken }
+        const response = await axios.post('http://localhost:8080/api/auth/refresh', {
+          refreshToken
         });
 
         const { accessToken } = response.data;
