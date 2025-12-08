@@ -107,3 +107,11 @@ default load one scheme
     as this way. if have more better way. please use that approach.
     
     you show as better way to visualize make order by current value desc.
+
+
+## PowerShell Command for getting project tree structure
+(Get-ChildItem -Recurse -Force | Where-Object { $_.FullName -notmatch '(target|\.idea|\.mvn)' }).FullName | Out-File backend_structure.txt
+
+
+## for postgress table create strcutre dump
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -d amfi_db --schema-only > schema.sql

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.security.authentication.CredentialsExpiredException;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token expired. Please login again.");
+            throw new CredentialsExpiredException("Refresh token expired. Please login again.");
         }
         return token;
     }

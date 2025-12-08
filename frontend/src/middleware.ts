@@ -12,6 +12,9 @@ export async function middleware(request: NextRequest) {
     const refreshToken = request.cookies.get('refreshToken')?.value;
     const path = request.nextUrl.pathname;
 
+    console.log("token", token);
+    console.log("refreshToken", refreshToken);
+
     let payload: JWTPayload | null = null;
     let newToken: string | null = null;
     let hasValidToken = false;
@@ -26,34 +29,46 @@ export async function middleware(request: NextRequest) {
         }
     };
 
+    // 1. Initial Token Checks
     if (token) {
         payload = decodeToken(token);
-        if (payload) {
-            const exp = payload.exp;
+        if (payload && payload.exp) {
             const now = Math.floor(Date.now() / 1000);
+            if (payload.exp > now) {
+                hasValidToken = true;
+            } else {
+                console.log("Middleware: Token expired");
+            }
+        }
+    }
 
-            if (exp && exp < now) {
-                if (refreshToken) {
-                    try {
-                        const refreshRes = await fetch('http://localhost:8080/api/auth/refresh?token=' + refreshToken, {
-                            method: 'POST',
-                        });
+    // 2. Refresh Logic (if invalid/missing token but have refresh token)
+    if (!hasValidToken && refreshToken) {
+        try {
+            console.log("Middleware: Attempting to refresh token...");
+            const refreshRes = await fetch('http://localhost:8080/api/auth/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refreshToken }),
+            });
 
-                        if (refreshRes.ok) {
-                            const data = await refreshRes.json();
-                            if (data.accessToken) {
-                                newToken = data.accessToken;
-                                payload = decodeToken(data.accessToken);
-                                hasValidToken = true;
-                            }
-                        }
-                    } catch (err) {
-                        console.error('Token refresh failed in middleware:', err);
-                    }
+            if (refreshRes.ok) {
+                const data = await refreshRes.json();
+                if (data.accessToken) {
+                    console.log("Middleware: Token refresh successful");
+                    newToken = data.accessToken;
+                    payload = decodeToken(data.accessToken);
+                    hasValidToken = true;
                 }
             } else {
-                hasValidToken = true;
+                console.error("Middleware: Refresh failed with status", refreshRes.status);
+                const text = await refreshRes.text();
+                console.error("Middleware: Refresh response:", text);
             }
+        } catch (err) {
+            console.error('Token refresh failed in middleware:', err);
         }
     }
 
