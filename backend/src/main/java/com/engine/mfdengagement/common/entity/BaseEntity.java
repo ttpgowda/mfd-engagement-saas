@@ -1,6 +1,8 @@
 package com.engine.mfdengagement.common.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.springframework.data.annotation.CreatedBy;
@@ -14,6 +16,8 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantIdentifier", type = String.class))
+@Getter
+@Setter
 public abstract class BaseEntity {
 
     @Id

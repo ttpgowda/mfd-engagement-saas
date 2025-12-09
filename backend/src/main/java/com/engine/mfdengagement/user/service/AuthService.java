@@ -50,10 +50,15 @@ public class AuthService {
     private String appDomain;
 
     public AuthResponse authenticate(LoginRequest request) {
-        String tenantId = request.getTenantId();
+        // TenantId is inferred from Subdomain/Header via TenantFilter before this
+        // service is called.
+        String tenantId = TenantContext.getTenantId();
+
+        // Fallback or explicit default
         if (tenantId == null || tenantId.isEmpty()) {
             tenantId = TenantUtil.DEFAULT_TENANT;
         }
+
         TenantContext.setTenantId(tenantId);
 
         System.out.println("AuthService: Authenticating user: " + request.getUsername() + " for tenant: " + tenantId);

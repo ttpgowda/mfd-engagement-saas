@@ -14,6 +14,12 @@ export type CalculatorID =
     | 'inflation-impact'
     | 'emergency-fund';
 
+
+export interface CalculatorViewProps {
+    defaultValues?: Record<string, any>;
+    isPublicView?: boolean;
+}
+
 export interface CalculatorItem {
     id: CalculatorID;
     title: string;
@@ -26,5 +32,5 @@ export interface CalculatorItem {
     /**
      * The actual view component for the calculator.
      */
-    component: ComponentType;
+    component: ComponentType<CalculatorViewProps>;
 }

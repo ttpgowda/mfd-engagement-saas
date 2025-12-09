@@ -31,11 +31,16 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function SipCalculatorView() {
-    const [amount, setAmount] = useState(5000);
-    const [years, setYears] = useState(10);
-    const [rate, setRate] = useState(12);
-    const [inflationAdjusted, setInflationAdjusted] = useState(false);
+import { CalculatorViewProps } from "../types";
+
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function SipCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 5000);
+    const [years, setYears] = useState<number>(defaultValues?.years ?? 10);
+    const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
+    const [inflationAdjusted, setInflationAdjusted] = useState<boolean>(defaultValues?.inflationAdjusted ?? false);
 
     const { chartData, summary } = useMemo(() =>
         calculateSip(amount, years, rate, inflationAdjusted),
@@ -45,8 +50,21 @@ export default function SipCalculatorView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Input Section */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>SIP Configuration</CardTitle><CardDescription>Calculate wealth creation via regular investing.</CardDescription></CardHeader>
-                <CardContent className="space-y-8">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>SIP Configuration</CardTitle>
+                        <CardDescription>Calculate wealth creation via regular investing.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="sip-calculator"
+                            config={{ amount, years, rate, inflationAdjusted }}
+                        />
+                    )}
+                </CardHeader>
+                <CardContent className="space-y-8 pt-4">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Monthly Investment (₹)</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
                         <Input type="range" min="500" max="100000" step="500" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
