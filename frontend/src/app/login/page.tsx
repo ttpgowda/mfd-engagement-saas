@@ -20,7 +20,6 @@ import api from '@/lib/axios';
 import { useState } from 'react';
 
 const formSchema = z.object({
-    tenantId: z.string().min(1, "Tenant ID is required"),
     email: z.string().email(),
     password: z.string().min(1, "Password is required"),
 });
@@ -31,7 +30,6 @@ export default function LoginPage() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            tenantId: 'dev-tenant', // Default for convenience
             email: '',
             password: '',
         },
@@ -40,11 +38,12 @@ export default function LoginPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setError(null);
         try {
-            // Pass tenantId to the backend
+            // TenantID is now handled by axios interceptor via X-Tenant-ID header
+            // extracted from subdomain
             const response = await api.post('/auth/login', {
-                username: values.email, // Backend expects username, we use email
+                username: values.email,
                 password: values.password,
-                tenantId: values.tenantId,
+                // tenantId no longer manually sent here, handled by header
             });
             const { accessToken, refreshToken } = response.data;
             localStorage.setItem('token', accessToken);
@@ -56,10 +55,8 @@ export default function LoginPage() {
             // eslint-disable-next-line react-hooks/immutability
             document.cookie = `refreshToken=${refreshToken}; path=/; max-age=604800; SameSite=Strict`; // 7 days expiration
 
-            // Simple JWT decode to check role (in production use a library like jwt-decode)
             const payload = JSON.parse(atob(accessToken.split('.')[1]));
             const permissions = payload.permissions || [];
-            console.log("permissions: ", permissions);
             if (permissions.includes('TENANT_MANAGE')) {
                 router.push('/admin/dashboard');
             } else {
@@ -67,7 +64,7 @@ export default function LoginPage() {
             }
         } catch (err) {
             console.error(err);
-            setError('Invalid credentials or tenant ID');
+            setError('Invalid credentials');
         }
     }
 
@@ -77,25 +74,12 @@ export default function LoginPage() {
                 <CardHeader>
                     <CardTitle className="text-2xl">Login</CardTitle>
                     <CardDescription>
-                        Enter your tenant ID, email and password to login.
+                        Enter your email and password to login.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="tenantId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Tenant ID</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="dev-tenant" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                             <FormField
                                 control={form.control}
                                 name="email"

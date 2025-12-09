@@ -46,7 +46,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight checks
                         // .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .requestMatchers("/api/auth/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger/**")
+                        .permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/auth/refresh").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

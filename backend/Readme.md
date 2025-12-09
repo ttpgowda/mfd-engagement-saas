@@ -115,3 +115,8 @@ default load one scheme
 
 ## for postgress table create strcutre dump
 & "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -d amfi_db --schema-only > schema.sql
+
+
+
+### for adding DNS
+    C:\Windows\System32\drivers\etc\hosts
