@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional
 public class LeadService {
 
     private final LeadRepository leadRepository;
@@ -43,12 +44,14 @@ public class LeadService {
         return mapToDTO(savedLead);
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<LeadDTO> getAllLeads() {
         return leadRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public LeadDTO getLeadById(Long id) {
         Lead lead = leadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lead not found"));
