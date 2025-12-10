@@ -33,11 +33,12 @@ export function UserNav() {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
 
-        // Clear cookies if any (optional, but good practice if you used them)
+        // Clear cookies
         document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-        // Redirect to login
-        router.push('/login');
+        // Redirect to login (hard refresh to clear any in-memory state)
+        window.location.href = '/login';
     };
 
     return (

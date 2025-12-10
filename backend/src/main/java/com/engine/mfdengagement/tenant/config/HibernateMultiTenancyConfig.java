@@ -22,8 +22,8 @@ public class HibernateMultiTenancyConfig {
         properties.put("hibernate.multiTenancy", "DISCRIMINATOR"); // Correct string form
         properties.put(MultiTenancySettings.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantResolver);
         properties.put("hibernate.hbm2ddl.auto", "update"); // ✅ add this here
-        properties.put("hibernate.show_sql", "true");
-        properties.put("hibernate.format_sql", "true");
+        properties.put("hibernate.show_sql", "false");
+        properties.put("hibernate.format_sql", "false");
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);

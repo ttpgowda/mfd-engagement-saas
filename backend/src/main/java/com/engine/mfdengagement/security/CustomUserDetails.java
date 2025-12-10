@@ -17,18 +17,21 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(User user) {
         this.user = user;
-        this.authorities = user.getRoles().stream()
+        Set<SimpleGrantedAuthority> auths = new HashSet<>();
+
+        // Add permissions
+        user.getRoles().stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                .collect(Collectors.toSet());
+                .forEach(auths::add);
 
-       /* // Add roles as authorities
+        // Add roles
         user.getRoles().forEach(role -> {
             String roleName = role.getName().startsWith("ROLE_") ? role.getName() : "ROLE_" + role.getName();
-            authorities.add(new SimpleGrantedAuthority(roleName));
+            auths.add(new SimpleGrantedAuthority(roleName));
         });
 
-        this.authorities = authorities;*/
+        this.authorities = auths;
     }
 
     @Override
