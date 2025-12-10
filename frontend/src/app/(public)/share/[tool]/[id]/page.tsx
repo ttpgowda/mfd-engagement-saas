@@ -2,20 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getCalculator, CALCULATORS } from "@/features/calculators/registry";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCalculator } from "@/features/calculators/registry";
 import { Loader2 } from "lucide-react";
-import axios from '@/lib/axios'; // Or standard axios if lib/axios has interceptors that might conflict (auth)
-// lib/axios probably attaches token. For public API, we might need a clean instance or ensure it handles 401 gracefully?
-// Ideally use a plain axios instance for public calls if the main one is heavily tied to Auth.
+import { CalculatorViewProps, CalculatorID, CalculatorItem } from "@/features/calculators/types";
 import axiosPublic from "axios";
 
 const apiClient = axiosPublic.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
 });
-
-// Need to handle CalculatorViewProps
-import { CalculatorViewProps } from "@/features/calculators/types";
 import { useAnalytics } from "@/features/share/hooks/useAnalytics";
 import { LeadCaptureModal } from "@/features/share/components/LeadCaptureModal";
 
@@ -34,7 +28,7 @@ import CategoryMonitorView from '@/features/research/views/CategoryMonitorView';
 import BenchmarkMonitorView from '@/features/research/views/BenchmarkMonitorView';
 import FundCompareView from '@/features/research/views/FundCompareView';
 
-const RESEARCH_TOOLS: Record<string, { component: React.ElementType, title: string, description: string, icon?: any }> = {
+const RESEARCH_TOOLS: Record<string, { component: React.ComponentType<CalculatorViewProps>, title: string, description: string, icon?: React.ElementType }> = {
     'top-performing-funds': { component: TopPerformingFundsView, title: 'Top Performing Funds', description: 'Check out the high growth mutual funds.' },
     'trailing-returns': { component: TrailingReturnsView, title: 'Trailing Returns', description: 'Analyze trailing returns of funds.' },
     'rolling-returns': { component: RollingReturnsView, title: 'Rolling Returns', description: 'Analyze period-wise rolling returns.' },
@@ -57,7 +51,7 @@ export default function SharedLinkPage() {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [config, setConfig] = useState<Record<string, any> | null>(null);
+    const [config, setConfig] = useState<Record<string, unknown> | null>(null);
 
     const { showLeadCapture, setShowLeadCapture } = useAnalytics(shortCode);
 
@@ -68,9 +62,11 @@ export default function SharedLinkPage() {
             try {
                 const res = await apiClient.get(`/api/public/links/${shortCode}`);
                 setConfig(res.data.config);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Failed to load link", err);
-                setError(err.response?.status === 404 ? "Link not found" : "Failed to load configuration");
+                // Safe check for axios error structure
+                const status = (err as { response?: { status?: number } })?.response?.status;
+                setError(status === 404 ? "Link not found" : "Failed to load configuration");
             } finally {
                 setLoading(false);
             }
@@ -96,19 +92,19 @@ export default function SharedLinkPage() {
     }
 
     // 1. Try Financial Calculator Registry
-    let Calculator = getCalculator(toolSlug);
-    let Component: React.ElementType | undefined = Calculator?.component;
+    let Calculator: CalculatorItem | undefined = getCalculator(toolSlug);
+    let Component: React.ComponentType<CalculatorViewProps> | undefined = Calculator?.component;
 
     // 2. Try Research Tools Registry
     const researchTool = RESEARCH_TOOLS[toolSlug];
     if (researchTool) {
         Component = researchTool.component;
         Calculator = { // Mock CalculatorItem interface
-            id: toolSlug,
+            id: toolSlug as unknown as CalculatorID,
             title: researchTool.title,
             description: researchTool.description,
-            icon: researchTool.icon || Loader2,
-            component: researchTool.component as React.ElementType
+            icon: (researchTool.icon || Loader2) as React.ElementType,
+            component: researchTool.component
         };
     }
 
