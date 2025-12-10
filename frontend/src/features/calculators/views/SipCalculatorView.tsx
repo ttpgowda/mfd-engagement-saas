@@ -61,6 +61,8 @@ export default function SipCalculatorView({ defaultValues, isPublicView = false 
                         <ShareDialog
                             toolSlug="sip-calculator"
                             config={{ amount, years, rate, inflationAdjusted }}
+                            defaultTitle="SIP Investment Plan"
+                            defaultDescription={`Plan for ₹${amount.toLocaleString()} monthly investment over ${years} years.`}
                         />
                     )}
                 </CardHeader>

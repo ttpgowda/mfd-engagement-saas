@@ -30,13 +30,17 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function ChildEducationView() {
-    const [currentCost, setCurrentCost] = useState(1000000); // 10 Lakhs
-    const [childAge, setChildAge] = useState(5);
-    const [collegeStartAge, setCollegeStartAge] = useState(18);
-    const [currentSavings, setCurrentSavings] = useState(200000);
-    const [inflationRate, setInflationRate] = useState(8); // Education inflation is usually higher
-    const [returnRate, setReturnRate] = useState(12);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function ChildEducationView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [currentCost, setCurrentCost] = useState<number>(defaultValues?.currentCost ?? 1000000); // 10 Lakhs
+    const [childAge, setChildAge] = useState<number>(defaultValues?.childAge ?? 5);
+    const [collegeStartAge, setCollegeStartAge] = useState<number>(defaultValues?.collegeStartAge ?? 18);
+    const [currentSavings, setCurrentSavings] = useState<number>(defaultValues?.currentSavings ?? 200000);
+    const [inflationRate, setInflationRate] = useState<number>(defaultValues?.inflationRate ?? 8); // Education inflation is usually higher
+    const [returnRate, setReturnRate] = useState<number>(defaultValues?.returnRate ?? 12);
 
     const { summary, chartData } = useMemo(() =>
         calculateChildEducation(
@@ -54,7 +58,22 @@ export default function ChildEducationView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Child Education Plan</CardTitle><CardDescription>Estimate future college costs.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Child Education Plan</CardTitle>
+                        <CardDescription>Estimate future college costs.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="child-education"
+                            config={{ currentCost, childAge, collegeStartAge, currentSavings, inflationRate, returnRate }}
+                            defaultTitle="Child Education Plan"
+                            defaultDescription={`Education plan for ${collegeStartAge - childAge} years from now, starting with ₹${currentCost.toLocaleString()}.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Current Cost of Education</Label><span className="text-sm font-medium text-primary">₹{currentCost.toLocaleString()}</span></div>

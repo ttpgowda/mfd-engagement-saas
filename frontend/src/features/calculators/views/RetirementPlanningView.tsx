@@ -30,15 +30,19 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function RetirementPlanningView() {
-    const [currentAge, setCurrentAge] = useState(30);
-    const [retirementAge, setRetirementAge] = useState(60);
-    const [lifeExpectancy, setLifeExpectancy] = useState(85);
-    const [monthlyExpenses, setMonthlyExpenses] = useState(50000);
-    const [currentCorpus, setCurrentCorpus] = useState(1000000);
-    const [inflationRate, setInflationRate] = useState(6);
-    const [preRetirementReturn, setPreRetirementReturn] = useState(12);
-    const [postRetirementReturn, setPostRetirementReturn] = useState(8);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function RetirementPlanningView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [currentAge, setCurrentAge] = useState<number>(defaultValues?.currentAge ?? 30);
+    const [retirementAge, setRetirementAge] = useState<number>(defaultValues?.retirementAge ?? 60);
+    const [lifeExpectancy, setLifeExpectancy] = useState<number>(defaultValues?.lifeExpectancy ?? 85);
+    const [monthlyExpenses, setMonthlyExpenses] = useState<number>(defaultValues?.monthlyExpenses ?? 50000);
+    const [currentCorpus, setCurrentCorpus] = useState<number>(defaultValues?.currentCorpus ?? 1000000);
+    const [inflationRate, setInflationRate] = useState<number>(defaultValues?.inflationRate ?? 6);
+    const [preRetirementReturn, setPreRetirementReturn] = useState<number>(defaultValues?.preRetirementReturn ?? 12);
+    const [postRetirementReturn, setPostRetirementReturn] = useState<number>(defaultValues?.postRetirementReturn ?? 8);
 
     const { summary, chartData } = useMemo(() =>
         calculateRetirementPlanning(
@@ -58,7 +62,22 @@ export default function RetirementPlanningView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Plan Your Retirement</CardTitle><CardDescription>Estimate corpus and SIP needed.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Plan Your Retirement</CardTitle>
+                        <CardDescription>Estimate corpus and SIP needed.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="retirement-planning"
+                            config={{ currentAge, retirementAge, lifeExpectancy, monthlyExpenses, currentCorpus, inflationRate, preRetirementReturn, postRetirementReturn }}
+                            defaultTitle="Retirement Plan"
+                            defaultDescription={`Retirement plan for age ${retirementAge} with monthly expenses of ₹${monthlyExpenses.toLocaleString()}.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Current Age</Label><span className="text-sm font-medium">{currentAge} Years</span></div>

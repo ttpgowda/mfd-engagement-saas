@@ -9,12 +9,14 @@ import axios from "@/lib/axios";
 interface ShareDialogProps {
     toolSlug: string;
     config: Record<string, any>;
+    defaultTitle?: string;
+    defaultDescription?: string;
 }
 
-export function ShareDialog({ toolSlug, config }: ShareDialogProps) {
+export function ShareDialog({ toolSlug, config, defaultTitle = "", defaultDescription = "" }: ShareDialogProps) {
     const [open, setOpen] = useState(false);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [title, setTitle] = useState(defaultTitle);
+    const [description, setDescription] = useState(defaultDescription);
 
     // UI States
     const [loading, setLoading] = useState(false);
@@ -63,18 +65,27 @@ export function ShareDialog({ toolSlug, config }: ShareDialogProps) {
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
         if (!newOpen) {
-            // Reset on close
+            // Reset on close (optional, or persist? Resetting to defaults usually better)
             setGeneratedLink(null);
-            setTitle("");
-            setDescription("");
+            setTitle(defaultTitle);
+            setDescription(defaultDescription);
+        } else {
+            // If we want to ensure defaults are there when re-opening if they were cleared? 
+            // Ideally we just keep state, but let's re-sync if props changed or just ensure defaults.
+            if (!title) setTitle(defaultTitle);
+            if (!description) setDescription(defaultDescription);
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <Button variant="outline" size="sm" onClick={() => handleOpenChange(true)} className="gap-2">
+            <Button
+                onClick={() => handleOpenChange(true)}
+                className="gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 whitespace-nowrap shrink-0"
+            >
                 <Share2 className="w-4 h-4" />
-                Share
+                <span className="hidden sm:inline">Share Link</span>
+                <span className="sm:hidden">Share</span>
             </Button>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>

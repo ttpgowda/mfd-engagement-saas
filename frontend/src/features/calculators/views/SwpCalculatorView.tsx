@@ -30,11 +30,15 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function SwpCalculatorView() {
-    const [totalInvestment, setTotalInvestment] = useState(1000000); // 10 Lakhs
-    const [withdrawalAmount, setWithdrawalAmount] = useState(6000);
-    const [expectedReturnRate, setExpectedReturnRate] = useState(8);
-    const [durationYears, setDurationYears] = useState(10);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function SwpCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [totalInvestment, setTotalInvestment] = useState<number>(defaultValues?.totalInvestment ?? 1000000); // 10 Lakhs
+    const [withdrawalAmount, setWithdrawalAmount] = useState<number>(defaultValues?.withdrawalAmount ?? 6000);
+    const [expectedReturnRate, setExpectedReturnRate] = useState<number>(defaultValues?.expectedReturnRate ?? 8);
+    const [durationYears, setDurationYears] = useState<number>(defaultValues?.durationYears ?? 10);
 
     const { summary, chartData } = useMemo(() =>
         calculateSwp(
@@ -50,7 +54,22 @@ export default function SwpCalculatorView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>SWP Calculator</CardTitle><CardDescription>Systematic Withdrawal Plan</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>SWP Calculator</CardTitle>
+                        <CardDescription>Systematic Withdrawal Plan</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="swp-calculator"
+                            config={{ totalInvestment, withdrawalAmount, expectedReturnRate, durationYears }}
+                            defaultTitle="SWP Income Plan"
+                            defaultDescription={`Plan for ₹${withdrawalAmount.toLocaleString()} monthly withdrawal from ₹${totalInvestment.toLocaleString()} investment.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Total Investment</Label><span className="text-sm font-medium text-primary">₹{totalInvestment.toLocaleString()}</span></div>

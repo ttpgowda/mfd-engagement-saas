@@ -34,11 +34,15 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 const CurrencyFormatter = (value: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
 
-export default function CostOfDelayView() {
-    const [amount, setAmount] = useState(10000);
-    const [years, setYears] = useState(25);
-    const [rate, setRate] = useState(12);
-    const [delay, setDelay] = useState(5);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function CostOfDelayView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 10000);
+    const [years, setYears] = useState<number>(defaultValues?.years ?? 25);
+    const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
+    const [delay, setDelay] = useState<number>(defaultValues?.delay ?? 5);
 
     const data = useMemo(() => calculateCostOfDelay(amount, years, rate, delay), [amount, years, rate, delay]);
 
@@ -46,9 +50,21 @@ export default function CostOfDelayView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Inputs */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader>
-                    <CardTitle>Configuration</CardTitle>
-                    <CardDescription>Adjust variables to see impact</CardDescription>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Configuration</CardTitle>
+                        <CardDescription>Adjust variables to see impact</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="cost-of-delay"
+                            config={{ amount, years, rate, delay }}
+                            defaultTitle="Cost of Delay"
+                            defaultDescription={`See how a ${delay} year delay affects your ₹${amount.toLocaleString()} SIP.`}
+                        />
+                    )}
                 </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">

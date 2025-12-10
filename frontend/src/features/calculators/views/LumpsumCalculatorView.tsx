@@ -30,10 +30,14 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function LumpsumCalculatorView() {
-    const [investmentAmount, setInvestmentAmount] = useState(100000); // 1 Lakh
-    const [expectedReturnRate, setExpectedReturnRate] = useState(12);
-    const [durationYears, setDurationYears] = useState(10);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function LumpsumCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [investmentAmount, setInvestmentAmount] = useState<number>(defaultValues?.investmentAmount ?? 100000); // 1 Lakh
+    const [expectedReturnRate, setExpectedReturnRate] = useState<number>(defaultValues?.expectedReturnRate ?? 12);
+    const [durationYears, setDurationYears] = useState<number>(defaultValues?.durationYears ?? 10);
 
     const { summary, chartData } = useMemo(() =>
         calculateLumpsum(
@@ -48,7 +52,22 @@ export default function LumpsumCalculatorView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Lumpsum Calculator</CardTitle><CardDescription>Calculate future value of one-time investment.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Lumpsum Calculator</CardTitle>
+                        <CardDescription>Calculate future value of one-time investment.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="lumpsum-calculator"
+                            config={{ investmentAmount, expectedReturnRate, durationYears }}
+                            defaultTitle="Lumpsum Investment"
+                            defaultDescription={`Growth of ₹${investmentAmount.toLocaleString()} over ${durationYears} years.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Investment Amount</Label><span className="text-sm font-medium text-primary">₹{investmentAmount.toLocaleString()}</span></div>

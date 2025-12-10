@@ -30,11 +30,15 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function SipDelayCostView() {
-    const [amount, setAmount] = useState(10000);
-    const [years, setYears] = useState(20);
-    const [rate, setRate] = useState(12);
-    const [delayYears, setDelayYears] = useState(3); // Delay in years
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function SipDelayCostView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 10000);
+    const [years, setYears] = useState<number>(defaultValues?.years ?? 20);
+    const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
+    const [delayYears, setDelayYears] = useState<number>(defaultValues?.delayYears ?? 3); // Delay in years
 
     // Convert delay years to months for logic
     const { chartData, summary } = useMemo(() =>
@@ -45,7 +49,22 @@ export default function SipDelayCostView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Inputs */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Delay Scenarios</CardTitle><CardDescription>See how a small delay creates a huge gap.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Delay Scenarios</CardTitle>
+                        <CardDescription>See how a small delay creates a huge gap.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="sip-delay-cost"
+                            config={{ amount, years, rate, delayYears }}
+                            defaultTitle="Cost of Delay Analysis"
+                            defaultDescription={`See the cost of delaying a ₹${amount.toLocaleString()} SIP by ${delayYears} years.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Monthly SIP (₹)</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>

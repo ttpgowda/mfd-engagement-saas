@@ -132,7 +132,10 @@ api.interceptors.response.use(
 
       if (!refreshToken) {
         // No refresh token, logout
-        clearAuthAndRedirect();
+        // BUT ignore if it's a public API call (might have failed for other reasons, don't force login)
+        if (!originalRequest.url?.includes('/api/public/')) {
+          clearAuthAndRedirect();
+        }
         return Promise.reject(error);
       }
 

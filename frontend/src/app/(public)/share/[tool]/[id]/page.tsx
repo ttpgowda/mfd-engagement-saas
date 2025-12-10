@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getCalculator, CALCULATORS } from "@/features/calculators/registry";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,7 @@ const apiClient = axiosPublic.create({
 import { CalculatorViewProps } from "@/features/calculators/types";
 import { useAnalytics } from "@/features/share/hooks/useAnalytics";
 import { LeadCaptureModal } from "@/features/share/components/LeadCaptureModal";
+import TopPerformingFundsView from "@/features/research/views/TopPerformingFundsView";
 
 export default function SharedLinkPage() {
     const params = useParams();
@@ -67,17 +68,30 @@ export default function SharedLinkPage() {
         );
     }
 
-    const Calculator = getCalculator(toolSlug);
+    let Calculator = getCalculator(toolSlug);
+    let Component: React.ElementType | undefined;
 
-    if (!Calculator) {
+    // Manual override for Research Tools that aren't in the Calculator Registry
+    if (toolSlug === 'top-performing-funds') {
+        Component = TopPerformingFundsView;
+        Calculator = {
+            id: 'top-performing-funds',
+            title: 'Top Performing Funds',
+            description: 'Check out the high growth mutual funds.',
+            icon: Loader2, // Placeholder
+            component: TopPerformingFundsView
+        };
+    } else {
+        Component = Calculator?.component;
+    }
+
+    if (!Component || !Calculator) {
         return (
             <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
-                <p>Calculator type '{toolSlug}' not found.</p>
+                <p>Tool type '{toolSlug}' not found.</p>
             </div>
         );
     }
-
-    const Component = Calculator.component;
 
     return (
         <div className="max-w-5xl mx-auto">
@@ -91,6 +105,7 @@ export default function SharedLinkPage() {
             <LeadCaptureModal
                 open={showLeadCapture}
                 onOpenChange={setShowLeadCapture} // Allow user to close it? Or force? 
+                shortCode={shortCode}
             // Usually force or strictly require. But for UX better allow close or make it persistent. 
             // Implementation plan said "if missing, display a modal ... and then proceed"
             // Assuming modal is dismissible or has logic. For now default Dialog behavior.

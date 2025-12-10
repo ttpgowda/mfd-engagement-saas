@@ -31,12 +31,16 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function StepUpSipView() {
-    const [amount, setAmount] = useState(15000);
-    const [years, setYears] = useState(20);
-    const [rate, setRate] = useState(12);
-    const [increase, setIncrease] = useState(10);
-    const [inflationAdjusted, setInflationAdjusted] = useState(false);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function StepUpSipView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 15000);
+    const [years, setYears] = useState<number>(defaultValues?.years ?? 20);
+    const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
+    const [increase, setIncrease] = useState<number>(defaultValues?.increase ?? 10);
+    const [inflationAdjusted, setInflationAdjusted] = useState<boolean>(defaultValues?.inflationAdjusted ?? false);
 
     const { chartData, summary } = useMemo(() =>
         calculateStepUpSip(amount, years, rate, increase, inflationAdjusted),
@@ -45,7 +49,22 @@ export default function StepUpSipView() {
     return (
         <div className="grid gap-6 lg:grid-cols-12">
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Step-Up Strategy</CardTitle><CardDescription>Small increases create massive wealth.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Step-Up Strategy</CardTitle>
+                        <CardDescription>Small increases create massive wealth.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="step-up-sip"
+                            config={{ amount, years, rate, increase, inflationAdjusted }}
+                            defaultTitle="Step-Up SIP Plan"
+                            defaultDescription={`Plan for ₹${amount.toLocaleString()} SIP with ${increase}% annual step-up.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Initial SIP Amount</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
