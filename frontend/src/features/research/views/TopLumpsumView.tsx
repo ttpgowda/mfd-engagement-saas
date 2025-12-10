@@ -29,7 +29,12 @@ const PRESET_AMOUNTS = [
     { label: '₹10L', value: 1000000 },
 ];
 
-export default function TopLumpsumView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
+export default function TopLumpsumView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // --- State ---
     const [categories, setCategories] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -44,13 +49,21 @@ export default function TopLumpsumView() {
     const [data, setData] = useState<LumpsumResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // 1. Initial Load
+    // 0. Initial Load of Defaults
     useEffect(() => {
-        researchService.getCategories().then(cats => {
+        if (defaultValues?.amount) setAmount(defaultValues.amount);
+        if (defaultValues?.years) setYears(defaultValues.years);
+        if (defaultValues?.category) setCategory(defaultValues.category);
+    }, [defaultValues]);
+
+    // 1. Initial Load of Categories
+    useEffect(() => {
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(cats => {
             setCategories(cats);
-            if (cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
+            if (cats.length > 0 && !defaultValues?.category) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
         });
-    }, []);
+    }, [isPublicView, defaultValues]);
 
     // 2. Fetch Data
     useEffect(() => {
@@ -59,7 +72,8 @@ export default function TopLumpsumView() {
         const fetch = async () => {
             setLoading(true);
             try {
-                const res = await researchService.getTopLumpsumFunds({
+                const service = isPublicView ? publicResearchService : researchService;
+                const res = await service.getTopLumpsumFunds({
                     category,
                     years,
                     amount,
@@ -79,7 +93,7 @@ export default function TopLumpsumView() {
         // Debounce slightly to prevent rapid firing on slider change
         const timer = setTimeout(fetch, 300);
         return () => clearTimeout(timer);
-    }, [category, years, amount, page]);
+    }, [category, years, amount, page, isPublicView]);
 
     // Format Currency Helper
     const fmt = (val: number) => new Intl.NumberFormat('en-IN', {
@@ -90,13 +104,29 @@ export default function TopLumpsumView() {
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
             {/* --- Header --- */}
             <div>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                    <Coins className="w-8 h-8 text-emerald-500" />
-                    Top Performing Lumpsum Funds
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Simulate past one-time investments to find wealth creators.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Coins className="w-8 h-8 text-emerald-500" />
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                Top Performing Lumpsum Funds
+                            </h1>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Simulate past one-time investments to find wealth creators.
+                            </p>
+                        </div>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="lumpsum-returns"
+                            config={{ category, amount, years }}
+                            defaultTitle="Lumpsum Returns Analysis"
+                            defaultDescription={`Top funds for ₹${amount.toLocaleString()} investment over ${years} years.`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* --- Controls Section (Advanced & Better UI) --- */}
@@ -152,8 +182,8 @@ export default function TopLumpsumView() {
                                         onClick={() => setAmount(preset.value)}
                                         className={`text-[10px] font-medium px-2.5 py-1 rounded-md border transition-all
                                             ${amount === preset.value
-                                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                                            : 'bg-background text-muted-foreground border-border hover:border-emerald-400 hover:text-emerald-600'}`}
+                                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                                                : 'bg-background text-muted-foreground border-border hover:border-emerald-400 hover:text-emerald-600'}`}
                                     >
                                         {preset.label}
                                     </button>
@@ -214,10 +244,10 @@ export default function TopLumpsumView() {
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={data.funds.slice(0, 5)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
-                                    <XAxis dataKey="schemeName" tick={{fontSize: 10}} interval={0} tickFormatter={(val) => val.length > 15 ? val.substring(0, 15) + '...' : val} />
-                                    <YAxis tickFormatter={(val) => `₹${val/1000}k`} fontSize={11} />
+                                    <XAxis dataKey="schemeName" tick={{ fontSize: 10 }} interval={0} tickFormatter={(val) => val.length > 15 ? val.substring(0, 15) + '...' : val} />
+                                    <YAxis tickFormatter={(val) => `₹${val / 1000}k`} fontSize={11} />
                                     <Tooltip
-                                        cursor={{fill: 'transparent'}}
+                                        cursor={{ fill: 'transparent' }}
                                         content={({ active, payload, label }) => {
                                             if (active && payload && payload.length) {
                                                 return (
@@ -259,40 +289,40 @@ export default function TopLumpsumView() {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/30 text-muted-foreground font-medium border-b border-border/50">
-                                <tr>
-                                    <th className="px-6 py-3 w-[50px]">#</th>
-                                    <th className="px-6 py-3">Scheme Name</th>
-                                    <th className="px-4 py-3 text-right">CAGR</th>
-                                    <th className="px-4 py-3 text-right">Profit</th>
-                                    <th className="px-4 py-3 text-right">Current Value</th>
-                                </tr>
+                                    <tr>
+                                        <th className="px-6 py-3 w-[50px]">#</th>
+                                        <th className="px-6 py-3">Scheme Name</th>
+                                        <th className="px-4 py-3 text-right">CAGR</th>
+                                        <th className="px-4 py-3 text-right">Profit</th>
+                                        <th className="px-4 py-3 text-right">Current Value</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/40">
-                                {data.funds.map((fund, index) => (
-                                    <tr key={fund.schemeCode} className="hover:bg-muted/30 transition-colors group">
-                                        <td className="px-6 py-3 text-muted-foreground font-mono text-xs">{(page * 20) + index + 1}</td>
-                                        <td className="px-6 py-3">
-                                            <div className="font-medium text-foreground group-hover:text-emerald-600 transition-colors">
-                                                {fund.schemeName}
-                                            </div>
-                                            <div className="text-[10px] text-muted-foreground flex gap-2 mt-0.5">
-                                                <span>NAV Start: ₹{fund.startNav?.toFixed(2)}</span>
-                                                <span>•</span>
-                                                <span>NAV End: ₹{fund.currentNav?.toFixed(2)}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-right font-mono text-emerald-600 dark:text-emerald-400 font-medium">
-                                            {fund.cagr}%
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <span className="text-emerald-600 text-xs font-bold">+</span>
-                                            {fmt(fund.absoluteReturn)}
-                                        </td>
-                                        <td className="px-4 py-3 text-right font-bold text-foreground">
-                                            {fmt(fund.currentValue)}
-                                        </td>
-                                    </tr>
-                                ))}
+                                    {data.funds.map((fund, index) => (
+                                        <tr key={fund.schemeCode} className="hover:bg-muted/30 transition-colors group">
+                                            <td className="px-6 py-3 text-muted-foreground font-mono text-xs">{(page * 20) + index + 1}</td>
+                                            <td className="px-6 py-3">
+                                                <div className="font-medium text-foreground group-hover:text-emerald-600 transition-colors">
+                                                    {fund.schemeName}
+                                                </div>
+                                                <div className="text-[10px] text-muted-foreground flex gap-2 mt-0.5">
+                                                    <span>NAV Start: ₹{fund.startNav?.toFixed(2)}</span>
+                                                    <span>•</span>
+                                                    <span>NAV End: ₹{fund.currentNav?.toFixed(2)}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-right font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                                                {fund.cagr}%
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <span className="text-emerald-600 text-xs font-bold">+</span>
+                                                {fmt(fund.absoluteReturn)}
+                                            </td>
+                                            <td className="px-4 py-3 text-right font-bold text-foreground">
+                                                {fmt(fund.currentValue)}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>

@@ -39,9 +39,14 @@ import { Check, ChevronDown } from "lucide-react";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 
 // --- Types & Interfaces ---
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
 type ViewMode = 'bar' | 'radar' | 'alpha';
 
-export default function TrailingReturnsView() {
+export default function TrailingReturnsView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // --- State Management ---
     const [categories, setCategories] = useState<string[]>([]);
     const [schemes, setSchemes] = useState<SchemeDropdownDto[]>([]);
@@ -58,13 +63,22 @@ export default function TrailingReturnsView() {
     const [error, setError] = useState<string | null>(null);
     // --- Data Fetching Logic ---
 
+    // 0. Handle Default Values (State Restoration)
+    useEffect(() => {
+        if (defaultValues?.category) {
+            setSelectedCategory(defaultValues.category);
+        }
+    }, [defaultValues]);
+
     // 1. Load Categories on Mount
     useEffect(() => {
         const init = async () => {
             try {
-                const cats = await researchService.getCategories();
+                const service = isPublicView ? publicResearchService : researchService;
+                const cats = await service.getCategories();
                 setCategories(cats);
-                if (cats.length > 0) setSelectedCategory(cats[0]);
+                // Only default to first category if NO default value was provided
+                if (cats.length > 0 && !defaultValues?.category) setSelectedCategory(cats[0]);
             } catch (err: unknown) {
                 console.error("Failed to init", err);
                 const msg = (err as { response?: { data?: { message?: string } } }).response?.data?.message || "An unexpected error occurred. Please verify dates and try again.";
@@ -74,7 +88,7 @@ export default function TrailingReturnsView() {
             }
         };
         init();
-    }, []);
+    }, [isPublicView, defaultValues]);
 
     // 2. Load Schemes when Category changes
     useEffect(() => {
@@ -82,8 +96,20 @@ export default function TrailingReturnsView() {
         const fetchSchemes = async () => {
             try {
                 setLoading(true);
-                const list = await researchService.getSchemesByCategory(selectedCategory);
+                const service = isPublicView ? publicResearchService : researchService;
+                const list = await service.getSchemesByCategory(selectedCategory);
                 setSchemes(list);
+
+                // If default value exists and matches a scheme in this list, pick it.
+                // Otherwise default to first.
+                if (defaultValues?.schemeCode) {
+                    const match = list.find(s => s.schemeCode.toString() === defaultValues.schemeCode.toString());
+                    if (match) {
+                        setSelectedSchemeCode(match.schemeCode.toString());
+                        return; // Done
+                    }
+                }
+
                 if (list.length > 0) {
                     setSelectedSchemeCode(list[0].schemeCode.toString());
                 } else {
@@ -97,7 +123,7 @@ export default function TrailingReturnsView() {
             }
         };
         fetchSchemes();
-    }, [selectedCategory]);
+    }, [selectedCategory, isPublicView, defaultValues]);
 
     // 3. Load Main Data when Scheme changes
     useEffect(() => {
@@ -105,7 +131,8 @@ export default function TrailingReturnsView() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const result = await researchService.getTrailingReturns(Number(selectedSchemeCode));
+                const service = isPublicView ? publicResearchService : researchService;
+                const result = await service.getTrailingReturns(Number(selectedSchemeCode));
                 setData(result);
             } catch (err) {
                 console.error("Failed to fetch trailing returns", err);
@@ -114,7 +141,7 @@ export default function TrailingReturnsView() {
             }
         };
         fetchData();
-    }, [selectedSchemeCode]);
+    }, [selectedSchemeCode, isPublicView]);
 
     // --- Advanced Insights Engine ---
     const insights = useMemo(() => {
@@ -220,9 +247,21 @@ export default function TrailingReturnsView() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     {/* Left: Title + subtext (unchanged) */}
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                            Trailing Returns
-                        </h1>
+                        <div className="flex items-center gap-3 mb-1">
+                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                Trailing Returns
+                            </h1>
+                            {isPublicView ? (
+                                <PublicShareButton />
+                            ) : (
+                                <ShareDialog
+                                    toolSlug="trailing-returns"
+                                    config={{ category: selectedCategory, schemeCode: selectedSchemeCode }}
+                                    defaultTitle="Trailing Returns Analysis"
+                                    defaultDescription={`Performance analysis of ${selectedScheme?.schemeName || 'selected fund'}.`}
+                                />
+                            )}
+                        </div>
                         <p className="text-sm text-muted-foreground mt-1">
                             Analyze fund performance across multiple time horizons vs{" "}
                             {data?.benchmarkName || "Benchmark"}

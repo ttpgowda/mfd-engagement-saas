@@ -22,7 +22,12 @@ import {
 import { researchService, FundCompareResponse, FundRowDto } from '@/services/researchService';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function FundCompareView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
+export default function FundCompareView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -38,14 +43,19 @@ export default function FundCompareView() {
     // STATE RETENTION FIX: Keep the category state in the Parent
     const [lastCategory, setLastCategory] = useState<string>("");
 
-    // 1. Sync State with URL
+    // 1. Sync State with URL or Default Values
     useEffect(() => {
+        if (defaultValues?.schemes && Array.isArray(defaultValues.schemes)) {
+            setSelectedIds(defaultValues.schemes);
+            return;
+        }
+
         const schemesParam = searchParams.get('schemes');
         if (schemesParam) {
             const ids = schemesParam.split(',').map(Number).filter(n => !isNaN(n));
             setSelectedIds(ids);
         }
-    }, [searchParams]);
+    }, [searchParams, defaultValues]);
 
     // 2. Fetch Comparison Data
     useEffect(() => {
@@ -56,7 +66,8 @@ export default function FundCompareView() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await researchService.getFundComparison({ schemeCodes: selectedIds });
+                const service = isPublicView ? publicResearchService : researchService;
+                const res = await service.getFundComparison({ schemeCodes: selectedIds });
                 setData(res);
 
                 // Optional: If we have data and no category is selected yet,
@@ -75,7 +86,7 @@ export default function FundCompareView() {
         };
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedIds]);
+    }, [selectedIds, isPublicView]);
 
     const handleAddFund = (schemeCode: number) => {
         if (selectedIds.includes(schemeCode)) return;
@@ -106,13 +117,27 @@ export default function FundCompareView() {
     return (
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <ArrowUpDown className="w-6 h-6 text-emerald-500" />
-                    Fund Comparison
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Compare up to 5 mutual funds side-by-side.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <ArrowUpDown className="w-6 h-6 text-emerald-500" />
+                            Fund Comparison
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Compare up to 5 mutual funds side-by-side.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="fund-comparison"
+                            config={{ schemes: selectedIds }}
+                            defaultTitle="Fund Comparison"
+                            defaultDescription={`Comparing ${selectedIds.length} funds.`}
+                        />
+                    )}
+                </div>
             </div>
 
             <ErrorAlert message={error} />
@@ -143,6 +168,7 @@ export default function FundCompareView() {
                                     currentlySelected={selectedIds}
                                     initialCategory={lastCategory}
                                     onCategoryChange={setLastCategory}
+                                    isPublicView={isPublicView}
                                 />
                             </DialogContent>
                         </Dialog>
@@ -237,12 +263,13 @@ const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'];
 
 // --- Sub-Component: Fund Selector ---
 function FundSelector({
-    onSelect, currentlySelected, initialCategory, onCategoryChange
+    onSelect, currentlySelected, initialCategory, onCategoryChange, isPublicView = false
 }: {
     onSelect: (schemeCode: number) => void;
     currentlySelected: number[];
     initialCategory: string;
     onCategoryChange: (cat: string) => void;
+    isPublicView?: boolean;
 }) {
     const [categories, setCategories] = useState<string[]>([]);
     const [activeCategory, setActiveCategory] = useState(initialCategory);
@@ -251,9 +278,11 @@ function FundSelector({
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    const service = isPublicView ? publicResearchService : researchService;
+
     // Load Categories
     useEffect(() => {
-        researchService.getCategories().then(cats => {
+        service.getCategories().then(cats => {
             setCategories(cats);
             if (!activeCategory && cats.length > 0) {
                 const defaultCat = cats.includes("Equity") ? "Equity" : cats[0];
@@ -261,13 +290,13 @@ function FundSelector({
                 onCategoryChange(defaultCat);
             }
         });
-    }, []);
+    }, [isPublicView]);
 
     // Load Funds when Category/Page changes
     useEffect(() => {
         if (!activeCategory) return;
         setLoading(true);
-        researchService.getTopPerformingFunds({
+        service.getTopPerformingFunds({
             category: activeCategory,
             page: page,
             size: 10,
@@ -279,7 +308,7 @@ function FundSelector({
             setLoading(false);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeCategory, page]);
+    }, [activeCategory, page, isPublicView]);
 
     const handleCategoryChange = (val: string) => {
         setActiveCategory(val);

@@ -26,7 +26,12 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from 'lucide-react';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function SwpCalculatorView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { publicResearchService } from '@/services/publicResearchService';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+
+export default function SwpCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // Data State
     const [categories, setCategories] = useState<string[]>([]);
     const [category, setCategory] = useState("");
@@ -47,27 +52,58 @@ export default function SwpCalculatorView() {
     const [comboOpen, setComboOpen] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Initial Load
+    // 1. Initial Load (Defaults + Categories)
     useEffect(() => {
-        researchService.getCategories().then(cats => {
-            setCategories(cats);
-            const hybridCat = cats.find(c => c.includes("Hybrid") || c.includes("Balanced"));
-            if (hybridCat) setCategory(hybridCat);
-            else if (cats.length) setCategory(cats[0]);
-        });
-    }, []);
+        // Defaults
+        if (defaultValues) {
+            if (defaultValues.lumpsum) setLumpsum(defaultValues.lumpsum);
+            if (defaultValues.withdrawal) setWithdrawal(defaultValues.withdrawal);
+            if (defaultValues.investDate) setInvestDate(defaultValues.investDate);
+            if (defaultValues.swpStartDate) setSwpStartDate(defaultValues.swpStartDate);
+            if (defaultValues.swpEndDate) setSwpEndDate(defaultValues.swpEndDate);
+            if (defaultValues.frequency) setFrequency(defaultValues.frequency);
+            if (defaultValues.category) setCategory(defaultValues.category);
+        }
 
-    // Load Schemes
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(cats => {
+            setCategories(cats);
+            if (!defaultValues?.category) {
+                const hybridCat = cats.find(c => c.includes("Hybrid") || c.includes("Balanced"));
+                if (hybridCat) setCategory(hybridCat);
+                else if (cats.length) setCategory(cats[0]);
+            }
+        });
+    }, [defaultValues, isPublicView]);
+
+    // 2. Load Schemes and Restore Selection
     useEffect(() => {
         if (!category) return;
-        researchService.getSchemesByCategory(category).then(setSchemes);
-    }, [category]);
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getSchemesByCategory(category).then(list => {
+            setSchemes(list);
+            // Restore Selection if needed
+            if (defaultValues?.schemeCode) {
+                const match = list.find(s => s.schemeCode === defaultValues.schemeCode);
+                if (match) setSelectedScheme(match);
+            }
+        });
+    }, [category, isPublicView, defaultValues]);
+
+    // Auto-Run for Public Views
+    useEffect(() => {
+        if (isPublicView && defaultValues && selectedScheme && !result && !loading) {
+            calculate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPublicView, defaultValues, selectedScheme]);
 
     const calculate = async () => {
         if (!selectedScheme) return;
         setLoading(true);
         try {
-            const res = await researchService.calculateSwp({
+            const service = isPublicView ? publicResearchService : researchService;
+            const res = await service.calculateSwp({
                 schemeCode: selectedScheme.schemeCode,
                 initialInvestmentAmount: lumpsum,
                 investmentDate: investDate,
@@ -94,13 +130,36 @@ export default function SwpCalculatorView() {
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <ArrowDownCircle className="w-6 h-6 text-emerald-500" />
-                    SWP Calculator
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Generate regular income from your investments while keeping capital invested.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <ArrowDownCircle className="w-6 h-6 text-emerald-500" />
+                            SWP Calculator
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Generate regular income from your investments while keeping capital invested.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="research-swp"
+                            config={{
+                                category,
+                                schemeCode: selectedScheme?.schemeCode,
+                                lumpsum,
+                                withdrawal,
+                                investDate,
+                                swpStartDate,
+                                swpEndDate,
+                                frequency
+                            }}
+                            defaultTitle="SWP Income Plan"
+                            defaultDescription={`SWP Plan for ${selectedScheme?.schemeName || 'selected fund'}: ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(withdrawal)} monthly.`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Input Card */}
