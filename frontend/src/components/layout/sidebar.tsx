@@ -10,7 +10,7 @@ import {
     Calculator,
     Users,
     X,
-    FileBarChart,
+    FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -31,14 +31,14 @@ const sidebarItems = [
         icon: Calculator,
     },
     {
+        title: 'Templates',
+        href: '/templates',
+        icon: FileText,
+    },
+    {
         title: 'Leads',
         href: '/leads',
         icon: Users,
-    },
-    {
-        title: 'Reports',
-        href: '/reports',
-        icon: FileBarChart,
     },
 ];
 
