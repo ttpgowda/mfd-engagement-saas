@@ -25,7 +25,12 @@ import { Loader2 } from 'lucide-react';
 
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function FdVsDebtView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { publicResearchService } from '@/services/publicResearchService';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+
+export default function FdVsDebtView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // --- State ---
     const [categories, setCategories] = useState<string[]>([]);
     const [category, setCategory] = useState("");
@@ -45,28 +50,58 @@ export default function FdVsDebtView() {
     const [comboOpen, setComboOpen] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Initial Load
+    // 1. Initial Load (Defaults + Categories)
     useEffect(() => {
-        researchService.getCategories().then(cats => {
-            setCategories(cats);
-            // Default to a Debt category if available
-            const debtCat = cats.find(c => c.toLowerCase().includes("debt")) || cats[0];
-            if (debtCat) setCategory(debtCat);
-        });
-    }, []);
+        // Defaults
+        if (defaultValues) {
+            if (defaultValues.amount) setAmount(defaultValues.amount);
+            if (defaultValues.fdRate) setFdRate(defaultValues.fdRate);
+            if (defaultValues.taxRate) setTaxRate(defaultValues.taxRate);
+            if (defaultValues.startDate) setStartDate(defaultValues.startDate);
+            if (defaultValues.endDate) setEndDate(defaultValues.endDate);
+            if (defaultValues.category) setCategory(defaultValues.category);
+        }
 
-    // Load Schemes
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(cats => {
+            setCategories(cats);
+            if (!defaultValues?.category) {
+                // Default to a Debt category if available
+                const debtCat = cats.find(c => c.toLowerCase().includes("debt")) || cats[0];
+                if (debtCat) setCategory(debtCat);
+            }
+        });
+    }, [defaultValues, isPublicView]);
+
+    // 2. Load Schemes and Restore Selection
     useEffect(() => {
         if (!category) return;
-        researchService.getSchemesByCategory(category).then(setSchemes);
-    }, [category]);
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getSchemesByCategory(category).then(list => {
+            setSchemes(list);
+            // Restore Selection if needed
+            if (defaultValues?.schemeCode) {
+                const match = list.find(s => s.schemeCode === defaultValues.schemeCode);
+                if (match) setSelectedScheme(match);
+            }
+        });
+    }, [category, isPublicView, defaultValues]);
+
+    // Auto-Run for Public Views
+    useEffect(() => {
+        if (isPublicView && defaultValues && selectedScheme && !data && !loading) {
+            handleCalculate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPublicView, defaultValues, selectedScheme]);
 
     const handleCalculate = async () => {
         if (!selectedScheme) return;
         setLoading(true);
         setError(null); // Reset error
         try {
-            const res = await researchService.compareFdVsDebt({
+            const service = isPublicView ? publicResearchService : researchService;
+            const res = await service.compareFdVsDebt({
                 investmentAmount: amount,
                 fdInterestRate: fdRate,
                 debtSchemeCode: selectedScheme.schemeCode,
@@ -92,13 +127,35 @@ export default function FdVsDebtView() {
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <Scale className="w-6 h-6 text-emerald-500" />
-                    Debt Funds vs Fixed Deposit
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Compare post-tax returns of Debt Mutual Funds against traditional Fixed Deposits.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <Scale className="w-6 h-6 text-emerald-500" />
+                            Debt Funds vs Fixed Deposit
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Compare post-tax returns of Debt Mutual Funds against traditional Fixed Deposits.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="fd-vs-debt"
+                            config={{
+                                category,
+                                schemeCode: selectedScheme?.schemeCode,
+                                amount,
+                                fdRate,
+                                taxRate,
+                                startDate,
+                                endDate
+                            }}
+                            defaultTitle="FD vs Debt Comparison"
+                            defaultDescription={`Comparison: FD @ ${fdRate}% vs ${selectedScheme?.schemeName || 'Debt Fund'}.`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Input Card */}

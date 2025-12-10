@@ -18,11 +18,40 @@ const apiClient = axiosPublic.create({
 import { CalculatorViewProps } from "@/features/calculators/types";
 import { useAnalytics } from "@/features/share/hooks/useAnalytics";
 import { LeadCaptureModal } from "@/features/share/components/LeadCaptureModal";
+
+// Research Views
 import TopPerformingFundsView from "@/features/research/views/TopPerformingFundsView";
+import TrailingReturnsView from '@/features/research/views/TrailingReturnsView';
+import RollingReturnsView from '@/features/research/views/RollingReturnsView';
+import TopLumpsumView from '@/features/research/views/TopLumpsumView';
+import SipCalculatorView from '@/features/research/views/SipCalculatorView';
+import StpCalculatorView from '@/features/research/views/StpCalculatorView';
+import SwpCalculatorView from '@/features/research/views/SwpCalculatorView';
+import FdVsDebtView from '@/features/research/views/FdVsDebtView';
+import AnnualReturnsView from '@/features/research/views/AnnualReturnsView';
+import FundRankerView from '@/features/research/views/FundRankerView';
+import CategoryMonitorView from '@/features/research/views/CategoryMonitorView';
+import BenchmarkMonitorView from '@/features/research/views/BenchmarkMonitorView';
+import FundCompareView from '@/features/research/views/FundCompareView';
+
+const RESEARCH_TOOLS: Record<string, { component: React.ElementType, title: string, description: string, icon?: any }> = {
+    'top-performing-funds': { component: TopPerformingFundsView, title: 'Top Performing Funds', description: 'Check out the high growth mutual funds.' },
+    'trailing-returns': { component: TrailingReturnsView, title: 'Trailing Returns', description: 'Analyze trailing returns of funds.' },
+    'rolling-returns': { component: RollingReturnsView, title: 'Rolling Returns', description: 'Analyze period-wise rolling returns.' },
+    'lumpsum-returns': { component: TopLumpsumView, title: 'Top Lumpsum Returns', description: 'Find the best lumpsum investment returns.' },
+    'research-sip': { component: SipCalculatorView, title: 'Historical SIP Returns', description: 'Simulate past SIP performance.' },
+    'research-stp': { component: StpCalculatorView, title: 'STP Calculator', description: 'Simulate Systematic Transfer Plan returns.' },
+    'research-swp': { component: SwpCalculatorView, title: 'SWP Calculator', description: 'Simulate Systematic Withdrawal Plan returns.' },
+    'fd-vs-debt': { component: FdVsDebtView, title: 'FD vs Debt Funds', description: 'Tax-adjusted comparison of FD and Debt Funds.' },
+    'annual-returns': { component: AnnualReturnsView, title: 'Annual Returns Matrix', description: 'Year-wise performance matrix.' },
+    'fund-ranker': { component: FundRankerView, title: 'Fund Ranker', description: 'Top funds ranked by Alpha and returns.' },
+    'category-monitor': { component: CategoryMonitorView, title: 'Category Monitor', description: 'Monitor performance across categories.' },
+    'benchmark-monitor': { component: BenchmarkMonitorView, title: 'Benchmark Monitor', description: 'Monitor performance across benchmarks.' },
+    'fund-comparison': { component: FundCompareView, title: 'Fund Comparison', description: 'Compare multiple funds side-by-side.' },
+};
 
 export default function SharedLinkPage() {
     const params = useParams();
-    // params.tool might be array or string, safer to cast
     const toolSlug = params?.tool as string;
     const shortCode = params?.id as string;
 
@@ -37,8 +66,6 @@ export default function SharedLinkPage() {
 
         const fetchConfig = async () => {
             try {
-                // Determine API URL based on environment or window location
-                // If running on same domain, relative path works
                 const res = await apiClient.get(`/api/public/links/${shortCode}`);
                 setConfig(res.data.config);
             } catch (err: any) {
@@ -68,27 +95,27 @@ export default function SharedLinkPage() {
         );
     }
 
+    // 1. Try Financial Calculator Registry
     let Calculator = getCalculator(toolSlug);
-    let Component: React.ElementType | undefined;
+    let Component: React.ElementType | undefined = Calculator?.component;
 
-    // Manual override for Research Tools that aren't in the Calculator Registry
-    if (toolSlug === 'top-performing-funds') {
-        Component = TopPerformingFundsView;
-        Calculator = {
-            id: 'top-performing-funds',
-            title: 'Top Performing Funds',
-            description: 'Check out the high growth mutual funds.',
-            icon: Loader2, // Placeholder
-            component: TopPerformingFundsView
+    // 2. Try Research Tools Registry
+    const researchTool = RESEARCH_TOOLS[toolSlug];
+    if (researchTool) {
+        Component = researchTool.component;
+        Calculator = { // Mock CalculatorItem interface
+            id: toolSlug,
+            title: researchTool.title,
+            description: researchTool.description,
+            icon: researchTool.icon || Loader2,
+            component: researchTool.component as React.ElementType
         };
-    } else {
-        Component = Calculator?.component;
     }
 
     if (!Component || !Calculator) {
         return (
             <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
-                <p>Tool type '{toolSlug}' not found.</p>
+                <p>Tool type &apos;{toolSlug}&apos; not found.</p>
             </div>
         );
     }
@@ -104,11 +131,8 @@ export default function SharedLinkPage() {
 
             <LeadCaptureModal
                 open={showLeadCapture}
-                onOpenChange={setShowLeadCapture} // Allow user to close it? Or force? 
+                onOpenChange={setShowLeadCapture}
                 shortCode={shortCode}
-            // Usually force or strictly require. But for UX better allow close or make it persistent. 
-            // Implementation plan said "if missing, display a modal ... and then proceed"
-            // Assuming modal is dismissible or has logic. For now default Dialog behavior.
             />
         </div>
     );

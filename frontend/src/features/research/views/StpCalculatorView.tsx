@@ -27,7 +27,12 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from 'lucide-react';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function StpCalculatorView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { publicResearchService } from '@/services/publicResearchService';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+
+export default function StpCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // Data Loading State
     const [categories, setCategories] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -50,16 +55,61 @@ export default function StpCalculatorView() {
     const [targetFund, setTargetFund] = useState<SchemeDropdownDto | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Initial Load
+    // 1. Initial Load (Defaults + Categories)
     useEffect(() => {
-        researchService.getCategories().then(setCategories);
-    }, []);
+        // Defaults
+        if (defaultValues) {
+            if (defaultValues.initialAmount) setInitialAmount(defaultValues.initialAmount);
+            if (defaultValues.transferAmount) setTransferAmount(defaultValues.transferAmount);
+            if (defaultValues.frequency) setFrequency(defaultValues.frequency);
+            if (defaultValues.investDate) setInvestDate(defaultValues.investDate);
+            if (defaultValues.stpDate) setStpDate(defaultValues.stpDate);
+            if (defaultValues.endDate) setEndDate(defaultValues.endDate);
+            if (defaultValues.sourceCat) setSourceCat(defaultValues.sourceCat);
+            if (defaultValues.targetCat) setTargetCat(defaultValues.targetCat);
+        }
+
+        // Fetch Categories
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(setCategories);
+    }, [defaultValues, isPublicView]);
+
+    // 2. Restore Source Fund Object
+    useEffect(() => {
+        if (defaultValues?.sourceSchemeCode && sourceCat) {
+            const service = isPublicView ? publicResearchService : researchService;
+            service.getSchemesByCategory(sourceCat).then(list => {
+                const match = list.find(s => s.schemeCode === defaultValues.sourceSchemeCode);
+                if (match) setSourceFund(match);
+            });
+        }
+    }, [defaultValues, sourceCat, isPublicView]);
+
+    // 3. Restore Target Fund Object
+    useEffect(() => {
+        if (defaultValues?.targetSchemeCode && targetCat) {
+            const service = isPublicView ? publicResearchService : researchService;
+            service.getSchemesByCategory(targetCat).then(list => {
+                const match = list.find(s => s.schemeCode === defaultValues.targetSchemeCode);
+                if (match) setTargetFund(match);
+            });
+        }
+    }, [defaultValues, targetCat, isPublicView]);
+
+    // Auto-Run for Public Views
+    useEffect(() => {
+        if (isPublicView && defaultValues && sourceFund && targetFund && !result && !loading) {
+            calculate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPublicView, defaultValues, sourceFund, targetFund]);
 
     const calculate = async () => {
         if (!sourceFund || !targetFund) return;
         setLoading(true);
         try {
-            const res = await researchService.calculateStp({
+            const service = isPublicView ? publicResearchService : researchService;
+            const res = await service.calculateStp({
                 initialInvestmentAmount: initialAmount,
                 transferAmount,
                 sourceSchemeCode: sourceFund.schemeCode,
@@ -87,13 +137,38 @@ export default function StpCalculatorView() {
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <ArrowRightLeft className="w-6 h-6 text-emerald-500" />
-                    STP Calculator
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Systematic Transfer Plan: Simulate transferring wealth from Debt to Equity.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <ArrowRightLeft className="w-6 h-6 text-emerald-500" />
+                            STP Calculator
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Systematic Transfer Plan: Simulate transferring wealth from Debt to Equity.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="research-stp"
+                            config={{
+                                initialAmount,
+                                transferAmount,
+                                frequency,
+                                investDate,
+                                stpDate,
+                                endDate,
+                                sourceCat,
+                                targetCat,
+                                sourceSchemeCode: sourceFund?.schemeCode,
+                                targetSchemeCode: targetFund?.schemeCode
+                            }}
+                            defaultTitle="STP Analysis"
+                            defaultDescription={`STP from ${sourceFund?.schemeName || 'Debt'} to ${targetFund?.schemeName || 'Equity'}`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Config Card */}
@@ -117,7 +192,7 @@ export default function StpCalculatorView() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground">Fund</label>
-                                <FundCombobox category={sourceCat} selected={sourceFund} onSelect={setSourceFund} placeholder="Select Liquid Fund..." />
+                                <FundCombobox category={sourceCat} selected={sourceFund} onSelect={setSourceFund} placeholder="Select Liquid Fund..." isPublicView={isPublicView} />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground">Lumpsum Investment</label>
@@ -147,7 +222,7 @@ export default function StpCalculatorView() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground">Fund</label>
-                                <FundCombobox category={targetCat} selected={targetFund} onSelect={setTargetFund} placeholder="Select Equity Fund..." />
+                                <FundCombobox category={targetCat} selected={targetFund} onSelect={setTargetFund} placeholder="Select Equity Fund..." isPublicView={isPublicView} />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-muted-foreground">Transfer Amount (STP)</label>
@@ -328,17 +403,19 @@ interface FundComboboxProps {
     selected: SchemeDropdownDto | null;
     onSelect: (scheme: SchemeDropdownDto) => void;
     placeholder: string;
+    isPublicView?: boolean;
 }
 
-function FundCombobox({ category, selected, onSelect, placeholder }: FundComboboxProps) {
+function FundCombobox({ category, selected, onSelect, placeholder, isPublicView = false }: FundComboboxProps) {
     const [open, setOpen] = useState(false);
     const [list, setList] = useState<SchemeDropdownDto[]>([]);
 
     useEffect(() => {
         if (open && category) {
-            researchService.getSchemesByCategory(category).then(setList);
+            const service = isPublicView ? publicResearchService : researchService;
+            service.getSchemesByCategory(category).then(setList);
         }
-    }, [open, category]);
+    }, [open, category, isPublicView]);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>

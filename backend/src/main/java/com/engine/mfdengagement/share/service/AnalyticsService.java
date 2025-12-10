@@ -4,7 +4,7 @@ import com.engine.mfdengagement.share.entity.AnalyticsLog;
 import com.engine.mfdengagement.share.entity.SharedLink;
 import com.engine.mfdengagement.share.repository.AnalyticsLogRepository;
 import com.engine.mfdengagement.share.repository.SharedLinkRepository;
-import com.engine.mfdengagement.tenant.entity.Tenant;
+
 import com.engine.mfdengagement.tenant.config.TenantContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

@@ -18,7 +18,12 @@ import { researchService, BenchmarkMonitorResponse } from '@/services/researchSe
 import { Loader2 } from 'lucide-react';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function BenchmarkMonitorView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
+export default function BenchmarkMonitorView({ isPublicView = false }: CalculatorViewProps) {
     const [data, setData] = useState<BenchmarkMonitorResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'return1Y', direction: 'desc' });
@@ -27,7 +32,8 @@ export default function BenchmarkMonitorView() {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const res = await researchService.getBenchmarkMonitor();
+                const service = isPublicView ? publicResearchService : researchService;
+                const res = await service.getBenchmarkMonitor();
                 setData(res);
             } catch (err: unknown) {
                 console.error(err);
@@ -39,7 +45,7 @@ export default function BenchmarkMonitorView() {
             }
         };
         fetch();
-    }, []);
+    }, [isPublicView]);
 
     const sortedData = React.useMemo(() => {
         if (!data) return [];
@@ -84,10 +90,22 @@ export default function BenchmarkMonitorView() {
             <Card className="border-border/50 shadow-md">
                 <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium uppercase">Market Indices Matrix</CardTitle>
-                        <Badge variant="outline" className="bg-background">
-                            {data.length} Indices
-                        </Badge>
+                        <div className="flex items-center gap-4">
+                            <CardTitle className="text-sm font-medium uppercase">Market Indices Matrix</CardTitle>
+                            <Badge variant="outline" className="bg-background">
+                                {data.length} Indices
+                            </Badge>
+                        </div>
+                        {isPublicView ? (
+                            <PublicShareButton />
+                        ) : (
+                            <ShareDialog
+                                toolSlug="benchmark-monitor"
+                                config={{}}
+                                defaultTitle="Benchmark Monitor"
+                                defaultDescription="Track the performance of major market indices and benchmarks."
+                            />
+                        )}
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">

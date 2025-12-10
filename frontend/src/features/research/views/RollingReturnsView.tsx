@@ -24,7 +24,12 @@ import {
 import { researchService, RollingReturnsResponse, SchemeDropdownDto } from '@/services/researchService';
 import { cn } from "@/lib/utils";
 
-export default function RollingReturnsView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
+export default function RollingReturnsView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [categories, setCategories] = useState<string[]>([]);
     const [category, setCategory] = useState("");
     const [schemes, setSchemes] = useState<SchemeDropdownDto[]>([]);
@@ -41,22 +46,49 @@ export default function RollingReturnsView() {
 
     // Initial Load
     useEffect(() => {
-        researchService.getCategories().then(cats => {
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(cats => {
             setCategories(cats);
-            if (cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
+            if (cats.length > 0 && !defaultValues?.category) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
         });
-    }, []);
+    }, [isPublicView, defaultValues]);
+
+    // Restore Defaults
+    useEffect(() => {
+        if (defaultValues?.category) setCategory(defaultValues.category);
+        if (defaultValues?.period) setPeriod(defaultValues.period);
+    }, [defaultValues]);
 
     useEffect(() => {
         if (!category) return;
-        researchService.getSchemesByCategory(category).then(setSchemes);
-    }, [category]);
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getSchemesByCategory(category).then((list) => {
+            setSchemes(list);
+
+            // Restore Selected Funds if present in defaults
+            if (defaultValues?.schemeCodes && Array.isArray(defaultValues.schemeCodes)) {
+                const restoredFunds = list.filter(s => defaultValues.schemeCodes.includes(s.schemeCode));
+                if (restoredFunds.length > 0) {
+                    setSelectedFunds(restoredFunds);
+                }
+            }
+        });
+    }, [category, isPublicView, defaultValues]);
+
+    // Auto-Run for Public Views
+    useEffect(() => {
+        if (isPublicView && defaultValues && selectedFunds.length > 0 && !data && !loading) {
+            calculate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPublicView, defaultValues, selectedFunds]);
 
     const calculate = async () => {
         if (selectedFunds.length === 0) return;
         setLoading(true);
         try {
-            const res = await researchService.calculateRollingReturns({
+            const service = isPublicView ? publicResearchService : researchService;
+            const res = await service.calculateRollingReturns({
                 schemeCodes: selectedFunds.map(f => f.schemeCode),
                 period,
                 startDate // Optional: send to filter backend graph data
@@ -93,13 +125,31 @@ export default function RollingReturnsView() {
     return (
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <Waves className="w-6 h-6 text-emerald-500" />
-                    Rolling Returns Analysis
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Evaluate fund consistency over every {period} period. The &#34;Gold Standard&#34; of performance analysis.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <Waves className="w-6 h-6 text-emerald-500" />
+                            Rolling Returns Analysis
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Evaluate fund consistency over every {period} period. The &#34;Gold Standard&#34; of performance analysis.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="rolling-returns"
+                            config={{
+                                category,
+                                schemeCodes: selectedFunds.map(f => f.schemeCode),
+                                period
+                            }}
+                            defaultTitle="Rolling Returns Analysis"
+                            defaultDescription={`Analysis of ${selectedFunds.map(f => f.schemeName).join(', ')} over ${period} rolling periods.`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Config Card */}

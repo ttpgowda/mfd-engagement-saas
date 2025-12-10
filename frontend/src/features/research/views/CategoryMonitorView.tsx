@@ -17,7 +17,12 @@ import {
 import { researchService, CategoryMonitorResponse } from '@/services/researchService';
 import { Loader2 } from 'lucide-react';
 
-export default function CategoryMonitorView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { publicResearchService } from '@/services/publicResearchService';
+
+export default function CategoryMonitorView({ isPublicView = false }: CalculatorViewProps) {
     const [data, setData] = useState<CategoryMonitorResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'avgReturn3Y', direction: 'desc' });
@@ -25,14 +30,16 @@ export default function CategoryMonitorView() {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const res = await researchService.getCategoryMonitor();
+                // Use public service if in public view, otherwise default service
+                const service = isPublicView ? publicResearchService : researchService;
+                const res = await service.getCategoryMonitor();
                 setData(res);
             } finally {
                 setLoading(false);
             }
         };
         fetch();
-    }, []);
+    }, [isPublicView]);
 
     // Sorting Logic
     const sortedData = React.useMemo(() => {
@@ -77,10 +84,22 @@ export default function CategoryMonitorView() {
             <Card className="border-border/50 shadow-md">
                 <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium uppercase">Category Performance Matrix</CardTitle>
-                        <Badge variant="outline" className="bg-background">
-                            {data.length} Categories Tracked
-                        </Badge>
+                        <div className="flex items-center gap-4">
+                            <CardTitle className="text-sm font-medium uppercase">Category Performance Matrix</CardTitle>
+                            <Badge variant="outline" className="bg-background">
+                                {data.length} Categories Tracked
+                            </Badge>
+                        </div>
+                        {isPublicView ? (
+                            <PublicShareButton />
+                        ) : (
+                            <ShareDialog
+                                toolSlug="category-monitor"
+                                config={{}}
+                                defaultTitle="Mutual Fund Category Monitor"
+                                defaultDescription="Check out the performance of all mutual fund categories."
+                            />
+                        )}
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">

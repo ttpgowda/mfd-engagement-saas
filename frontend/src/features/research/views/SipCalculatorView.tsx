@@ -26,7 +26,12 @@ import { researchService, HistoricalSipResponse, SchemeDropdownDto } from '@/ser
 import { cn } from "@/lib/utils";
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
-export default function SipCalculatorView() {
+import { CalculatorViewProps } from '@/features/calculators/types';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { publicResearchService } from '@/services/publicResearchService';
+import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+
+export default function SipCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // --- State ---
     const [categories, setCategories] = useState<string[]>([]);
     const [category, setCategory] = useState("");
@@ -47,19 +52,52 @@ export default function SipCalculatorView() {
     const [result, setResult] = useState<HistoricalSipResponse | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Initial Load
+    // 1. Initial Load of Defaults
     useEffect(() => {
-        researchService.getCategories().then(cats => {
-            setCategories(cats);
-            if (cats.length > 0) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
-        });
-    }, []);
+        if (defaultValues?.amount) setAmount(defaultValues.amount);
+        if (defaultValues?.frequency) setFrequency(defaultValues.frequency);
+        if (defaultValues?.startDate) setStartDate(defaultValues.startDate);
+        if (defaultValues?.endDate) setEndDate(defaultValues.endDate);
+        if (defaultValues?.isStepUp !== undefined) setIsStepUp(defaultValues.isStepUp);
+        if (defaultValues?.stepUpPercent) setStepUpPercent(defaultValues.stepUpPercent);
+        if (defaultValues?.category) setCategory(defaultValues.category);
+    }, [defaultValues]);
 
-    // Load Schemes on Category Change
+    // 2. Initial Load of Categories
+    useEffect(() => {
+        const service = isPublicView ? publicResearchService : researchService;
+        service.getCategories().then(cats => {
+            setCategories(cats);
+            if (cats.length > 0 && !defaultValues?.category) setCategory(cats.includes("Equity") ? "Equity" : cats[0]);
+        });
+    }, [isPublicView, defaultValues]);
+
+    // 3. Load Schemes on Category Change AND Restore Funds
     useEffect(() => {
         if (!category) return;
-        researchService.getSchemesByCategory(category).then(setSchemes);
-    }, [category]);
+        const service = isPublicView ? publicResearchService : researchService;
+
+        service.getSchemesByCategory(category).then((list) => {
+            setSchemes(list);
+
+            // Restore Selected Funds logic
+            if (defaultValues?.schemeCodes && Array.isArray(defaultValues.schemeCodes)) {
+                const fundsToRestore = list.filter(s => defaultValues.schemeCodes.includes(s.schemeCode));
+                // Only set if we found matches to avoid overwriting user selection with empty if no match
+                if (fundsToRestore.length > 0) {
+                    setSelectedFunds(fundsToRestore);
+                }
+            }
+        });
+    }, [category, isPublicView, defaultValues]);
+
+    // Auto-Run for Public Views
+    useEffect(() => {
+        if (isPublicView && defaultValues && selectedFunds.length > 0 && !result && !loading) {
+            calculate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isPublicView, defaultValues, selectedFunds]);
 
     // Handlers
     const addFund = (fund: SchemeDropdownDto) => {
@@ -77,7 +115,8 @@ export default function SipCalculatorView() {
         if (selectedFunds.length === 0) return;
         setLoading(true);
         try {
-            const res = await researchService.calculateHistoricalSip({
+            const service = isPublicView ? publicResearchService : researchService;
+            const res = await service.calculateHistoricalSip({
                 schemeCodes: selectedFunds.map(f => f.schemeCode),
                 amount,
                 frequency,
@@ -131,13 +170,36 @@ export default function SipCalculatorView() {
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <TrendingUp className="w-6 h-6 text-emerald-500" />
-                    Mutual Fund SIP Calculator
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Backtest your SIP returns with actual historical data.
-                </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <TrendingUp className="w-6 h-6 text-emerald-500" />
+                            Mutual Fund SIP Calculator
+                        </h1>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Backtest your SIP returns with actual historical data.
+                        </p>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="research-sip"
+                            config={{
+                                category,
+                                schemeCodes: selectedFunds.map(f => f.schemeCode),
+                                amount,
+                                frequency,
+                                startDate,
+                                endDate,
+                                isStepUp,
+                                stepUpPercent
+                            }}
+                            defaultTitle="SIP Returns Analysis"
+                            defaultDescription={`Historical SIP analysis for ${selectedFunds.map(f => f.schemeName).join(', ')}.`}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Input Card */}
