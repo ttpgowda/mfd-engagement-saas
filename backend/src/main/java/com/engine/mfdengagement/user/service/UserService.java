@@ -28,7 +28,7 @@ public class UserService {
     public User createUser(UserDTO dto) {
 
         // 1. Fetch the Tenant entity using the logical tenant ID from the DTO
-        //    We use findByTenantId, which you added to TenantRepository earlier.
+        // We use findByTenantId, which you added to TenantRepository earlier.
         Tenant tenant = tenantRepository.findByTenantId(dto.getTenantId())
                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found with ID: " + dto.getTenantId()));
 
@@ -48,13 +48,13 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUsers() {
-        List<User> users=  userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
         return userMapper.toDtoList(users);
     }
 
     public UserDTO getUserById(Long id) {
-        User user =  userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         return userMapper.toDto(user);
@@ -88,4 +88,3 @@ public class UserService {
         userRepository.delete(user);
     }
 }
-

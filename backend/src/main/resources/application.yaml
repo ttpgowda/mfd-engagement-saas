@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://${DATASOURCE_URL}/${DATASOURCE_DATABASE}
     username: ${DATASOURCE_USERNAME}

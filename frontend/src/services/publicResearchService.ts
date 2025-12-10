@@ -91,6 +91,17 @@ export const publicResearchService = {
     },
 
     /**
+     * Get Top Funds Ranker
+     * Endpoint: /api/public/research/funds/ranker
+     */
+    getTopFunds: async (category: string = 'Equity', sortBy: string = 'alpha_3y'): Promise<FundRankerResponse[]> => {
+        const response = await publicApi.get(`/api/public/research/funds/ranker`, {
+            params: { category, sortBy },
+        });
+        return response.data;
+    },
+
+    /**
      * Get Top Performing Funds
      * Endpoint: /api/public/research/funds/top-performing
      */

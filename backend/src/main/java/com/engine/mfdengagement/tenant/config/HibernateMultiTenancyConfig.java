@@ -1,6 +1,5 @@
 package com.engine.mfdengagement.tenant.config;
 
-
 import org.hibernate.cfg.MultiTenancySettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +17,7 @@ public class HibernateMultiTenancyConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource,
             JpaVendorAdapter jpaVendorAdapter,
-            TenantIdentifierResolver tenantResolver
-    ) {
+            TenantIdentifierResolver tenantResolver) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("hibernate.multiTenancy", "DISCRIMINATOR"); // Correct string form
         properties.put(MultiTenancySettings.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantResolver);
