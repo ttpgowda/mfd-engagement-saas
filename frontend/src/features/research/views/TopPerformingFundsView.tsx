@@ -17,35 +17,46 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { researchService, TopFundsRequest, TopFundsResponse } from '@/services/researchService';
+import { publicResearchService } from '@/services/publicResearchService';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import { ShareDialog } from '@/features/share/components/ShareDialog';
 
-export default function TopPerformingFundsView() {
+interface TopPerformingFundsViewProps {
+    defaultValues?: Partial<TopFundsRequest>;
+    isPublicView?: boolean;
+}
+
+export default function TopPerformingFundsView({ defaultValues, isPublicView = false }: TopPerformingFundsViewProps) {
     const [categories, setCategories] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
 
     // Query State
     const [request, setRequest] = useState<TopFundsRequest>({
-        category: '',
+        category: defaultValues?.category || '',
         page: 0,
         size: 15,
         sortBy: 'return_3y',
-        sortDirection: 'DESC'
+        sortDirection: 'DESC',
+        ...defaultValues
     });
 
     const [data, setData] = useState<TopFundsResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
 
+    // Service Selection
+    const service = isPublicView ? publicResearchService : researchService;
+
     // 1. Load Categories
     useEffect(() => {
-        researchService.getCategories().then(cats => {
+        service.getCategories().then(cats => {
             setCategories(cats);
-            if (cats.length > 0) {
+            if (cats.length > 0 && !request.category) {
                 // Default to Equity if available, else first category
                 const defaultCat = cats.includes('Equity') ? 'Equity' : cats[0];
                 setRequest(prev => ({ ...prev, category: defaultCat }));
             }
         });
-    }, []);
+    }, [isPublicView]); // Re-run if mode changes (unlikely) or on mount
 
     // 2. Fetch Data
     useEffect(() => {
@@ -53,7 +64,7 @@ export default function TopPerformingFundsView() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await researchService.getTopPerformingFunds(request);
+                const res = await service.getTopPerformingFunds(request);
                 setData(res);
             } catch (err: unknown) {
                 console.error("Failed to fetch top funds", err);
@@ -64,7 +75,7 @@ export default function TopPerformingFundsView() {
             }
         };
         fetchData();
-    }, [request]);
+    }, [request, isPublicView]);
 
     const handleSort = (field: string) => {
         setRequest(prev => ({
@@ -107,23 +118,36 @@ export default function TopPerformingFundsView() {
                     </p>
                 </div>
 
-                {/* Added min-w-0 to prevent flex overflow issues */}
-                <div className="w-full md:w-[280px] min-w-0 space-y-1.5">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">Category</label>
-                    <Select
-                        value={request.category}
-                        onValueChange={(v) => setRequest(prev => ({ ...prev, category: v, page: 0 }))}
-                    >
-                        <SelectTrigger className="h-10 bg-card border-input/60 shadow-sm w-full">
-                            {/* TRUNCATION FIX: Wraps text to prevent layout breaking on mobile */}
-                            <span className="truncate text-left block w-full pr-2">
-                                <SelectValue placeholder="Select Category" />
-                            </span>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                        </SelectContent>
-                    </Select>
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 w-full md:w-auto">
+                    {/* Added min-w-0 to prevent flex overflow issues */}
+                    <div className="w-full md:w-[280px] min-w-0 space-y-1.5 flex-1">
+                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">Category</label>
+                        <Select
+                            value={request.category}
+                            onValueChange={(v) => setRequest(prev => ({ ...prev, category: v, page: 0 }))}
+                        >
+                            <SelectTrigger className="h-10 bg-card border-input/60 shadow-sm w-full">
+                                {/* TRUNCATION FIX: Wraps text to prevent layout breaking on mobile */}
+                                <span className="truncate text-left block w-full pr-2">
+                                    <SelectValue placeholder="Select Category" />
+                                </span>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {!isPublicView && (
+                        <div className="mb-0.5">
+                            <ShareDialog
+                                toolSlug="top-performing-funds"
+                                config={request}
+                                defaultTitle="Top Performing Funds Report"
+                                defaultDescription={`Check out the top performing ${request.category} mutual funds.`}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 

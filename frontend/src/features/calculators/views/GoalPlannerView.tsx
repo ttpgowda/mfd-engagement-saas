@@ -30,12 +30,16 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function GoalPlannerView() {
-    const [currentCost, setCurrentCost] = useState(500000); // 5 Lakhs
-    const [yearsToGoal, setYearsToGoal] = useState(5);
-    const [currentSavings, setCurrentSavings] = useState(50000);
-    const [inflationRate, setInflationRate] = useState(6);
-    const [returnRate, setReturnRate] = useState(12);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function GoalPlannerView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [currentCost, setCurrentCost] = useState<number>(defaultValues?.currentCost ?? 500000); // 5 Lakhs
+    const [yearsToGoal, setYearsToGoal] = useState<number>(defaultValues?.yearsToGoal ?? 5);
+    const [currentSavings, setCurrentSavings] = useState<number>(defaultValues?.currentSavings ?? 50000);
+    const [inflationRate, setInflationRate] = useState<number>(defaultValues?.inflationRate ?? 6);
+    const [returnRate, setReturnRate] = useState<number>(defaultValues?.returnRate ?? 12);
 
     const { summary, chartData } = useMemo(() =>
         calculateGoalPlanner(
@@ -52,7 +56,22 @@ export default function GoalPlannerView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Goal Planner</CardTitle><CardDescription>Plan for your financial goals.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Goal Planner</CardTitle>
+                        <CardDescription>Plan for your financial goals.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="goal-planner"
+                            config={{ currentCost, yearsToGoal, currentSavings, inflationRate, returnRate }}
+                            defaultTitle="Financial Goal Plan"
+                            defaultDescription={`Plan for ₹${currentCost.toLocaleString()} goal in ${yearsToGoal} years.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Current Cost of Goal</Label><span className="text-sm font-medium text-primary">₹{currentCost.toLocaleString()}</span></div>

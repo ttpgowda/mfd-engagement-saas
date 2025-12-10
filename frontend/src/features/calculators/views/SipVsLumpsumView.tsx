@@ -31,11 +31,15 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function SipVsLumpsumView() {
-    const [amount, setAmount] = useState(500000); // 5 Lakhs
-    const [years, setYears] = useState(10);
-    const [rate, setRate] = useState(12);
-    const [inflationAdjusted, setInflationAdjusted] = useState(false);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function SipVsLumpsumView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 500000); // 5 Lakhs
+    const [years, setYears] = useState<number>(defaultValues?.years ?? 10);
+    const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
+    const [inflationAdjusted, setInflationAdjusted] = useState<boolean>(defaultValues?.inflationAdjusted ?? false);
 
     const { chartData, summary } = useMemo(() =>
         calculateSipVsLumpsum(amount, years, rate, inflationAdjusted),
@@ -45,7 +49,22 @@ export default function SipVsLumpsumView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Comparison Setup</CardTitle><CardDescription>Compare investing all at once vs. spreading it out.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Comparison Setup</CardTitle>
+                        <CardDescription>Compare investing all at once vs. spreading it out.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="sip-vs-lumpsum"
+                            config={{ amount, years, rate, inflationAdjusted }}
+                            defaultTitle="SIP vs Lumpsum Comparison"
+                            defaultDescription={`Comparing ₹${amount.toLocaleString()} investment over ${years} years.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Total Capital to Invest (₹)</Label>{amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</div>

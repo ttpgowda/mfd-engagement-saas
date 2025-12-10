@@ -30,10 +30,14 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function InflationImpactView() {
-    const [currentCost, setCurrentCost] = useState(100000); // 1 Lakh
-    const [inflationRate, setInflationRate] = useState(6);
-    const [timePeriodYears, setTimePeriodYears] = useState(10);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function InflationImpactView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [currentCost, setCurrentCost] = useState<number>(defaultValues?.currentCost ?? 100000); // 1 Lakh
+    const [inflationRate, setInflationRate] = useState<number>(defaultValues?.inflationRate ?? 6);
+    const [timePeriodYears, setTimePeriodYears] = useState<number>(defaultValues?.timePeriodYears ?? 10);
 
     const { summary, chartData } = useMemo(() =>
         calculateInflationImpact(
@@ -48,7 +52,22 @@ export default function InflationImpactView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Inflation Impact</CardTitle><CardDescription>See how inflation erodes purchasing power.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Inflation Impact</CardTitle>
+                        <CardDescription>See how inflation erodes purchasing power.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="inflation-impact"
+                            config={{ currentCost, inflationRate, timePeriodYears }}
+                            defaultTitle="Inflation Analysis"
+                            defaultDescription={`See the impact of ${inflationRate}% inflation on ₹${currentCost.toLocaleString()} over ${timePeriodYears} years.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Current Cost</Label><span className="text-sm font-medium text-primary">₹{currentCost.toLocaleString()}</span></div>

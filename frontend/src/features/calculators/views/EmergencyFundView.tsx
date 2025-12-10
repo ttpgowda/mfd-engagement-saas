@@ -30,9 +30,13 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
     </div>
 );
 
-export default function EmergencyFundView() {
-    const [monthlyExpenses, setMonthlyExpenses] = useState(50000);
-    const [monthsOfCoverage, setMonthsOfCoverage] = useState(6);
+import { CalculatorViewProps } from "../types";
+import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+
+export default function EmergencyFundView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+    const [monthlyExpenses, setMonthlyExpenses] = useState<number>(defaultValues?.monthlyExpenses ?? 50000);
+    const [monthsOfCoverage, setMonthsOfCoverage] = useState<number>(defaultValues?.monthsOfCoverage ?? 6);
 
     const { summary, chartData } = useMemo(() =>
         calculateEmergencyFund(
@@ -46,7 +50,22 @@ export default function EmergencyFundView() {
         <div className="grid gap-6 lg:grid-cols-12">
             {/* Configuration */}
             <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader><CardTitle>Emergency Fund</CardTitle><CardDescription>Calculate how much you need for a rainy day.</CardDescription></CardHeader>
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle>Emergency Fund</CardTitle>
+                        <CardDescription>Calculate how much you need for a rainy day.</CardDescription>
+                    </div>
+                    {isPublicView ? (
+                        <PublicShareButton />
+                    ) : (
+                        <ShareDialog
+                            toolSlug="emergency-fund"
+                            config={{ monthlyExpenses, monthsOfCoverage }}
+                            defaultTitle="Emergency Fund Plan"
+                            defaultDescription={`Required safety net for ${monthsOfCoverage} months of expenses.`}
+                        />
+                    )}
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Monthly Expenses</Label><span className="text-sm font-medium text-primary">₹{monthlyExpenses.toLocaleString()}</span></div>
