@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { UserService } from '@/services/api';
+import { UserService, AuthService } from '@/services/api';
 
 export function UserNav() {
     const router = useRouter();
@@ -28,7 +28,15 @@ export function UserNav() {
         enabled: typeof window !== 'undefined' && (!!localStorage.getItem('token') || document.cookie.includes('token=')), // Fetch if token exists in storage or cookie
     });
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            if (user?.username) {
+                await AuthService.logout(user.username);
+            }
+        } catch (e) {
+            console.error("Logout failed", e);
+        }
+
         // Clear tokens
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
