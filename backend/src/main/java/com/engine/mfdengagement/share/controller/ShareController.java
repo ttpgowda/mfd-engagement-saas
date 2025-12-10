@@ -50,12 +50,25 @@ public class ShareController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/public/links/{shortCode}/leads")
+    public ResponseEntity<Void> captureLead(@PathVariable String shortCode, @RequestBody CaptureLeadRequest request) {
+        shareService.captureLead(shortCode, request.getName(), request.getEmail(), request.getPhone());
+        return ResponseEntity.ok().build();
+    }
+
     @Data
     public static class CreateLinkRequest {
         private String toolSlug;
         private Map<String, Object> config;
         private String title;
         private String description;
+    }
+
+    @Data
+    public static class CaptureLeadRequest {
+        private String name;
+        private String email;
+        private String phone;
     }
 
     @Data
@@ -71,6 +84,6 @@ public class ShareController {
         private final String toolSlug;
         private final Map<String, Object> config;
         private final String tenantId;
-        // Add branding fields here later
+        // TODO Add branding fields here later
     }
 }
