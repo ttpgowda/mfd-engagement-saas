@@ -118,5 +118,9 @@ export const AuthService = {
     resetPassword: async (token: string, newPassword: string) => {
         const response = await api.post(`/auth/reset-password?token=${token}&newPassword=${newPassword}`);
         return response.data;
+    },
+    logout: async (username: string) => {
+        const response = await api.post(`/auth/logout?username=${username}`);
+        return response.data;
     }
 };

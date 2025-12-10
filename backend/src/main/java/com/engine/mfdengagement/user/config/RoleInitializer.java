@@ -31,14 +31,18 @@ public class RoleInitializer implements CommandLineRunner {
         createPermissionIfNotFound("LEAD_WRITE", "Create or update leads");
         createPermissionIfNotFound("ROLE_READ", "Read roles and permissions");
         createPermissionIfNotFound("ROLE_WRITE", "Manage roles and permissions");
+        createPermissionIfNotFound("TEMPLATE_READ", "Read templates");
+        createPermissionIfNotFound("TEMPLATE_WRITE", "Manage templates");
 
         // 2. Define Roles and Assign Permissions
         createRoleIfNotFound("SUPER_ADMIN", List.of(
                 "USER_READ", "USER_WRITE", "TENANT_MANAGE", "TEAM_MANAGE",
-                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE"));
+                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE",
+                "TEMPLATE_READ", "TEMPLATE_WRITE"));
         createRoleIfNotFound("COMPANY_ADMIN", List.of(
                 "USER_READ", "USER_WRITE", "TEAM_MANAGE",
-                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE"));
+                "MUTUAL_FUND_READ", "LEAD_READ", "LEAD_WRITE", "ROLE_READ", "ROLE_WRITE",
+                "TEMPLATE_READ", "TEMPLATE_WRITE"));
         createRoleIfNotFound("MANAGER", List.of("USER_READ", "TEAM_MANAGE", "LEAD_READ", "LEAD_WRITE"));
         createRoleIfNotFound("SUPPORT", List.of("USER_READ", "LEAD_READ"));
         createRoleIfNotFound("USER", List.of("USER_READ"));

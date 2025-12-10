@@ -10,6 +10,7 @@ import {
     Calculator,
     Users,
     X,
+    FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -28,6 +29,11 @@ const sidebarItems = [
         title: 'Calculators',
         href: '/calculators',
         icon: Calculator,
+    },
+    {
+        title: 'Templates',
+        href: '/templates',
+        icon: FileText,
     },
     {
         title: 'Leads',
