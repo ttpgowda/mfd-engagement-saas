@@ -32,6 +32,20 @@ jwt:
 app:
   domain: localhost # Default to localhost for dev, override with thewealthweb.in for prod
 
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
+logging:
+  file:
+    name: logs/backend.log
+  level:
+    root: INFO
+    com.engine.mfdengagement: DEBUG
+
+
 
 MAIL_FROM: info@thewealthweb.in
 MAIL_HOST: smtpout.secureserver.net

@@ -9,16 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
     LayoutDashboard,
+    LayoutTemplate,
     Users,
     Menu,
     Command,
     Settings
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function AdminNavbar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const routes = [
         {
@@ -26,6 +32,12 @@ export function AdminNavbar() {
             label: 'Dashboard',
             icon: LayoutDashboard,
             active: pathname === '/admin/dashboard',
+        },
+        {
+            href: '/admin/templates',
+            label: 'Templates',
+            icon: LayoutTemplate,
+            active: pathname?.startsWith('/admin/templates'),
         },
         {
             href: '/admin/tenants',
@@ -40,6 +52,45 @@ export function AdminNavbar() {
             active: pathname === '/admin/settings',
         },
     ];
+
+    if (!isMounted) {
+        return (
+            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center px-4 md:px-8">
+                    <div className="md:hidden mr-2">
+                        <Button variant="ghost" size="icon">
+                            <Menu className="h-5 w-5" />
+                        </Button>
+                    </div>
+                    <div className="mr-4 hidden md:flex">
+                        <Link href="/admin/dashboard" className="mr-6 flex items-center space-x-2">
+                            <div className="bg-primary/10 p-1.5 rounded-lg">
+                                <Command className="h-5 w-5 text-primary" />
+                            </div>
+                            <span className="hidden font-bold sm:inline-block">
+                                MFD Admin
+                            </span>
+                        </Link>
+                        <nav className="flex items-center space-x-6 text-sm font-medium">
+                            {routes.map((route) => (
+                                <Link
+                                    key={route.href}
+                                    href={route.href}
+                                    className={cn(
+                                        "flex items-center gap-2 transition-colors hover:text-primary",
+                                        route.active ? "text-foreground font-semibold" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <route.icon className={cn("h-4 w-4", route.active ? "text-primary" : "text-muted-foreground")} />
+                                    {route.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        );
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

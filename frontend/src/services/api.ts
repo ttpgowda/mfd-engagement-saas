@@ -1,4 +1,5 @@
 import api from '@/lib/axios';
+export { api };
 import { z } from 'zod';
 
 export const TenantSchema = z.object({

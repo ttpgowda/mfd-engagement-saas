@@ -7,6 +7,9 @@ export enum TemplateCategory {
     BANNER = 'BANNER',
     INVESTMENT_TIP = 'INVESTMENT_TIP',
     FUND_PERFORMANCE = 'FUND_PERFORMANCE',
+    FESTIVAL = 'FESTIVAL',
+    QUOTE = 'QUOTE',
+    GENERIC = 'GENERIC',
     CUSTOM = 'CUSTOM'
 }
 
@@ -15,6 +18,7 @@ export interface Template {
     name: string;
     description?: string;
     category: TemplateCategory;
+    subCategory?: string;
     templateData?: Record<string, any>;
     logoUrl?: string;
     isPublic?: boolean;
