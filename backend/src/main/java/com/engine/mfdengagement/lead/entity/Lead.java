@@ -27,6 +27,10 @@ public class Lead extends BaseEntity {
     private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shared_link_id")
+    private com.engine.mfdengagement.share.entity.SharedLink sharedLink;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id")
     private com.engine.mfdengagement.user.entity.User assignedTo;
 

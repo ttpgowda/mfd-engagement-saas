@@ -24,6 +24,7 @@ import java.util.Optional;
 public class ShareService {
 
     private final SharedLinkRepository sharedLinkRepository;
+    private final com.engine.mfdengagement.lead.repository.LeadRepository leadRepository;
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
@@ -102,5 +103,24 @@ public class ShareService {
             code = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         } while (sharedLinkRepository.existsByShortCode(code));
         return code;
+    }
+
+    @Transactional
+    public void captureLead(String shortCode, String name, String email, String phone) {
+        // Global lookup reuse
+        Optional<SharedLink> linkOpt = getLink(shortCode);
+        SharedLink link = linkOpt.orElseThrow(() -> new RuntimeException("Link not found"));
+
+        com.engine.mfdengagement.lead.entity.Lead lead = com.engine.mfdengagement.lead.entity.Lead.builder()
+                .name(name)
+                .email(email)
+                .phone(phone)
+                .source("Shared Link")
+                .sharedLink(link)
+                .tenant(link.getTenant())
+                .status(com.engine.mfdengagement.lead.entity.LeadStatus.NEW)
+                .build();
+
+        leadRepository.save(lead);
     }
 }
