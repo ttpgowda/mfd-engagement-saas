@@ -5,6 +5,10 @@ spring:
     url: jdbc:postgresql://${DATASOURCE_URL}/${DATASOURCE_DATABASE}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
