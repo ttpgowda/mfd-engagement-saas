@@ -17,14 +17,14 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    @Value("${jwt.refresh.expiration.ms:86400000}") // 24 hours default
+    @Value("${jwt.refresh.expiration.ms:604800000}") // 7 days default
     private Long refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
     // In RefreshTokenService
-    public RefreshToken createRefreshToken(User user) { // Change parameter type from String username to User user
+    public RefreshToken createRefreshToken(User user) {
         Optional<RefreshToken> existingTokenOpt = refreshTokenRepository.findByUser(user);
 
         RefreshToken refreshToken = existingTokenOpt.orElse(new RefreshToken());

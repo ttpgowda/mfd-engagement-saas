@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-    Calculator, Plus, X, Calendar, Search, TrendingUp, Check, Loader2
+    Calculator, X, Search, TrendingUp, Check, Loader2
 } from 'lucide-react';
 import {
     Card, CardContent, CardHeader, CardTitle

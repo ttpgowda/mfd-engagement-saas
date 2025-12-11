@@ -11,6 +11,7 @@ import {
     Users,
     X,
     FileText,
+    FileBarChart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -39,6 +40,11 @@ const sidebarItems = [
         title: 'Leads',
         href: '/leads',
         icon: Users,
+    },
+    {
+        title: 'Reports',
+        href: '/reports',
+        icon: FileBarChart,
     },
 ];
 
