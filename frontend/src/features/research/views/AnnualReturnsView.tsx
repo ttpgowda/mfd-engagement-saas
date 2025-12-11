@@ -7,7 +7,7 @@ import { CalculatorViewProps } from '@/features/calculators/types';
 import { ShareDialog } from '@/features/share/components/ShareDialog';
 import { PublicShareButton } from '@/features/share/components/PublicShareButton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { TrendingUp, Search, Calendar, Check } from 'lucide-react';
+import { Search, Calendar, Check } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
