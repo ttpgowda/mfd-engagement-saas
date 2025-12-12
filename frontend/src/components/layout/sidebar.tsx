@@ -32,11 +32,6 @@ const sidebarItems = [
         icon: Calculator,
     },
     {
-        title: 'Templates',
-        href: '/templates',
-        icon: FileText,
-    },
-    {
         title: 'Leads',
         href: '/leads',
         icon: Users,
