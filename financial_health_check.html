@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>:: SEBI Investor | Get your Financial Health Check Report</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="assets/fonts.css" rel="stylesheet" type="text/css" />
+    <link href="assets/layouts/layout3/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="assets/global/plugins/font-aws/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="newcss/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/global/plugins/bootstrap-v5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <link href="assets/global/plugins/cubeportfolio/css/cubeportfolio.css" rel="stylesheet" type="text/css" />
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="assets/global/css/components-md.min.css" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="assets/global/css/plugins-md.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/custom.css" rel="stylesheet" type="text/css" />
+    <link href="assets/layouts/layout3/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/layouts/layout3/css/themes/default.min.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="newcss/owl.carousel.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico" />
+    <style>
+        .traffic {
+            background-color: #2c3e50;
+            border-radius: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 15px 0;
+            height: 175px;
+            width: 70px;
+            min-width: 70px;
+        }
+
+        .circle {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 100%;
+            position: relative;
+            height: 40px;
+            width: 40px;
+        }
+
+        .circle::after {
+            border-right: 4px solid rgba(255, 255, 255, 0.6);
+            border-radius: 100%;
+            content: ' ';
+            position: absolute;
+            top: 5px;
+            left: 0px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .circle.red {
+            background-color: #c0392b;
+            box-shadow: 0 0 20px 5px #c0392b;
+        }
+
+        .circle.yellow {
+            background-color: #FFFF00;
+            box-shadow: 0 0 20px 5px #FFFF00;
+        }
+
+        .circle.green {
+            background-color: #2ecc71;
+            box-shadow: 0 0 20px 5px #2ecc71;
+        }
+
+        .top-social-links ul {
+            margin-bottom: 0px !important;
+        }
+
+        .top-social-links3 ul {
+            margin-bottom: 0px !important;
+        }
+
+        a {
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+            outline: none !important;
+        }
+
+        a:active,
+        a:hover {
+            text-decoration: none;
+            outline: 0 none;
+        }
+
+        .animate-top {
+            text-transform: uppercase;
+            background-image: linear-gradient(-225deg, #231557 0%, #ff005e 29%, #242c42 67%, #fff800 100%);
+            background-size: 50% auto;
+            color: #fff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textclip 2s linear infinite;
+            display: inline-block;
+            font-size: 19px;
+            text-align: center;
+        }
+
+        @keyframes textclip {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        /*.col-md-6{
+            background-color: #fff;
+            padding-top: 30px;
+        }*/
+        .img {
+            border: 1px solid #000;
+        }
+
+        .page-content {
+            padding: 25px 0 !important;
+            background-color: #e9eef0;
+        }
+
+        .btn_center {
+            position: relative;
+            left: 50%;
+            top: 10px;
+        }
+
+        .btn {
+            margin: 0px 0px 0px 20px;
+        }
+
+        .mr-10 {
+            margin-top: 10px;
+        }
+
+        .required {
+            color: #e02222;
+            font-size: 12px;
+            padding-left: 2px;
+        }
+
+        #error {
+            color: #e91b1b;
+        }
+
+        a {
+            text-shadow: none;
+            color: #337ab7;
+            /*            font-weight: 600 !important;*/
+        }
+
+        .text-color {
+            color: #2e3292;
+            font-weight: 700 !important;
+        }
+
+        #show_blocks {
+            display: none;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+        }
+
+        #show_blocks_content {
+            margin: 10px;
+        }
+
+        .text-color-red {
+            color: #EC1212 !important;
+            font-size: 24px;
+        }
+
+        .text-color-orange {
+            color: #907326 !important;
+            font-size: 24px;
+        }
+
+        .text-color-green {
+            color: #008A29 !important;
+            font-size: 24px;
+        }
+
+        #report_red {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #report_orange {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #report_green {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #rep_subdata {
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        #rep_subdata1 {
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        #rep_subdata2 {
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        #json-holder {
+            font-size: 18px;
+        }
+
+        #show_blocks {
+            font-size: 18px;
+        }
+
+        #results {
+            font-size: 18px;
+            margin: 30px 10px 10px 10px;
+        }
+
+        .blink_green {
+            animation: blink_green 1s 3;
+        }
+
+        .blink_red {
+            animation: blink_red 1s 3;
+        }
+
+        .blink_yellow {
+            animation: blink_yellow 1s 3;
+        }
+
+        #hint {
+            color: #2e3292;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @keyframes blink_green {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #008A29;
+            }
+        }
+
+        @keyframes blink_red {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #EC1212;
+            }
+        }
+
+        @keyframes blink_yellow {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #907326;
+            }
+        }
+    </style>
+
+<body class="page-container-bg-solid page-md page-header-menu-fixed">
+    <form name="homeForm" method="post" onsubmit="return false;">
+        <nav class="navbar navbar-expand-lg">
+            <div class="page-wrapper">
+                <div class="page-wrapper-row">
+                    <script src="assets/header.js"></script>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper-row full-height">
+            <div class="page-wrapper-middle">
+                <!-- BEGIN CONTAINER -->
+                <div class="page-container">
+                    <!-- BEGIN CONTENT -->
+                    <div class="page-content-wrapper">
+                        <!-- BEGIN CONTENT BODY -->
+                        <!-- BEGIN PAGE HEAD-->
+                        <div class="page-head">
+                            <div class="container">
+                                <!-- BEGIN PAGE TITLE -->
+                                <ol class="page-breadcrumb breadcrumb">
+                                    <li>
+                                        <a href="index.html">Home</a>
+                                        <i class="fa fa-circle"></i>
+                                    </li>
+                                    <li>
+                                        <span>Financial Health Check</span>
+                                    </li>
+                                </ol>
+                                <!-- <div class="page-title">
+                                <h1>Financial Health Check</h1>
+                            </div> -->
+                                <!-- END PAGE TITLE -->
+                            </div>
+                        </div>
+                        <!-- END PAGE HEAD-->
+                        <!-- BEGIN PAGE CONTENT BODY -->
+                        <div class="page-content">
+                            <div class="container">
+                                <!-- BEGIN PAGE CONTENT INNER -->
+                                <div class="page-content-inner">
+                                    <div class="row">
+                                        <div class="portlet light media-section clearfix">
+                                            <div id="ques_wrap">
+                                                <div id="ques_start">
+                                                    <h1 class="text-color">Financial Health Check</h1>
+                                                    <div class="row mr-10">
+                                                        <div class="col-md-6" tabindex="0">
+                                                            <label id="json-holder" class="text-color"
+                                                                aria-describedby="json-holder"></label>
+                                                            <!-- <span id="required_icon" class="required" aria-required="true" style="display:none;">*</span> -->
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <select class="form-select" id="sel" aria-describedby="sel"
+                                                                style="display:none;color: #2e3292;font-weight: 700;border: 1px solid #2e3292;">
+                                                            </select>
+                                                            <span id="error"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mr-10">
+                                                        <div class="col-md-12">
+                                                            <span id="hint" aria-describedby="hint"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mr-10">
+                                                        <div class="col-md-12">
+
+                                                            <span id="show_blocks" aria-live="polite" role=“status”>
+                                                                <span id="show_blocks_traffic"></span>
+                                                                <span id="show_blocks_content"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mr-10">
+                                                    <div style="justify-content: center;display: flex;">
+                                                        <input type="submit" aria-label="Previous" class="btn green"
+                                                            value="Prev" id="prev_btn" data-qid="0"
+                                                            style="display:none;">
+                                                        <input type="submit" aria-label="Next" class="btn green"
+                                                            value="Start" id="next_btn" data-qid="0">
+
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div id="consolidated_report" style="display:none;">
+                                                <div id="report_head_response">
+                                                    <h1 class="text-color" style="text-align:left;">Your health check is
+                                                        complete!</h1>
+                                                </div>
+                                                <div id="report_head">
+                                                    <h2 class="text-color" style="text-align:center;">Consolidated
+                                                        Report (Highlights)</h2>
+                                                </div>
+                                                <div id="report_data">
+                                                    <div id="report_red" style="display: none;">
+                                                        <div id='rep_subhead'>
+                                                            <h3 class="text-color-red">Areas Of Concern</h3>
+                                                        </div>
+                                                        <div id="rep_subdata"
+                                                            style="color:#EC1212;border: 1px solid #EC1212;border-radius: 10px;padding: 10px;">
+                                                        </div>
+                                                    </div>
+                                                    <div id="report_orange" style="display: none;">
+                                                        <div id='rep_subheadone'>
+                                                            <h3 class="text-color-orange">Areas To Improve</h3>
+                                                        </div>
+                                                        <div id="rep_subdata1"
+                                                            style="color:#907326;border: 1px solid #907326;border-radius: 10px;padding: 10px;">
+                                                        </div>
+                                                    </div>
+                                                    <div id="report_green" style="display: none;">
+                                                        <div id='rep_subheadtwo'>
+                                                            <h3 class="text-color-green">Areas Displaying Good Financial
+                                                                Health</h3>
+                                                        </div>
+                                                        <div id="rep_subdata2"
+                                                            style="color:#008A29;border: 1px solid #008A29;border-radius: 10px;padding: 10px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="results" style="display:none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END PAGE CONTENT INNER -->
+                            </div>
+                        </div>
+                        <!-- END PAGE CONTENT BODY -->
+                        <!-- END CONTENT BODY -->
+                    </div>
+                    <!-- END CONTENT -->
+                </div>
+                <!-- END CONTAINER -->
+
+            </div>
+        </div>
+        <div class="page-wrapper-row">
+            <script src="assets/footer.js" type="text/javascript"></script>
+        </div>
+        <!-- BEGIN QUICK NAV -->
+        <script src="assets/share.js" type="text/javascript"></script>
+        <script src="assets/emailtofriend.js" type="text/javascript"></script>
+        <!-- END QUICK NAV -->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="newjs/jquery.min.js" type="text/javascript"></script>
+        <script src="newjs/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap-v5/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="newjs/js.cookie.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="newjs/jquery.blockUI.min.js" type="text/javascript"></script>
+
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="newjs/app.min.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="assets/layouts/layout3/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/layout3/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/global/scripts/quick-nav.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <script src="assets/marquee.js" type="text/javascript"></script>
+        <script src="assets/jquery.jfontsize.js" type="text/javascript"></script>
+        <script src="assets/custom.js" type="text/javascript"></script>
+        <script src="assets/common.js" type="text/javascript"></script>
+        <script src="assets/commonsite.js" type="text/javascript"></script>
+
+        <script>
+
+            $("#next_btn").focus();
+
+            var jsonobj =
+            {
+                "data": {
+                    "questions": [
+                        {
+                            "ques_id": 1,
+                            "question": "Do you have anyone who depends on you financially?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["", ""],
+                            "optionsColor": ["", "", ""],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 2,
+                            "question": "Do you have life insurance cover for at least 15 to 20 times your annual income?",
+                            "options": ["Select", "Yes", "No", "Not applicable"],
+                            "optionsHint": ["It is Great that you have life insurance cover for at least 15 to 20 times your annual income. Life insurance is a key component of financial security.", "As you do not have life insurance cover for at least 15 to 20 times your annual income, it is recommended that you purchase a term life insurance policy with your dependents as nominees. This will ensure they can fend for themselves in the event of unfortunate demise of the breadwinner.", ""],
+                            "optionsColor": ["", "#008A29", "#EC1212"],
+                            "hints": "* (If you have sufficient net worth and believe you do not need such an amount of life insurance, you can select 'not applicable')",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 3,
+                            "question": "Do you have health insurance for yourself and all your dependents (if applicable)? ",
+                            "options": ["Select", "I do not have any health insurance", "I have health insurance provided by my employer", "I have personal health insurance", "I have both personal and employer provided insurance", "I have health insurance provided by Central / State Government"],
+                            "optionsHint": ["As you don’t have any health insurance, it is recommended to purchase a personal health insurance policy for at least Rs. 5 lakhs to 50% of your annual income (which is the higher), covering you.", "As you have health insurance provided by your employer, you can additionally consider purchasing a personal health insurance policy for at least Rs. 5 lakhs to 50% of your annual income (which is the higher), covering you.", "As you have personal health insurance, you may consider purchasing a Super-Top Up policy (policy that covers you over and above your existing primary health insurance policy).", "It is Great that you have both personal and employer provided insurance.", "It is Great that you have health insurance provided by Central/State Government."],
+                            "optionsColor": ["", "#EC1212", "#008A29", "#008A29", "#008A29", "#008A29"],
+                            "hints": "* Insurance is a risk management tool, not an investment vehicle",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 4,
+                            "question": "How well are you aware of the features, terms and conditions of your health insurance cover?",
+                            "options": ["Select", "I am well aware", "I am not aware", "I know only the basics"],
+                            "optionsHint": ["Way to go! This will help you handle cashless and reimbursement claims at ease!", "Please spend time reading these. They are essential for the smooth processing of claims", "You are only one step away from being an expert! Read up more. It will help you handle hospitalizations with confidence."],
+                            "optionsColor": ["", "#008A29", "#EC1212", "#907326"],
+                            "hints": "* Insurance is a risk management tool, not an investment vehicle",
+                            "tabindex": "0"
+                        },
+
+                        {
+                            "ques_id": 5,
+                            "question": "How well can you handle sudden, unexpected expenses?",
+                            "options": ["Select", "I cannot :(", "I can handle small emergency expenses", "I am confident of handling financial emergencies"],
+                            "optionsHint": ["As you are not able to handle sudden, unexpected expenses, it is recommended for you to build an emergency fund over the next few months from which you can withdraw immediately (e.g. a savings bank account other than your salary account or main account). The emergency fund should at least be six times your monthly expenses.", "It is a positive start that you can handle small emergency expenses. Additionally, it is recommended to build your emergency fund over the next few months to at least six to twelve times your monthly expenses.", "It is great that you are confident of handling emergency expenses."],
+                            "optionsColor": ["", "#EC1212", "#907326", "#008A29"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 6,
+                            "question": "If you have a credit card do you manage to pay the bill in full before the due date each month?",
+                            "options": ["Select", "I don't have a credit card", "I pay in full each month", "Occasionally I fail to pay in full", "I often do not pay in full"],
+                            "optionsHint": ["", "It is Fantastic that you manage to pay your credit card bill in full before due date each month.", "As you occasionally fail in managing to pay your credit card bill in full before due date each month, it is recommended that you curb your spending within your ability to pay. If you don't pay your credit card bill in full on time, you will have to pay late fees, high interest charges and it can cause damage to your credit score, harming your ability to take other loans.", "As you do not pay your credit card bill in full before due date each month very often, you will be charged an annual interest of about 40% or oustanding! Failing to pay in full amount regularly is a sign of a spending problem and it is recommended that you return your credit card and seek the help of a credit / debt counsellor or a Registered investment advisor."],
+                            "optionsColor": ["", "", "#008A29", "#EC1212", "#EC1212"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 7,
+                            "question": "Do you have any personal loans or any unsecured loans?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["As you have personal / unsecured loans, it is recommended that you close these loans as soon as possible as their interest rates are high.", "It is Fantastic that you have no personal / unsecured loans."],
+                            "optionsColor": ["", "#EC1212", "#008A29"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 8,
+                            "question": "Is the total EMI you pay towards the home loan, car loan, personal loan etc., greater than 40% of your monthly take-home pay?",
+                            "options": ["Select", "Yes", "No", "I don't have any debt"],
+                            "optionsHint": ["As your total EMI towards the home loan, car loan, personal loan etc., is greater than 40% of your monthly take-home pay, it is recommended that you focus on reducing your debt burden. You can consider the possibility of refinancing some debt. Expert advice from a Registered investment advisor may help.", "It is Great that your total EMI towards the home loan, car loan, personal loan etc., is less than 40% of your monthly take-home pay. It is recommended that you continue to keep debt as low as possible as it is the first step towards building wealth.", "It is Great that you don’t have any debt. You can try to invest as much as possible for as long as possible to build a sizeable corpus for retirement or achieving financial freedom."],
+                            "optionsColor": ["", "#EC1212", "#008A29", "#008A29"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 9,
+                            "question": "Do you create a budget for your income?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["It is a good habit to create a budget for your income to have control over your spending.", "As you don’t have a budget, it is recommended that you set a budget for income and expenditure each month. You can allocate a maximum target amount that can be spent for different ‘needs’ and ‘wants’. The goal is to not exceed the amount set as a target for 'wants'."],
+                            "optionsColor": ["", "#008A29", "#EC1212"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 10,
+                            "question": "Have you calculated the corpus needed for you to retire comfortably?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["It is Great that you have calculated the corpus needed to retire comfortably. Further, you can also consider validating your calculations with our <a href='https://investor.sebi.gov.in/calculators/financial_goal_planner.html' target='_blank'>financial goal planner available on SEBI Investor Website</a>.", "As you have not calculated the corpus needed for you to retire comfortably, you may use the <a href='https://investor.sebi.gov.in/calculators/financial_goal_planner.html' target='_blank'>financial goal planner available on SEBI Investor Website</a> to plan for your retirement and other financial goals. Delaying this exercise can be quite expensive as the total investment amount increases by 10-12% for each year of delay."],
+                            "optionsColor": ["", "#008A29", "#EC1212", "#8f8f16"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 11,
+                            "question": "Are you investing enough for retirement?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["It is great that you have invested enough for your financial independence after retirement.", "As you haven’t invested enough for your financial independence after retirement you can begin your retirement planning journey. With focus, discipline and small dash of luck, things will become progressively better. Don't lose heart!"],
+                            "optionsColor": ["", "#008A29", "#EC1212"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 12,
+                            "question": "Have you shared the details of your investments with your spouse/children/or other dependents (as applicable/relevant)?",
+                            "options": ["Select", "Yes", "No", "I don't have any spouse/children/or other dependents"],
+                            "optionsHint": ["It is great that you have shared the details of your investments with your spouse/children/or other dependents. Now your net worth can be seamlessly managed by your loved ones in case you are unable to. Further, you can consider including the contact details of a Registered Investment Advisor to guide your family members.", "As you haven’t shared the details of your investments with your spouse/children/or other dependents, it is recommended to discuss your investments with them so that they do not suffer in case you are incapacitated / unable to manage your money", "As you don’t have any spouse/children/other, you can consider taking legal advice on how your investments can be managed if you are incapacitated / unable to do so."],
+                            "optionsColor": ["", "#008A29", "#EC1212", "#907326"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 13,
+                            "question": "Have you added nomination details to all your investments?",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["It is Great that you have added nomination details to all your investments. Do also keep your nominees informed.", "As you haven’t added nomination details to all your investments, it is recommended you do this immediately! This is a crucial step to ensure your loved ones have easy access to your investments in the event of your demise."],
+                            "optionsColor": ["", "#008A29", "#EC1212"],
+                            "hints": "",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 14,
+                            "question": "Have you made a will? <br>(This allows you to distribute your assets to your relatives/nominees as per your wishes)",
+                            "options": ["Select", "Yes", "No"],
+                            "optionsHint": ["Kudos to your foresight for creating a Will! If you ensure that the beneficiaries in the Will are also the nominees (when possible), asset disbursal can be hassle-free.", "A nomination alone is not enough to ensure your assets are distributed to your kin as per your wishes. The provisions of a Will prevail over the nomination. Therefore, it is recommended to create a Will and ensure that beneficiaries in the Will are also the nominees (when possible) for smooth disbursement of the amount."],
+                            "optionsColor": ["", "#008A29", "#EC1212"],
+                            "hints": "",
+                            "tabindex": "0"
+                        }
+                    ],
+                    "results": "Thank you for participating in this questionnaire."
+                }
+            };
+
+
+            $(document).ready(function () {
+                var response = [], qres = [];
+                var qlen = jsonobj['data']['questions'].length;
+                var qidHist = [], selOptions = [], selHintsRed = [], selHintsGreen = [], selHintsOrange = [];
+                var redInfo = "";
+                var orangeInfo = "";
+                var greenInfo = "";
+
+                var trafficStruct = '<div class="traffic"> <div class="circle" color="red"></div> <div class="circle" color="yellow"></div> <div class="circle" color="green"></div> </div>';
+                $("#next_btn").click(function () {
+                    $("#consolidated_report,#show_blocks").hide();
+                    $("#ques_wrap").show();
+                    $("#error").html("");
+                    $("#show_blocks").html("");
+
+                    var qid = parseInt($("#next_btn").data('qid'));
+                    var optSel = parseInt($("#sel").val());
+                    console.log(qid, optSel);
+                    if (optSel > 0 || qid == 0) {
+                        // saving current question records
+                        if (optSel > 0) {
+                            qres = [];
+                            //selOptions.push($("#sel").val());
+                            var jsonQues = jsonobj['data']['questions'][qid - 1]; // array setting for jsonobj 
+                            qres['ques_id'] = $("#next_btn").data("qid");
+                            qres['question'] = jsonQues['question'];
+                            qres['optionVal'] = $("#sel").val();
+                            qres['optionsText'] = $("#sel option:selected").text();
+                            qres['optionsHint'] = jsonQues['optionsHint'][optSel - 1];
+                            qres['optionsColor'] = jsonQues['optionsColor'][optSel];
+                            response.push(qres)
+                        }
+                        console.log(response);
+                        if (qid == 1) $("#prev_btn").show();
+                        // Next question parsing
+                        qid++;
+                        if (qlen >= qid) {
+                            //logic for jumping
+                            if (qid == 2 && optSel == 2) {
+                                console.log("qid = jump" + qid);
+                                qid = 3;
+                            }
+                            else if (qid == 4 && optSel == 1) {
+                                console.log("qid = jump" + qid);
+                                qid = 5;
+                            }
+
+                            // last question for submit
+                            if (qlen == qid) $(this).val("Submit");
+                            else $(this).val("Next");
+
+                            displayQid(qid);
+                        }
+                        else { // Consolidated report formation
+                            $("#consolidated_report").show();
+                            $("#results").show();
+                            $("#ques_wrap").hide();
+                            console.log(response);
+
+                            $.each(response, function (key, val) {
+                                console.log(val['ques_id']);
+
+                                if (val['optionsHint'] != "" && val['optionsHint'] != undefined) {
+
+                                    if (val['optionsColor'] == "#EC1212") {
+                                        redInfo += '<li><i class="fa fa-times blink_red" aria-hidden="true"  style="color: #EC1212;"></i>&nbsp;' + val["optionsHint"] + '</li>';
+                                    }
+                                    else if (val['optionsColor'] == "#907326") {
+                                        orangeInfo += '<li><i class="fa fa-circle-o blink_yellow" aria-hidden="true" style="color: #907326;"></i>&nbsp;' + val["optionsHint"] + '</li>';
+                                    }
+                                    else if (val['optionsColor'] == "#008A29") {
+                                        greenInfo += '<li><i class="fa fa-check blink_green" aria-hidden="true" style="color: #008A29;"></i>&nbsp;' + val["optionsHint"] + '</li>';
+                                    }
+                                }
+                            });
+
+                            $("#report_red").show();
+                            $("#report_orange").show();
+                            $("#report_green").show();
+
+                            $("#report_red #rep_subdata").append('<ul style="list-style-type: none; padding: 0px;">' + redInfo + '</ul>');
+                            $("#report_orange #rep_subdata1").append('<ul style="list-style-type: none; padding: 0px;">' + orangeInfo + '</ul>');
+                            $("#report_green #rep_subdata2").append('<ul style="list-style-type: none; padding: 0px;">' + greenInfo + '</ul>');
+
+                            $("#results").html(jsonobj['data']['results']).show();
+                            // $(this).val("Start");
+                            // $(this).data('qid',0);
+                        }
+                    }
+                    else {
+                        $("#error").html("Please Select any options");
+                    }
+                });
+
+                $("#prev_btn").click(function () {
+                    if (response.length > 0) {
+                        var prevQues = response.pop();
+                        // if(qid == $("#next_btn").data("qid")) qid = qidHist.pop();
+                        displayQid(prevQues['ques_id']);
+                        $("#sel").val(prevQues['optionVal']).trigger("change");
+                        if (response.length == 0) $("#prev_btn").hide();
+                        else $("#prev_btn").show();
+                    }
+                    else {
+                        $("#prev_btn").hide();
+                    }
+                });
+
+                $("#sel").change(function () {
+                    $("#error").html("");
+                    $("#show_blocks").html("");
+                    var qid = parseInt($("#next_btn").data('qid'));
+                    var optSel = $(this).val();
+                    var color = jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel];
+                    var optHint = jsonobj['data']['questions'][qid - 1]['optionsHint'][optSel - 1];
+                    console.log(qid, color);
+                    // Option hint formation if available
+                    if (optHint != "" && optHint != undefined) {
+                        var hintOptHTML = "";
+                        if (optHint != "") {
+                            hintOptHTML = trafficStruct;
+                            $("#show_blocks").html(hintOptHTML + "<div id='show_blocks_content'>" + optHint + "</div>");
+                            console.log(color);
+                            if (color == "#EC1212") $("#show_blocks .traffic .circle").eq(0).addClass("red blink_red");
+                            else if (color == "#907326") $("#show_blocks .traffic .circle").eq(1).addClass("yellow blink_yellow");
+                            else if (color == "#008A29") $("#show_blocks .traffic .circle").eq(2).addClass("green blink_green");
+                        }
+
+                        $("#show_blocks").attr("style", 'color: ' + jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel] + '; border: 1px solid ' + jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel] + ';display:flex;border-radius: 10px;padding: 10px;gap: 20px;');
+                    }
+                    else {
+                        $("#show_blocks").hide();
+                    }
+                });
+
+                function displayQid(qid) {
+                    // $('#required_icon').show();
+                    // $("#json-holder").attr("data-id");
+                    $("#json-holder").html(jsonobj['data']['questions'][qid - 1]['question']);
+                    $('#sel').show().html("");
+                    var optionList = jsonobj['data']['questions'][qid - 1]["options"]
+                    $.each(optionList, function (k, v) {
+                        $('#sel').append("<option value=" + (k) + ">" + v + "</option>");
+                    });
+                    $("#hint").html(jsonobj['data']['questions'][qid - 1]["hints"]);
+                    $("#next_btn").data('qid', qid);
+                    $("#ques_start").show();
+                    $("#results").hide();
+                }
+
+            });
+
+        </script>
+        <script>
+            const circles = document.querySelectorAll('.circle')
+            let activeLight = 0;
+
+            // setInterval(() => {
+            //   changeLight();
+            // }, 1000);
+
+            function changeLight() {
+                circles[activeLight].className = 'circle';
+                activeLight++;
+
+                if (activeLight > 2) {
+                    activeLight = 0;
+                }
+
+                const currentLight = circles[activeLight]
+
+                currentLight.classList.add(curr

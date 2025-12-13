@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional; // Added import for Optional
 
 @Repository
 public interface LeadRepository extends JpaRepository<Lead, Long> {
+
+        Optional<Lead> findByPhoneAndTenantId(String phone, Long tenantId);
 
         @Query("SELECT COUNT(l) FROM Lead l WHERE l.sharedLink IS NOT NULL")
         Long countTotalSharedLinkLeads();
