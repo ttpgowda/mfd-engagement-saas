@@ -32,7 +32,7 @@ import { ShareDialog } from '@/features/share/components/ShareDialog';
 import { publicResearchService } from '@/services/publicResearchService';
 import { PublicShareButton } from '@/features/share/components/PublicShareButton';
 
-export default function StpCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+export function StpCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     // Data Loading State
     const [categories, setCategories] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);

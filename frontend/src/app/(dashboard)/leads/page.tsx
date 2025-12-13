@@ -15,6 +15,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { ClientPageTitle } from '@/components/utils/ClientPageTitle';
 import {
     Form,
     FormControl,
@@ -167,6 +168,7 @@ export default function LeadsPage() {
 
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
+            <ClientPageTitle title="Leads" />
             <div className="flex items-center justify-between space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight">Leads</h2>
                 <Dialog open={isOpen} onOpenChange={setIsOpen}>

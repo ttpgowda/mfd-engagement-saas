@@ -33,6 +33,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useState } from 'react';
+import { ClientPageTitle } from '@/components/utils/ClientPageTitle';
 
 const userFormSchema = z.object({
     username: z.string().min(3),
@@ -92,6 +93,7 @@ export default function UsersPage() {
 
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
+            <ClientPageTitle title="Users" />
             <div className="flex items-center justify-between space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
