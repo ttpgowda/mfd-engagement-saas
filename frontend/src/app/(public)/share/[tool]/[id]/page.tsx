@@ -16,6 +16,7 @@ import { LeadCaptureModal } from "@/features/share/components/LeadCaptureModal";
 import { RecommendedTools } from "@/features/share/components/RecommendedTools";
 
 import { getResearchTool } from "@/features/research/registry";
+import { getSurveyTool } from "@/features/surveys/registry";
 
 export default function SharedLinkPage() {
     const params = useParams();
@@ -67,6 +68,16 @@ export default function SharedLinkPage() {
         }
     }
 
+    // 3. Try Survey Registry
+    if (!Calculator) {
+        const surveyTool = getSurveyTool(toolSlug);
+        if (surveyTool) {
+            Component = surveyTool.component;
+            Calculator = surveyTool as any; // Cast because types might slightly differ but structure is compatible enough for this page
+        }
+    }
+
+
     // Set Document Title
     useEffect(() => {
         if (Calculator) {
@@ -114,11 +125,13 @@ export default function SharedLinkPage() {
                 onConversion={trackConversion}
             />
 
-            <RecommendedTools
-                currentToolSlug={toolSlug}
-                currentShortCode={shortCode}
-                onRecommendationClick={() => trackConversion('recommendation_click')}
-            />
+            {toolSlug !== 'financial-health-check' && (
+                <RecommendedTools
+                    currentToolSlug={toolSlug}
+                    currentShortCode={shortCode}
+                    onRecommendationClick={() => trackConversion('recommendation_click')}
+                />
+            )}
 
             <LeadCaptureModal
                 open={showLeadCapture}

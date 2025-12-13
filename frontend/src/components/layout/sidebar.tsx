@@ -37,6 +37,11 @@ const sidebarItems = [
         icon: Users,
     },
     {
+        title: 'Surveys',
+        href: '/surveys/financial-health-check', // Direct link for now as we only have one
+        icon: FileText,
+    },
+    {
         title: 'Reports',
         href: '/reports',
         icon: FileBarChart,
