@@ -45,7 +45,8 @@ public class ShareController {
                     return ResponseEntity.ok(new PublicLinkResponse(
                             link.getToolSlug(),
                             config,
-                            link.getTenant().getTenantId()));
+                            link.getTenant().getTenantId(),
+                            link.getTenant().getName()));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -84,6 +85,7 @@ public class ShareController {
         private final String toolSlug;
         private final Map<String, Object> config;
         private final String tenantId;
+        private final String tenantName;
         // TODO Add branding fields here later
     }
 }

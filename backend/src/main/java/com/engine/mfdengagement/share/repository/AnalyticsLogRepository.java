@@ -49,4 +49,26 @@ public interface AnalyticsLogRepository extends JpaRepository<AnalyticsLog, Long
                         "GROUP BY FUNCTION('DATE', a.createdAt) " +
                         "ORDER BY FUNCTION('DATE', a.createdAt) DESC")
         List<Object[]> getDailyUniqueViews(org.springframework.data.domain.Pageable pageable);
+
+        @Query("SELECT a.parentShortCode, l.toolSlug, COUNT(a) " +
+                        "FROM AnalyticsLog a JOIN a.sharedLink l " +
+                        "WHERE a.parentShortCode IS NOT NULL " +
+                        "GROUP BY a.parentShortCode, l.toolSlug " +
+                        "ORDER BY COUNT(a) DESC")
+        List<Object[]> findPatterns();
+
+        @Query("SELECT " +
+                        "COUNT(a), " + // Total Views
+                        "SUM(CASE WHEN a.durationSeconds > 10 OR a.interactionCount > 0 THEN 1 ELSE 0 END), " + // Engaged
+                        "SUM(CASE WHEN a.converted = true THEN 1 ELSE 0 END) " + // Converted
+                        "FROM AnalyticsLog a")
+        List<Object[]> getFunnelMetrics();
+
+        @Query(value = "SELECT " +
+                        "CAST(EXTRACT(DOW FROM createdat) AS INTEGER) as dow, " +
+                        "CAST(EXTRACT(HOUR FROM createdat) AS INTEGER) as hour, " +
+                        "COUNT(*) " +
+                        "FROM analytics_logs " +
+                        "GROUP BY EXTRACT(DOW FROM createdat), EXTRACT(HOUR FROM createdat)", nativeQuery = true)
+        List<Object[]> getHourlyActivity();
 }

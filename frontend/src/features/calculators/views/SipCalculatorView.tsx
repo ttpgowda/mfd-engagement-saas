@@ -35,12 +35,20 @@ import { CalculatorViewProps } from "../types";
 
 import { ShareDialog } from "@/features/share/components/ShareDialog";
 import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { Button } from "@/components/ui/button";
 
-export default function SipCalculatorView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
+
+
+export default function SipCalculatorView({ defaultValues, isPublicView = false, onInteraction, onConversion }: CalculatorViewProps) {
     const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 5000);
     const [years, setYears] = useState<number>(defaultValues?.years ?? 10);
+
     const [rate, setRate] = useState<number>(defaultValues?.rate ?? 12);
     const [inflationAdjusted, setInflationAdjusted] = useState<boolean>(defaultValues?.inflationAdjusted ?? false);
+
+    const handleInteraction = () => {
+        onInteraction?.();
+    };
 
     const { chartData, summary } = useMemo(() =>
         calculateSip(amount, years, rate, inflationAdjusted),
@@ -69,20 +77,20 @@ export default function SipCalculatorView({ defaultValues, isPublicView = false 
                 <CardContent className="space-y-8 pt-4">
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Monthly Investment (₹)</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
-                        <Input type="range" min="500" max="100000" step="500" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
-                        <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="mt-2" />
+                        <Input type="range" min="500" max="100000" step="500" value={amount} onChange={(e) => { setAmount(Number(e.target.value)); handleInteraction(); }} className="accent-primary" />
+                        <Input type="number" value={amount} onChange={(e) => { setAmount(Number(e.target.value)); handleInteraction(); }} className="mt-2" />
                     </div>
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Time Period (Years)</Label><span className="text-sm font-medium bg-primary/10 px-2 py-0.5 rounded text-primary">{years} Years</span></div>
-                        <Slider value={[years]} onValueChange={(v) => setYears(v[0])} max={40} step={1} />
+                        <Slider value={[years]} onValueChange={(v) => { setYears(v[0]); handleInteraction(); }} max={40} step={1} />
                     </div>
                     <div className="space-y-4">
                         <div className="flex justify-between"><Label>Expected Return (p.a)</Label><span className="text-sm font-medium">{rate}%</span></div>
-                        <Slider value={[rate]} onValueChange={(v) => setRate(v[0])} max={30} step={0.5} />
+                        <Slider value={[rate]} onValueChange={(v) => { setRate(v[0]); handleInteraction(); }} max={30} step={0.5} />
                     </div>
                     <div className="flex items-center justify-between pt-4 border-t">
                         <div className="space-y-0.5"><Label>Inflation Adjusted?</Label><p className="text-xs text-muted-foreground">Adjust for 6% inflation</p></div>
-                        <Switch checked={inflationAdjusted} onCheckedChange={setInflationAdjusted} />
+                        <Switch checked={inflationAdjusted} onCheckedChange={(v) => { setInflationAdjusted(v); handleInteraction(); }} />
                     </div>
                 </CardContent>
             </Card>
@@ -116,6 +124,22 @@ export default function SipCalculatorView({ defaultValues, isPublicView = false 
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
+
+                {isPublicView && (
+                    <div className="space-y-6">
+                        <Card className="bg-primary/5 border-primary/20">
+                            <CardContent className="p-6 flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="font-semibold text-lg">Talk to an Investment Expert</h3>
+                                    <p className="text-sm text-muted-foreground">Get a personalized investment plan based on your goals.</p>
+                                </div>
+                                <Button size="lg" onClick={() => onConversion?.('consultation')}>Connect Now</Button>
+                            </CardContent>
+                        </Card>
+
+
+                    </div>
+                )}
             </div>
         </div>
     );

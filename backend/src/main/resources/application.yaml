@@ -1,10 +1,14 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+    lazy-initialization: true
   datasource:
     url: jdbc:postgresql://${DATASOURCE_URL}/${DATASOURCE_DATABASE}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
   servlet:
     multipart:
       max-file-size: 10MB

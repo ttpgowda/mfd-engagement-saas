@@ -3,7 +3,9 @@ import { getCalculator, CALCULATORS } from "@/features/calculators/registry"; //
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import {shuffleArray} from "@/utils/array";
+import { shuffleArray } from "@/utils/array";
+
+import { ClientPageTitle } from "@/components/utils/ClientPageTitle";
 
 interface PageProps {
     params: Promise<{
@@ -27,6 +29,8 @@ export default async function CalculatorPage(props: PageProps) {
 
     return (
         <div className="p-6 space-y-8 max-w-6xl mx-auto">
+            <ClientPageTitle title={calculator.title} />
+
             {/* 1. Header */}
             <div className="flex justify-between items-center pb-6 border-b border-border/40">
                 <div>

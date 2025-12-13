@@ -19,7 +19,7 @@ import org.hibernate.annotations.Filter;
 @Filter(name = "tenantFilter", condition = "tenant_id IN (SELECT t.id FROM tenants t WHERE t.tenantid = :tenantIdentifier)")
 public class SharedLink extends BaseEntity {
 
-    @Column(nullable = false, unique = true, length = 16)
+    @Column(nullable = false, unique = true, length = 64)
     private String shortCode;
 
     @Column(nullable = false, length = 50)

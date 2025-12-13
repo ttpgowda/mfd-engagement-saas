@@ -32,14 +32,14 @@ const sidebarItems = [
         icon: Calculator,
     },
     {
-        title: 'Templates',
-        href: '/templates',
-        icon: FileText,
-    },
-    {
         title: 'Leads',
         href: '/leads',
         icon: Users,
+    },
+    {
+        title: 'Surveys',
+        href: '/surveys/financial-health-check', // Direct link for now as we only have one
+        icon: FileText,
     },
     {
         title: 'Reports',

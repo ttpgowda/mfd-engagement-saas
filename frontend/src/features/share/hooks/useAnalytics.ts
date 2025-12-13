@@ -1,17 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import axios from '@/lib/axios';
+import { useSearchParams } from 'next/navigation';
 
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
 const LEAD_CAPTURE_TRIGGER = 60000; // 60 seconds
+const DEBOUNCE_DELAY = 1000; // 1 second for interaction debouncing
 
 const generateSessionId = () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-export const useAnalytics = (shortCode: string | undefined) => {
+export const useAnalytics = (shortCode: string | undefined, toolSlug?: string) => {
     const [showLeadCapture, setShowLeadCapture] = useState(false);
     const sessionIdRef = useRef<string>('');
-    const startTimeRef = useRef<number>(Date.now());
+    const params = useSearchParams();
+    const parentShortCode = params?.get('ref') || undefined;
+
+    // Interaction Tracking Refs
+    const interactionCountRef = useRef(0);
+    const pendingInteractionRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!shortCode) return;
@@ -25,18 +32,18 @@ export const useAnalytics = (shortCode: string | undefined) => {
         sessionIdRef.current = sid;
 
         // Initial View Event
-        sendHeartbeat(shortCode, sid, 0);
+        sendEvent(shortCode, sid, 0, 'VIEW', parentShortCode);
 
         // Heartbeat Interval
         const intervalId = setInterval(() => {
             const currentSid = localStorage.getItem('analytics_session_id') || sessionIdRef.current;
-            sendHeartbeat(shortCode, currentSid, HEARTBEAT_INTERVAL / 1000);
+            sendEvent(shortCode, currentSid, HEARTBEAT_INTERVAL / 1000, 'HEARTBEAT', undefined);
         }, HEARTBEAT_INTERVAL);
 
         // Lead Capture Timer
         const timeoutId = setTimeout(() => {
             const hasLeadToken = localStorage.getItem('lead_token');
-            if (!hasLeadToken) {
+            if (toolSlug !== 'financial-health-check' && !hasLeadToken) { // Skip for Survey
                 setShowLeadCapture(true);
             }
         }, LEAD_CAPTURE_TRIGGER);
@@ -45,20 +52,42 @@ export const useAnalytics = (shortCode: string | undefined) => {
             clearInterval(intervalId);
             clearTimeout(timeoutId);
         };
-    }, [shortCode]);
+    }, [shortCode, parentShortCode, toolSlug]);
 
-    const sendHeartbeat = async (code: string, sid: string, duration: number) => {
+    const sendEvent = async (code: string, sid: string, duration: number, listType: string, parent?: string) => {
         try {
-            // Use configured axios instance to ensure X-Tenant-ID header and Auth tokens are sent
-            const response = await axios.post('/public/analytics/heartbeat', {
+            await axios.post('/public/analytics/heartbeat', {
                 shortCode: code,
+                toolSlug: toolSlug,
                 sessionId: sid,
-                durationDelta: duration
+                durationDelta: duration,
+                eventType: listType,
+                parentShortCode: parent
             });
         } catch (e) {
-            console.error("Heartbeat failed", e);
+            console.error("Analytics failed", e);
         }
     };
 
-    return { showLeadCapture, setShowLeadCapture };
+    const trackInteraction = useCallback(() => {
+        if (!shortCode) return;
+
+        if (pendingInteractionRef.current) {
+            clearTimeout(pendingInteractionRef.current);
+        }
+
+        pendingInteractionRef.current = setTimeout(() => {
+            interactionCountRef.current += 1;
+            const currentSid = localStorage.getItem('analytics_session_id') || sessionIdRef.current;
+            sendEvent(shortCode, currentSid, 0, 'INTERACTION', undefined);
+        }, DEBOUNCE_DELAY);
+    }, [shortCode, toolSlug]);
+
+    const trackConversion = useCallback((label?: string) => {
+        if (!shortCode) return;
+        const currentSid = localStorage.getItem('analytics_session_id') || sessionIdRef.current;
+        sendEvent(shortCode, currentSid, 0, 'CONVERSION', undefined);
+    }, [shortCode, toolSlug]);
+
+    return { showLeadCapture, setShowLeadCapture, trackInteraction, trackConversion };
 };
