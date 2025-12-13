@@ -18,6 +18,8 @@ export type CalculatorID =
 export interface CalculatorViewProps {
     defaultValues?: Record<string, any>;
     isPublicView?: boolean;
+    onInteraction?: () => void;
+    onConversion?: (type?: string) => void;
 }
 
 export interface CalculatorItem {

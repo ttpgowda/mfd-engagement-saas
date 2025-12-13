@@ -4,19 +4,31 @@ import { StatsGrid } from './StatsGrid';
 import { TrafficChart } from './TrafficChart';
 import { ToolPerformanceChart } from './ToolPerformanceChart';
 import { LinksTable } from './LinksTable';
+import { UserJourneyPatterns } from './UserJourneyPatterns';
 import { Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
+import { ConversionFunnel } from './ConversionFunnel';
+import { EngagementHeatmap } from './EngagementHeatmap';
+
 export function AnalyticsDashboard() {
     const [data, setData] = useState<AnalyticsDashboardDTO | null>(null);
+    const [funnelData, setFunnelData] = useState<any[]>([]);
+    const [heatmapData, setHeatmapData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const load = async () => {
             try {
-                const result = await adminAnalyticsService.getDashboard();
-                setData(result);
+                const [dashboard, funnel, heatmap] = await Promise.all([
+                    adminAnalyticsService.getDashboard(),
+                    adminAnalyticsService.getFunnel(),
+                    adminAnalyticsService.getHeatmap()
+                ]);
+                setData(dashboard);
+                setFunnelData(funnel);
+                setHeatmapData(heatmap);
             } catch (err: unknown) {
                 console.error(err);
                 setError('Failed to load analytics data.');
@@ -58,10 +70,26 @@ export function AnalyticsDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* 2. Traffic Trends */}
-                <TrafficChart data={data.trafficTrend} />
+                <div className="lg:col-span-2">
+                    <TrafficChart data={data.trafficTrend} />
+                </div>
+                {/* 3. Funnel */}
+                <div className="lg:col-span-1">
+                    <ConversionFunnel data={funnelData} />
+                </div>
+            </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* 3. Top Tools */}
                 <ToolPerformanceChart data={data.topTools} />
+
+                {/* 3.5 Patterns */}
+                <UserJourneyPatterns />
+            </div>
+
+            {/* 3.6 Heatmap - Full Width */}
+            <div className="w-full">
+                <EngagementHeatmap data={heatmapData} />
             </div>
 
             {/* 4. Detailed Links Table */}

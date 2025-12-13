@@ -40,8 +40,23 @@ export interface AnalyticsDashboardDTO {
 }
 
 export const adminAnalyticsService = {
-    getDashboard: async (): Promise<AnalyticsDashboardDTO> => {
+    async getDashboard(): Promise<AnalyticsDashboardDTO> {
         const response = await axiosInstance.get('/admin/analytics/dashboard');
         return response.data;
+    },
+
+    async getFunnel(): Promise<{ stage: string; count: number; dropoffPercentage: number; }[]> {
+        const res = await axiosInstance.get('/public/analytics/funnel');
+        return res.data;
+    },
+
+    async getHeatmap(): Promise<{ dayOfWeek: number; hourOfDay: number; intensity: number; }[]> {
+        const res = await axiosInstance.get('/public/analytics/heatmap');
+        return res.data;
+    },
+
+    async getPatterns(): Promise<{ sourceTool: string; targetTool: string; count: number; }[]> {
+        const res = await axiosInstance.get('/public/analytics/patterns');
+        return res.data;
     }
 };

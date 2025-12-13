@@ -25,12 +25,23 @@ public class AnalyticsLog extends BaseEntity {
     @JoinColumn(name = "link_id", nullable = false)
     private SharedLink sharedLink;
 
-    @Column(nullable = false, length = 32)
+    @Column(length = 32)
     private String eventType; // VIEW, HEARTBEAT, CONVERSION
 
     @Builder.Default
     @Column(nullable = false)
     private Integer durationSeconds = 0;
+
+    @Column(length = 64)
+    private String parentShortCode;
+
+    @Builder.Default
+    @Column(columnDefinition = "integer default 0")
+    private Integer interactionCount = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "boolean default false")
+    private Boolean converted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)
