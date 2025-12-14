@@ -69,11 +69,13 @@ export default function SharedLinkPage() {
     }
 
     // 3. Try Survey Registry
+    let isSurveyTool = false;
     if (!Calculator) {
         const surveyTool = getSurveyTool(toolSlug);
         if (surveyTool) {
             Component = surveyTool.component;
             Calculator = surveyTool as any; // Cast because types might slightly differ but structure is compatible enough for this page
+            isSurveyTool = true;
         }
     }
 
@@ -126,7 +128,7 @@ export default function SharedLinkPage() {
                 sharedCode={shortCode}
             />
 
-            {toolSlug !== 'financial-health-check' && toolSlug !== 'risk-profiler' && (
+            {toolSlug !== 'financial-health-check' && toolSlug !== 'risk-profiler' && toolSlug !== 'goal-readiness' && (
                 <RecommendedTools
                     currentToolSlug={toolSlug}
                     currentShortCode={shortCode}
@@ -134,11 +136,13 @@ export default function SharedLinkPage() {
                 />
             )}
 
-            <LeadCaptureModal
-                open={showLeadCapture}
-                onOpenChange={setShowLeadCapture}
-                shortCode={shortCode}
-            />
+            {!isSurveyTool && (
+                <LeadCaptureModal
+                    open={showLeadCapture}
+                    onOpenChange={setShowLeadCapture}
+                    shortCode={shortCode}
+                />
+            )}
         </div>
     );
 }

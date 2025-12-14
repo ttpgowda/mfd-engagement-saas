@@ -1,7 +1,8 @@
 import { FinancialHealthCheckWizard } from "./components/FinancialHealthCheckWizard";
 import { RiskProfilerWizard } from "./components/RiskProfilerWizard";
+import { GoalReadinessWizard } from "./components/GoalReadinessWizard";
 
-import { FileText, TrendingUp } from "lucide-react";
+import { FileText, TrendingUp, Target } from "lucide-react";
 
 export interface SurveyToolItem {
     id: string;
@@ -25,6 +26,13 @@ export const SURVEY_TOOLS: SurveyToolItem[] = [
         description: 'Analyze your investment risk tolerance.',
         component: RiskProfilerWizard,
         icon: TrendingUp
+    },
+    {
+        id: 'goal-readiness',
+        title: 'Goal Readiness',
+        description: 'Evaluate your readiness to achieve financial goals.',
+        component: GoalReadinessWizard,
+        icon: Target
     }
 ];
 
