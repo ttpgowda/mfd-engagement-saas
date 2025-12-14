@@ -38,7 +38,7 @@ const sidebarItems = [
     },
     {
         title: 'Surveys',
-        href: '/surveys/financial-health-check', // Direct link for now as we only have one
+        href: '/surveys',
         icon: FileText,
     },
     {
