@@ -1,6 +1,7 @@
 import { FinancialHealthCheckWizard } from "./components/FinancialHealthCheckWizard";
+import { RiskProfilerWizard } from "./components/RiskProfilerWizard";
 
-import { FileText } from "lucide-react";
+import { FileText, TrendingUp } from "lucide-react";
 
 export interface SurveyToolItem {
     id: string;
@@ -17,6 +18,13 @@ export const SURVEY_TOOLS: SurveyToolItem[] = [
         description: 'Comprehensive assessment of your financial wellbeing.',
         component: FinancialHealthCheckWizard,
         icon: FileText
+    },
+    {
+        id: 'risk-profiler',
+        title: 'Risk Profiler',
+        description: 'Analyze your investment risk tolerance.',
+        component: RiskProfilerWizard,
+        icon: TrendingUp
     }
 ];
 

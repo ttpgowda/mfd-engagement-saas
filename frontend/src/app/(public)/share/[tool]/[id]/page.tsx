@@ -123,9 +123,10 @@ export default function SharedLinkPage() {
                 isPublicView={true}
                 onInteraction={trackInteraction}
                 onConversion={trackConversion}
+                sharedCode={shortCode}
             />
 
-            {toolSlug !== 'financial-health-check' && (
+            {toolSlug !== 'financial-health-check' && toolSlug !== 'risk-profiler' && (
                 <RecommendedTools
                     currentToolSlug={toolSlug}
                     currentShortCode={shortCode}

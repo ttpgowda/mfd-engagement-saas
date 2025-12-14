@@ -9,12 +9,12 @@ import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, XCircle, Award, Sha
 import { FINANCIAL_HEALTH_DATA } from "../data/financial-health-check";
 import axios from "@/lib/axios";
 import { toast } from "sonner";
-import { LeadCaptureModal } from "@/features/share/components/LeadCaptureModal";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ShareDialog } from "@/features/share/components/ShareDialog";
 import { RecommendedTools } from "@/features/share/components/RecommendedTools";
 import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { SurveyLeadForm, AutoPopupTrigger } from "./SurveyLeadForm";
+import { useSurvey } from "../hooks/useSurvey";
 
 interface FinancialHealthCheckWizardProps {
     isPublicView?: boolean;
@@ -31,25 +31,25 @@ interface QuestionResponse {
 }
 
 export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, onComplete }: FinancialHealthCheckWizardProps) {
-    const [currentStep, setCurrentStep] = useState(0); // 0 = Intro, 1..N = Questions, N+1 = LeadForm, N+2 = Report
+    const [currentStep, setCurrentStep] = useState(0);
     const [responses, setResponses] = useState<Record<number, QuestionResponse>>({});
     const [showLeadModal, setShowLeadModal] = useState(false);
-    const [leadId, setLeadId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [history, setHistory] = useState<number[]>([]);
 
     const questions = FINANCIAL_HEALTH_DATA.questions;
 
+    const { isSaving, saveProgress, submitLead, responseId } = useSurvey({
+        surveyType: "FINANCIAL_HEALTH",
+        sharedCode
+    });
+
+    const [hasLinkedLead, setHasLinkedLead] = useState(false);
+
     // Navigation Logic with Skips
     const getNextQuestionId = (currentQId: number, currentOptionIndex: number) => {
-        // Skip Logic:
-        // If Q1 (Dependents) is 'No' (index 2 in 1-based logic, but data is ["Select", "Yes", "No"]), 
-        // optionIndex for "No" is 2.
         if (currentQId === 1 && currentOptionIndex === 2) return 3;
-
-        // If Q3 (Health Ins) is 'No' (index 1), Skip Q4 (Awareness), Go to Q5.
         if (currentQId === 3 && currentOptionIndex === 1) return 5;
-
         return currentQId + 1;
     };
 
@@ -90,46 +90,30 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
         }
     };
 
+
+    // ... existing logic ...
+
     const finishSurvey = () => {
         setCurrentStep(99); // Report State
-        saveResponses();
+        // Auto-save anonymous
+        const { score, category } = calculateScore();
+        const data = {
+            responses,
+            totalScore: score,
+            scoreCategory: category
+        };
+        saveProgress(data, { status: "COMPLETED" });
     };
 
     const saveResponses = async () => {
-        if (!isPublicView) return;
-        // We trigger the modal if public to capturing details.
-        // If already captured (unlikely in this flow unless previous session?), skip.
-        // We do nothing here, just set state 99 renders the view which has the modal trigger.
-        // We could auto-show modal here:
-        // setShowLeadModal(true); 
-        // BUT user asked for 5 sec delay or "gamified" feel. See AutoPopupTrigger below.
+        // No-op, handled by finishSurvey now
     };
 
     const submitData = async (leadDetails: any) => {
-        setIsLoading(true);
-        try {
-            // Calculate score first
-            const { score, category } = calculateScore();
-
-            const payload = {
-                sharedCode: sharedCode || 'demo',
-                responsesJson: JSON.stringify(responses),
-                totalScore: score,
-                scoreCategory: category,
-                ...leadDetails
-            };
-
-            const res = await axios.post('/api/public/surveys/financial-health-check', payload);
-            setLeadId(res.data);
-            setShowLeadModal(false); // Close modal on success
-            if (onComplete) onComplete(res.data);
-            toast.success("Progress Saved!");
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to save.");
-        } finally {
-            setIsLoading(false);
-        }
+        await submitLead(leadDetails);
+        setHasLinkedLead(true);
+        setShowLeadModal(false);
+        if (onComplete && responseId) onComplete(responseId);
     };
 
     const currentQId = history.length > 0 ? history[history.length - 1] : 1;
@@ -284,7 +268,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                         </div>
 
                         {/* Lead Capture Trigger */}
-                        {isPublicView && !leadId && (
+                        {isPublicView && !hasLinkedLead && (
                             <div className="text-center pt-8 border-t">
                                 <p className="text-muted-foreground mb-4">Save your report now and get expert advice to fix these gaps.</p>
                                 <Button size="lg" onClick={() => setShowLeadModal(true)} className="animate-pulse shadow-xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 transition-transformation hover:scale-105">
@@ -296,8 +280,9 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                     </CardContent>
                 </Card>
 
-                {/* Auto Popup Controller */}
-                <AutoPopupTrigger shouldShow={isPublicView && !leadId && currentStep === 99} onTrigger={() => setShowLeadModal(true)} />
+
+
+                <AutoPopupTrigger shouldShow={isPublicView && !hasLinkedLead && currentStep === 99} onTrigger={() => setShowLeadModal(true)} />
 
                 {/* Recommendations */}
                 <div className="mt-8">
@@ -308,7 +293,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                     />
                 </div>
 
-                <CustomLeadForm
+                <SurveyLeadForm
                     open={showLeadModal}
                     onOpenChange={setShowLeadModal}
                     onSubmit={submitData}
@@ -394,62 +379,4 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
     );
 }
 
-interface CustomLeadFormProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onSubmit: (data: { name: string, phone: string, email: string }) => void;
-    isLoading: boolean;
-}
 
-function CustomLeadForm({ open, onOpenChange, onSubmit, isLoading }: CustomLeadFormProps) {
-    const [name, setName] = useState("");
-    const [phone, setPhone] = useState("");
-    const [email, setEmail] = useState("");
-
-    if (!open) return null;
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center bg-black/80 p-4 animate-in fade-in">
-            <Card className="w-full max-w-md relative bg-background p-6 space-y-4">
-                <button onClick={() => onOpenChange(false)} className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"><XCircle className="w-4 h-4" /></button>
-                <div className="space-y-2 text-center">
-                    <h2 className="text-lg font-semibold">Unlock Full Access</h2>
-                    <p className="text-sm text-muted-foreground">You've been exploring for a while! Enter your details to save your progress and get a detailed report.</p>
-                </div>
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label>Name</Label>
-                        <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={name} onChange={e => setName(e.target.value)} placeholder="Your Name" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Mobile Number</Label>
-                        <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={phone} onChange={e => setPhone(e.target.value)} placeholder="9999999999" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Email (Optional)</Label>
-                        <input className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={email} onChange={e => setEmail(e.target.value)} placeholder="email@example.com" />
-                    </div>
-                    <Button className="w-full" onClick={() => onSubmit({ name, phone, email })} disabled={!name || !phone || isLoading}>
-                        {isLoading ? "Saving..." : "Save Report"}
-                    </Button>
-                </div>
-            </Card>
-        </div>
-    )
-}
-
-function AutoPopupTrigger({ shouldShow, onTrigger }: { shouldShow: boolean, onTrigger: () => void }) {
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (shouldShow) {
-            timer = setTimeout(() => {
-                onTrigger();
-            }, 5000);
-        }
-        return () => clearTimeout(timer);
-    }, [shouldShow]); // Removing onTrigger from deps to avoid re-trigger if function reference changes, though usually fine.
-    return null;
-}

@@ -20,6 +20,7 @@ export interface CalculatorViewProps {
     isPublicView?: boolean;
     onInteraction?: () => void;
     onConversion?: (type?: string) => void;
+    sharedCode?: string;
 }
 
 export interface CalculatorItem {
