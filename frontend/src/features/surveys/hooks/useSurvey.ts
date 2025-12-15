@@ -15,7 +15,7 @@ export function useSurvey({ surveyType, sharedCode }: SurveyConfig) {
     const startTime = useRef(Date.now());
 
     // Debounced save helper (simplified for now)
-    const saveProgress = async (data: any, metadata: any = {}) => {
+    const saveProgress = async (data: unknown, metadata: Record<string, unknown> = {}) => {
         if (!sessionId) return;
 
         setIsSaving(true);
@@ -43,7 +43,7 @@ export function useSurvey({ surveyType, sharedCode }: SurveyConfig) {
         }
     };
 
-    const submitLead = async (leadDetails: any) => {
+    const submitLead = async (leadDetails: { name: string; email: string; phone: string }) => {
         if (!responseId) {
             console.error("Cannot link lead without a response ID. Ensure progress is saved first.");
             // Try to save first if ID is missing? For now, we assume saveProgress was called at 'Report' step.

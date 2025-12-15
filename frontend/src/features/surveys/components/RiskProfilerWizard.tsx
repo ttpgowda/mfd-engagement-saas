@@ -136,7 +136,7 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
         }
     }, [currentStep, finishTriggered]);
 
-    const submitData = async (leadDetails: any) => {
+    const submitData = async (leadDetails: { name: string; email: string; phone: string }) => {
         // Link the lead
         await submitLead(leadDetails);
         setHasLinkedLead(true);
@@ -255,17 +255,28 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
                     {currentQuestion.options.map((opt, idx) => {
                         if (idx === 0) return null;
                         const isSelected = responses[currentQuestion.id]?.optionIndex === idx;
+                        const hint = currentQuestion.optionsHint?.[idx];
+
                         return (
-                            <div key={idx} className={cn(
-                                "relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md",
-                                isSelected
-                                    ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-md"
-                                    : "border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800"
-                            )}>
+                            <div key={idx}
+                                onClick={() => handleOptionSelect(idx, opt)}
+                                className={cn(
+                                    "relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md",
+                                    isSelected
+                                        ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-md"
+                                        : "border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800"
+                                )}>
                                 <RadioGroupItem value={idx.toString()} id={`opt-${idx}`} className="absolute opacity-0" />
-                                <Label htmlFor={`opt-${idx}`} className="flex-1 cursor-pointer font-medium text-slate-700 dark:text-slate-200 pl-2">
-                                    {opt}
-                                </Label>
+                                <div className="flex-1 pl-2">
+                                    <Label htmlFor={`opt-${idx}`} className="cursor-pointer font-medium text-slate-700 dark:text-slate-200 block">
+                                        {opt}
+                                    </Label>
+                                    {hint && (
+                                        <p className={cn("text-xs mt-1 font-normal", isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-muted-foreground")}>
+                                            {hint}
+                                        </p>
+                                    )}
+                                </div>
                                 {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-600 animate-in zoom-in spin-in-90 duration-300" />}
                             </div>
                         );
