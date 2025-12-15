@@ -157,7 +157,11 @@ public class AuthService {
         UserDetails userDetails = new CustomUserDetails(user);
 
         String newAccessToken = jwtTokenProvider.generateToken(userDetails);
-        return new AuthResponse(newAccessToken, refreshTokenStr);
+
+        // Rotate Refresh Token: Generate a new one (updates token string + expiry)
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+
+        return new AuthResponse(newAccessToken, newRefreshToken.getToken());
     }
 
     public void logout(String username) {

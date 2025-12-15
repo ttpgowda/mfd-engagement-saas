@@ -144,9 +144,12 @@ api.interceptors.response.use(
           refreshToken
         });
 
-        const { accessToken } = response.data;
+        const { accessToken, refreshToken: newRefreshToken } = response.data;
 
         localStorage.setItem('token', accessToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+        }
         // Update cookie if needed
         document.cookie = `token=${accessToken}; path=/; max-age=86400; SameSite=Strict`;
 
