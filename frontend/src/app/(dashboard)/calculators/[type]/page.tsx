@@ -48,7 +48,7 @@ export default async function CalculatorPage(props: PageProps) {
             <ActiveComponent />
 
             {/* 3. Recommended Tools Section */}
-            <div className="pt-12 mt-12 border-t border-border/40">
+            {/*<div className="pt-12 mt-12 border-t border-border/40">
                 <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     Explore Other Tools
                 </h3>
@@ -73,7 +73,7 @@ export default async function CalculatorPage(props: PageProps) {
                         </Link>
                     ))}
                 </div>
-            </div>
+            </div>*/}
         </div>
     );
 }
