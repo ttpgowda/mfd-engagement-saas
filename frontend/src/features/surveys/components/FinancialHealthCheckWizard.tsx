@@ -109,7 +109,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
         // No-op, handled by finishSurvey now
     };
 
-    const submitData = async (leadDetails: any) => {
+    const submitData = async (leadDetails: { name: string; email: string; phone: string }) => {
         await submitLead(leadDetails);
         setHasLinkedLead(true);
         setShowLeadModal(false);
@@ -140,7 +140,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
 
     const calculateScore = () => {
         let red = 0, orange = 0, green = 0;
-        Object.values(responses).forEach((r: any) => {
+        Object.values(responses).forEach((r) => {
             if (r.scoreColor === "#EC1212") red++;
             else if (r.scoreColor === "#907326") orange++;
             else if (r.scoreColor === "#008A29") green++;
@@ -343,10 +343,12 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                     {currentQuestion.options.map((opt, idx) => {
                         if (idx === 0) return null; // Skip "Select"
                         return (
-                            <div key={idx} className={cn(
-                                "flex items-center space-x-2 border p-4 rounded-lg transition-all cursor-pointer hover:bg-muted/50",
-                                currentResponse?.optionIndex === idx ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
-                            )}>
+                            <div key={idx}
+                                onClick={() => handleOptionSelect(idx, opt)}
+                                className={cn(
+                                    "flex items-center space-x-2 border p-4 rounded-lg transition-all cursor-pointer hover:bg-muted/50",
+                                    currentResponse?.optionIndex === idx ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border"
+                                )}>
                                 <RadioGroupItem value={idx.toString()} id={`opt-${idx}`} />
                                 <Label htmlFor={`opt-${idx}`} className="flex-1 cursor-pointer font-medium">{opt}</Label>
                             </div>
