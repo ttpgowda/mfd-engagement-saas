@@ -17,6 +17,7 @@ export async function middleware(request: NextRequest) {
 
     let payload: JWTPayload | null = null;
     let newToken: string | null = null;
+    let newRefreshToken: string | null = null;
     let hasValidToken = false;
 
     const decodeToken = (t: string): JWTPayload | null => {
@@ -59,6 +60,9 @@ export async function middleware(request: NextRequest) {
                 if (data.accessToken) {
                     console.log("Middleware: Token refresh successful");
                     newToken = data.accessToken;
+                    if (data.refreshToken) {
+                        newRefreshToken = data.refreshToken;
+                    }
                     payload = decodeToken(data.accessToken);
                     hasValidToken = true;
                 }
@@ -84,14 +88,14 @@ export async function middleware(request: NextRequest) {
                 response = NextResponse.redirect(new URL('/dashboard', request.url));
             }
             if (newToken) {
-                applyNewToken(response, newToken);
+                applyNewToken(response, newToken, newRefreshToken);
             }
             return response;
         }
 
         if (newToken) {
             const response = NextResponse.next();
-            applyNewToken(response, newToken);
+            applyNewToken(response, newToken, newRefreshToken);
             return response;
         }
     } else {
@@ -107,12 +111,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
 }
 
-function applyNewToken(response: NextResponse, token: string) {
+function applyNewToken(response: NextResponse, token: string, refreshToken?: string | null) {
     response.cookies.set('token', token, {
         path: '/',
         maxAge: 86400,
         sameSite: 'strict',
     });
+    if (refreshToken) {
+        response.cookies.set('refreshToken', refreshToken, {
+            path: '/',
+            maxAge: 604800, // 7 days matching backend
+            sameSite: 'strict',
+        });
+    }
 }
 
 export const config = {

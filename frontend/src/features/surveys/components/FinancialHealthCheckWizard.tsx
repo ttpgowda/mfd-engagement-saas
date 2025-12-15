@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, XCircle, Award, Share2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, XCircle, Award } from "lucide-react";
 import { FINANCIAL_HEALTH_DATA } from "../data/financial-health-check";
-import axios from "@/lib/axios";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ShareDialog } from "@/features/share/components/ShareDialog";
@@ -285,6 +284,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                 <AutoPopupTrigger shouldShow={isPublicView && !hasLinkedLead && currentStep === 99} onTrigger={() => setShowLeadModal(true)} />
 
                 {/* Recommendations */}
+                isPublicView && (
                 <div className="mt-8">
                     <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
                     <RecommendedTools
@@ -292,6 +292,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                         currentShortCode={sharedCode}
                     />
                 </div>
+                )
 
                 <SurveyLeadForm
                     open={showLeadModal}

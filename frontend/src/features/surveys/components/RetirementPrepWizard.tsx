@@ -221,9 +221,15 @@ export function RetirementPrepWizard({ isPublicView = false, sharedCode, onCompl
                     description="Get a detailed 15-page retirement roadmap and consultation."
                 />
 
+                isPublicView && (
                 <div className="mt-8">
-                    <RecommendedTools currentToolSlug="retirement-prep" currentShortCode={sharedCode} />
+                    <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                    <RecommendedTools
+                        currentToolSlug="financial-health-check"
+                        currentShortCode={sharedCode}
+                    />
                 </div>
+                )
             </div>
         );
     }
