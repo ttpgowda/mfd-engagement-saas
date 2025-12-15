@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { adminAnalyticsService } from '@/services/adminAnalyticsService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { GitCommit, ArrowRight, Loader2 } from "lucide-react";
-import axios from '@/lib/axios';
 
 interface PatternData {
     sourceTool: string;
@@ -75,38 +74,49 @@ export function UserJourneyPatterns() {
                         No patterns detected yet.
                     </div>
                 ) : (
-                    <div className="space-y-4">
-                        {Object.entries(groupedPatterns).map(([source, paths], i) => (
-                            <div key={i} className="border rounded-lg p-3 bg-background/50 hover:bg-muted/30 transition-colors">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                                            {i + 1}
+                    <div className="relative w-full overflow-hidden min-h-[200px]">
+                        <div className="flex items-start -space-x-12 overflow-x-auto pb-8 pt-4 px-4 no-scrollbar hover:space-x-6 transition-all duration-500 ease-out">
+                            {Object.entries(groupedPatterns).map(([source, paths], i) => (
+                                <div key={i}
+                                    className="relative shrink-0 w-[320px] border border-border/60 rounded-xl p-5 bg-background/80 backdrop-blur-md shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-primary/40 hover:-translate-y-2 hover:z-30"
+                                    style={{ zIndex: Object.keys(groupedPatterns).length - i }}
+                                >
+                                    <div className="flex items-center justify-between mb-4 border-b border-border/50 pb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-sm font-bold text-primary shadow-inner">
+                                                {i + 1}
+                                            </div>
+                                            <div className="font-bold text-base capitalize text-foreground/90">
+                                                {source.replace(/-/g, ' ')}
+                                            </div>
                                         </div>
-                                        <div className="font-semibold text-sm capitalize text-foreground">
-                                            {source.replace(/-/g, ' ')}
+                                        <div className="text-xs text-muted-foreground font-medium px-2 py-1 bg-muted rounded-full">
+                                            {paths.reduce((s, p) => s + p.count, 0)} users
                                         </div>
                                     </div>
-                                    <div className="text-xs text-muted-foreground font-medium">
-                                        {paths.reduce((s, p) => s + p.count, 0)} users
-                                    </div>
-                                </div>
 
-                                <div className="flex flex-wrap gap-2 pl-8">
-                                    {paths.map((pattern, j) => (
-                                        <div key={j} className="inline-flex items-center gap-1.5 text-xs bg-muted/50 border border-border px-2 py-1 rounded-md hover:border-primary/30 transition-colors">
-                                            <ArrowRight className="w-3 h-3 text-muted-foreground" />
-                                            <span className="capitalize text-foreground/80 font-medium">
-                                                {pattern.targetTool.replace(/-/g, ' ')}
-                                            </span>
-                                            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
-                                                {pattern.count}
-                                            </span>
+                                    <div className="group flex flex-col gap-2 pl-2">
+                                        <div className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider">Navigated To</div>
+                                        <div className="flex items-center -space-x-3 overflow-x-auto pb-2 no-scrollbar hover:space-x-2 transition-all duration-500 ease-out">
+                                            {paths.map((pattern, j) => (
+                                                <div key={j}
+                                                    className="relative shrink-0 flex items-center gap-2 text-xs bg-background/95 backdrop-blur-sm border border-border/80 shadow-sm px-3 py-1.5 rounded-lg hover:shadow-md hover:border-primary/50 hover:bg-primary/5 hover:scale-105 hover:z-20 transition-all duration-300 cursor-default"
+                                                    style={{ zIndex: paths.length - j }}
+                                                >
+                                                    <ArrowRight className="w-3 h-3 text-muted-foreground/70" />
+                                                    <span className="capitalize text-foreground font-medium whitespace-nowrap">
+                                                        {pattern.targetTool.replace(/-/g, ' ')}
+                                                    </span>
+                                                    <div className="ml-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary/10 px-1 text-[9px] font-bold text-primary">
+                                                        {pattern.count}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 )}
             </CardContent>
