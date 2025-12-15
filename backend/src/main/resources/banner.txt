@@ -8,7 +8,7 @@
   M U T U A L   F U N D   E N G A G E M E N T   S A A S
 ____________________________________________________________________
 
-    :: MFD-Engagement-SaaS :: (Powered by Spring Boot)
+    :: MFD-Engagement-SaaS
     :: Data Source: PostgreSQL (amfi_db)
     :: Application Version: @0.1
 ____________________________________________________________________

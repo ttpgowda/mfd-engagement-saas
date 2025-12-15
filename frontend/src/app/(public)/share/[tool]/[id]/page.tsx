@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getCalculator } from "@/features/calculators/registry";
 import { Loader2 } from "lucide-react";
-import { CalculatorViewProps, CalculatorID, CalculatorItem } from "@/features/calculators/types";
+import { CalculatorViewProps, CalculatorItem } from "@/features/calculators/types";
 import { ResearchToolItem } from "@/features/research/types";
-import axiosPublic from "axios";
+import axiosPublic, { AxiosError } from "axios";
 
 const apiClient = axiosPublic.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
@@ -26,7 +26,7 @@ export default function SharedLinkPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [config, setConfig] = useState<Record<string, unknown> | null>(null);
-    const [tenantName, setTenantName] = useState<string | null>(null);
+    const [, setTenantName] = useState<string | null>(null);
 
     const { showLeadCapture, setShowLeadCapture, trackInteraction, trackConversion } = useAnalytics(shortCode, toolSlug);
 
@@ -45,7 +45,7 @@ export default function SharedLinkPage() {
                 setTenantName(res.data.tenantName);
             } catch (err: unknown) {
                 console.error("Failed to load link", err);
-                const status = (err as { response?: { status?: number } })?.response?.status;
+                const status = (err as AxiosError)?.response?.status;
                 setError(status === 404 ? "Link not found" : "Failed to load configuration");
             } finally {
                 setLoading(false);
@@ -69,11 +69,13 @@ export default function SharedLinkPage() {
     }
 
     // 3. Try Survey Registry
+    let isSurveyTool = false;
     if (!Calculator) {
         const surveyTool = getSurveyTool(toolSlug);
         if (surveyTool) {
-            Component = surveyTool.component;
-            Calculator = surveyTool as any; // Cast because types might slightly differ but structure is compatible enough for this page
+            Component = surveyTool.component as unknown as React.ComponentType<CalculatorViewProps>;
+            Calculator = surveyTool as unknown as CalculatorItem;
+            isSurveyTool = true;
         }
     }
 
@@ -123,9 +125,10 @@ export default function SharedLinkPage() {
                 isPublicView={true}
                 onInteraction={trackInteraction}
                 onConversion={trackConversion}
+                sharedCode={shortCode}
             />
 
-            {toolSlug !== 'financial-health-check' && (
+            {toolSlug !== 'financial-health-check' && toolSlug !== 'risk-profiler' && toolSlug !== 'goal-readiness' && toolSlug !== 'retirement-prep' && (
                 <RecommendedTools
                     currentToolSlug={toolSlug}
                     currentShortCode={shortCode}
@@ -133,11 +136,13 @@ export default function SharedLinkPage() {
                 />
             )}
 
-            <LeadCaptureModal
-                open={showLeadCapture}
-                onOpenChange={setShowLeadCapture}
-                shortCode={shortCode}
-            />
+            {!isSurveyTool && (
+                <LeadCaptureModal
+                    open={showLeadCapture}
+                    onOpenChange={setShowLeadCapture}
+                    shortCode={shortCode}
+                />
+            )}
         </div>
     );
 }
