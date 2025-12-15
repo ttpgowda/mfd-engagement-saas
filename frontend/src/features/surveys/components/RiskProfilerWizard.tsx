@@ -225,9 +225,15 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
                 />
 
                 {/* Recommendations */}
-                <div className="mt-8">
-                    <RecommendedTools currentToolSlug="risk-profiler" currentShortCode={sharedCode} />
-                </div>
+                isPublicView && (
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                        <RecommendedTools
+                            currentToolSlug="financial-health-check"
+                            currentShortCode={sharedCode}
+                        />
+                    </div>
+                )
             </div>
         );
     }
