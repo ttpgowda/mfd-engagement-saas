@@ -9,8 +9,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { DataTable } from '@/components/ui/data-table';
 import { ReportService, LinkReportItem, TrafficLog } from '@/services/reportService';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, PaginationState } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Download, Loader2 } from 'lucide-react';
 
 // --- Columns Definition ---
@@ -58,8 +65,16 @@ export function ReportsView() {
         to: new Date(),
     });
 
-    const [page, setPage] = useState(0);
-    const pageSize = 20;
+    const [linksPagination, setLinksPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 20,
+    });
+    const [logsPagination, setLogsPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 20,
+    });
+    const [activeTab, setActiveTab] = useState('links');
+    const [sortOption, setSortOption] = useState('latest');
 
     // Helper to format date for API
     const getDates = () => {
@@ -72,16 +87,23 @@ export function ReportsView() {
 
     const { start, end } = getDates();
 
+    const getSortParam = () => {
+        if (sortOption === 'latest') return 'createdAt,desc';
+        if (sortOption === 'oldest') return 'createdAt,asc';
+        if (sortOption === 'duration') return 'durationSeconds,desc';
+        return 'createdAt,desc';
+    };
+
     const { data: linksData, isLoading: isLoadingLinks } = useQuery({
-        queryKey: ['detailed-links', start, end, page],
-        queryFn: () => ReportService.getDetailedLinksReport(start, end, page, pageSize),
-        enabled: !!start && !!end,
+        queryKey: ['detailed-links', start, end, linksPagination.pageIndex, linksPagination.pageSize, sortOption],
+        queryFn: () => ReportService.getDetailedLinksReport(start, end, linksPagination.pageIndex, linksPagination.pageSize, getSortParam()),
+        enabled: !!start && !!end && activeTab === 'links',
     });
 
     const { data: logsData, isLoading: isLoadingLogs } = useQuery({
-        queryKey: ['traffic-logs', start, end, page],
-        queryFn: () => ReportService.getTrafficLogs(start, end, page, pageSize),
-        enabled: !!start && !!end,
+        queryKey: ['traffic-logs', start, end, logsPagination.pageIndex, logsPagination.pageSize, sortOption],
+        queryFn: () => ReportService.getTrafficLogs(start, end, logsPagination.pageIndex, logsPagination.pageSize, getSortParam()),
+        enabled: !!start && !!end && activeTab === 'logs',
     });
 
     return (
@@ -89,6 +111,25 @@ export function ReportsView() {
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">Detailed Reports</h2>
                 <div className="flex items-center space-x-2">
+                    <Select
+                        value={sortOption}
+                        onValueChange={(val) => {
+                            setSortOption(val);
+                            setLinksPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                            setLogsPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                        }}
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Sort By" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="latest">Latest</SelectItem>
+                            <SelectItem value="oldest">Oldest</SelectItem>
+                            {activeTab === 'logs' && (
+                                <SelectItem value="duration">Duration (High-Low)</SelectItem>
+                            )}
+                        </SelectContent>
+                    </Select>
                     <DatePickerWithRange date={date} setDate={setDate} />
                     <Button variant="outline">
                         <Download className="mr-2 h-4 w-4" />
@@ -97,7 +138,16 @@ export function ReportsView() {
                 </div>
             </div>
 
-            <Tabs defaultValue="links" className="space-y-4">
+            <Tabs
+                value={activeTab}
+                onValueChange={(val) => {
+                    setActiveTab(val);
+                    setSortOption('latest');
+                    setLinksPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                    setLogsPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                }}
+                className="space-y-4"
+            >
                 <TabsList>
                     <TabsTrigger value="links">Link Performance</TabsTrigger>
                     <TabsTrigger value="logs">Traffic Logs</TabsTrigger>
@@ -117,7 +167,13 @@ export function ReportsView() {
                                     <Loader2 className="h-6 w-6 animate-spin" />
                                 </div>
                             ) : (
-                                <DataTable columns={linkColumns} data={linksData?.content || []} />
+                                <DataTable
+                                    columns={linkColumns}
+                                    data={linksData?.content || []}
+                                    pageCount={linksData?.totalPages || 0}
+                                    pagination={linksPagination}
+                                    onPaginationChange={setLinksPagination}
+                                />
                             )}
                         </CardContent>
                     </Card>
@@ -137,7 +193,13 @@ export function ReportsView() {
                                     <Loader2 className="h-6 w-6 animate-spin" />
                                 </div>
                             ) : (
-                                <DataTable columns={logColumns} data={logsData?.content || []} />
+                                <DataTable
+                                    columns={logColumns}
+                                    data={logsData?.content || []}
+                                    pageCount={logsData?.totalPages || 0}
+                                    pagination={logsPagination}
+                                    onPaginationChange={setLogsPagination}
+                                />
                             )}
                         </CardContent>
                     </Card>
