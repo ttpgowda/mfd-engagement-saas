@@ -41,10 +41,11 @@ export const ReportService = {
         startDate: string,
         endDate: string,
         page = 0,
-        size = 20
+        size = 20,
+        sort?: string
     ) => {
         const response = await api.get<Page<LinkReportItem>>('/admin/reports/links', {
-            params: { startDate, endDate, page, size },
+            params: { startDate, endDate, page, size, sort },
         });
         return response.data;
     },
@@ -53,10 +54,11 @@ export const ReportService = {
         startDate: string,
         endDate: string,
         page = 0,
-        size = 20
+        size = 20,
+        sort?: string
     ) => {
         const response = await api.get<Page<TrafficLog>>('/admin/reports/logs', {
-            params: { startDate, endDate, page, size },
+            params: { startDate, endDate, page, size, sort },
         });
         return response.data;
     },
