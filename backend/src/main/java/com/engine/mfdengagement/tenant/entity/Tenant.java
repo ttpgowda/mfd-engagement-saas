@@ -39,4 +39,16 @@ public class Tenant extends BaseEntity {
     private String secondaryColor;
 
     private String website;
+
+    private String faviconUrl;
+
+    private String darkLogoUrl;
+
+    private String mobileLogoUrl;
+
+    private String instagramUrl;
+
+    private String linkedinUrl;
+
+    private String twitterUrl;
 }

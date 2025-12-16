@@ -35,9 +35,12 @@ public class TenantOnboardingService {
         }
 
         // 2. Check for existing username (important for multi-tenant unique usernames)
-        // This check should be global (bypassing tenant filter) or rely on a unique constraint.
-        // Assuming your username column has a unique constraint, the save operation will fail.
-        // If not, you might need a custom global query or ensure the unique constraint covers (username, tenant_id)
+        // This check should be global (bypassing tenant filter) or rely on a unique
+        // constraint.
+        // Assuming your username column has a unique constraint, the save operation
+        // will fail.
+        // If not, you might need a custom global query or ensure the unique constraint
+        // covers (username, tenant_id)
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username '" + request.getUsername() + "' is already taken.");
         }
@@ -50,6 +53,16 @@ public class TenantOnboardingService {
                 .phone(request.getPhone())
                 .subDomain(request.getSubDomain())
                 .active(true) // Always active on creation
+                .subDomain(request.getSubDomain())
+                .active(true) // Always active on creation
+                .logoUrl(request.getLogoUrl())
+                .faviconUrl(request.getFaviconUrl())
+                .darkLogoUrl(request.getDarkLogoUrl())
+                .mobileLogoUrl(request.getMobileLogoUrl())
+                .website(request.getWebsite())
+                .instagramUrl(request.getInstagramUrl())
+                .linkedinUrl(request.getLinkedinUrl())
+                .twitterUrl(request.getTwitterUrl())
                 .build();
 
         newTenant = tenantRepository.save(newTenant); // Save tenant to get its ID if needed, and persist
@@ -57,7 +70,8 @@ public class TenantOnboardingService {
         // 4. Create Initial User (Company Admin) for this Tenant
         // Always assign the "COMPANY_ADMIN" role
         Role companyAdminRole = roleRepository.findByName("COMPANY_ADMIN")
-                .orElseThrow(() -> new RuntimeException("COMPANY_ADMIN role not found in database. Please configure roles."));
+                .orElseThrow(() -> new RuntimeException(
+                        "COMPANY_ADMIN role not found in database. Please configure roles."));
 
         Set<Role> initialRoles = new HashSet<>(Collections.singletonList(companyAdminRole));
 

@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger/**")
                         .permitAll()
                         .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll() // Allow access to uploaded files
                         .requestMatchers("/api/public/links/**").permitAll() // Explicitly open links path
                         .requestMatchers("/api/public/research/**").permitAll() // Allow public research access
                         .requestMatchers("/auth/refresh").permitAll()

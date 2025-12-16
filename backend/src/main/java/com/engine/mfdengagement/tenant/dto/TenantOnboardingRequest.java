@@ -23,8 +23,16 @@ public class TenantOnboardingRequest {
     @Email(message = "Invalid tenant contact email format")
     private String contactEmail;
 
-    private String phone; // Optional
-    private String subDomain; // Optional, e.g., "acme" for acme.your-app.com
+    private String phone;
+    private String subDomain;
+    private String logoUrl;
+    private String faviconUrl;
+    private String darkLogoUrl;
+    private String mobileLogoUrl;
+    private String website;
+    private String instagramUrl;
+    private String linkedinUrl;
+    private String twitterUrl;
     // --- Initial User (Company Admin) Details ---
     @NotBlank(message = "Initial user username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
