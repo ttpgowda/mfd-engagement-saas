@@ -9,12 +9,18 @@ export const TenantSchema = z.object({
     phone: z.string().optional(),
     active: z.boolean().default(true).optional(),
     subDomain: z.string().optional(),
-    logoUrl: z.string().url().optional(),
+    logoUrl: z.string().optional(),
+    faviconUrl: z.string().optional(),
+    darkLogoUrl: z.string().optional(),
+    mobileLogoUrl: z.string().optional(),
+    instagramUrl: z.string().optional(),
+    linkedinUrl: z.string().optional(),
+    twitterUrl: z.string().optional(),
 
     primaryColor: z.string().optional(),
 
     secondaryColor: z.string().optional(),
-    website: z.string().url().optional(),
+    website: z.string().optional(),
 });
 
 export type Tenant = z.infer<typeof TenantSchema>;
@@ -96,6 +102,14 @@ export interface OnboardTenantRequest {
     userEmail: string;
     password: string;
     fullName: string;
+    logoUrl?: string;
+    faviconUrl?: string;
+    darkLogoUrl?: string;
+    mobileLogoUrl?: string;
+    instagramUrl?: string;
+    linkedinUrl?: string;
+    twitterUrl?: string;
+    website?: string;
 }
 
 export const AuthService = {

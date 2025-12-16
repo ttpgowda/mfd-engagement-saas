@@ -13,4 +13,10 @@ public class TenantDTO {
     private String primaryColor;
     private String secondaryColor;
     private String website;
+    private String faviconUrl;
+    private String darkLogoUrl;
+    private String mobileLogoUrl;
+    private String instagramUrl;
+    private String linkedinUrl;
+    private String twitterUrl;
 }

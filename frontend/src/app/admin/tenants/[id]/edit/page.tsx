@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useRouter } from 'next/navigation';
-import { Building2, UserCircle2, Loader2, Image } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
+import { Building2, Image, Loader2, Save } from 'lucide-react';
 import { LogoUpload } from '@/components/admin/LogoUpload';
-
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -26,32 +25,30 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { TenantService } from '@/services/api';
+import { TenantService, Tenant } from '@/services/api';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
-    tenantId: z.string().min(3, "ID must be at least 3 characters"),
+    // Tenant Details
+    tenantId: z.string(), // Required for update
     tenantName: z.string().min(3, "Name must be at least 3 characters"),
     contactEmail: z.string().email("Invalid email address"),
     phone: z.string().optional(),
     subDomain: z.string().optional(),
-
-    // Admin User
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    userEmail: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    fullName: z.string().min(2, "Name is required"),
+    website: z.string().optional(),
 
     // Branding
     logoUrl: z.string().optional(),
     faviconUrl: z.string().optional(),
     darkLogoUrl: z.string().optional(),
     mobileLogoUrl: z.string().optional(),
-    website: z.string().optional(),
 });
 
-export default function OnboardTenantPage() {
+export default function EditTenantPage() {
     const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
+    const params = useParams();
+    const tenantId = Number(params.id); // 'id' from folder [id]
+    const [isLoading, setIsLoading] = useState(true);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -61,33 +58,97 @@ export default function OnboardTenantPage() {
             contactEmail: '',
             phone: '',
             subDomain: '',
-            username: '',
-            userEmail: '',
-            password: '',
-            fullName: '',
+            website: '',
+            logoUrl: '',
+            faviconUrl: '',
+            darkLogoUrl: '',
+            mobileLogoUrl: '',
         },
     });
+
+    useEffect(() => {
+        if (!tenantId) return;
+
+        const fetchTenant = async () => {
+            try {
+                // We need to fetch the tenant by ID. 
+                // The current API Service has getCurrentTenant(tenantId string)
+                // But getAllTenants returns the list.
+                // We might need a method to get by numeric ID or find from list.
+                // Let's assume we can use the list and find it for now, 
+                // OR better, specific endpoint. 
+                // Checking api.ts: getCurrentTenant takes string (tenantId like 'acme').
+                // But updateTenant takes number (id).
+                // Let's try to fetch all and find, or assume we need a new endpoint.
+                // Re-reading api.ts: There is no getById(number).
+                // Let's use getAllTenants and filter. Ideally we add getById.
+                const tenants = await TenantService.getAllTenants();
+                const tenant = tenants.find(t => t.id === tenantId);
+
+                if (tenant) {
+                    form.reset({
+                        tenantId: tenant.tenantId,
+                        tenantName: tenant.name,
+                        contactEmail: tenant.contactEmail,
+                        phone: tenant.phone || '',
+                        subDomain: tenant.subDomain || '',
+                        website: tenant.website || '',
+                        logoUrl: tenant.logoUrl || '',
+                        faviconUrl: tenant.faviconUrl || '',
+                        darkLogoUrl: tenant.darkLogoUrl || '',
+                        mobileLogoUrl: tenant.mobileLogoUrl || '',
+                    });
+                } else {
+                    toast.error("Tenant not found");
+                    router.push('/admin/dashboard');
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error("Failed to load tenant");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchTenant();
+    }, [tenantId, form, router]);
 
     const { isSubmitting } = form.formState;
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setError(null);
         try {
-            await TenantService.onboardTenant(values);
+            // Map form values to Tenant object (partial)
+            const updateData: any = {
+                ...values,
+                name: values.tenantName, // Map back
+                id: tenantId,
+                tenantId: form.getValues('tenantId'), // Ensure tenantId is passed back
+            };
+
+            await TenantService.updateTenant(tenantId, updateData);
+            toast.success("Tenant updated successfully");
             router.push('/admin/dashboard');
         } catch (err) {
             console.error(err);
-            setError('Failed to onboard tenant. Please check the inputs or try again.');
+            toast.error("Failed to update tenant");
         }
+    }
+
+    if (isLoading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
     }
 
     return (
         <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 p-4 md:p-8">
-            <Card className="mx-auto w-full max-w-2xl shadow-lg border-t-4 border-t-primary">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">Onboard New Tenant</CardTitle>
+            <Card className="mx-auto w-full max-w-2xl shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold">Edit Tenant</CardTitle>
                     <CardDescription>
-                        Create a new organization workspace and assign an administrator.
+                        Update branding and details for this workspace.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -117,22 +178,6 @@ export default function OnboardTenantPage() {
                                     />
                                     <FormField
                                         control={form.control}
-                                        name="tenantId"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Tenant ID (Unique)</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="acme-corp" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <FormField
-                                        control={form.control}
                                         name="contactEmail"
                                         render={({ field }) => (
                                             <FormItem>
@@ -144,6 +189,9 @@ export default function OnboardTenantPage() {
                                             </FormItem>
                                         )}
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <FormField
                                         control={form.control}
                                         name="phone"
@@ -151,14 +199,26 @@ export default function OnboardTenantPage() {
                                             <FormItem>
                                                 <FormLabel>Phone Number</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="+91 9535593024" {...field} />
+                                                    <Input placeholder="+91..." {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="website"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Website</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="https://..." {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-
                                 <FormField
                                     control={form.control}
                                     name="subDomain"
@@ -173,16 +233,13 @@ export default function OnboardTenantPage() {
                                                     </div>
                                                 </div>
                                             </FormControl>
-                                            <FormDescription className="text-xs">
-                                                Optional custom access URL.
-                                            </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            {/* Section 1.5: Branding */}
+                            {/* Section 2: Branding */}
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-center gap-2 pb-2 border-b">
                                     <Image asIcon className="h-5 w-5 text-primary" />
@@ -200,7 +257,7 @@ export default function OnboardTenantPage() {
                                                         label="Primary Logo (Light Theme)"
                                                         value={field.value}
                                                         onChange={field.onChange}
-                                                        helperText="Recommended: 512x512px, Transparent PNG"
+                                                        helperText="Recommended: 512x512px"
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -251,7 +308,7 @@ export default function OnboardTenantPage() {
                                                         label="Favicon"
                                                         value={field.value}
                                                         onChange={field.onChange}
-                                                        helperText=".ico format, 32x32px or 16x16px"
+                                                        helperText=".ico format, 32x32px"
                                                         maxSizeMB={0.5}
                                                     />
                                                 </FormControl>
@@ -262,88 +319,22 @@ export default function OnboardTenantPage() {
                                 </div>
                             </div>
 
-                            {/* Section 2: Admin Details */}
-                            <div className="space-y-4 pt-2">
-                                <div className="flex items-center gap-2 pb-2 border-b">
-                                    <UserCircle2 className="h-5 w-5 text-primary" />
-                                    <h3 className="font-semibold text-lg text-foreground">Administrator Account</h3>
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="fullName"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Full Name</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="John Doe" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="username"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Username</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="admin_acme" {...field} autoComplete="nope" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="userEmail"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Admin Email</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="admin@acme.com" {...field} autoComplete="nope" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Password</FormLabel>
-                                                <FormControl>
-                                                    <Input type="new-password" {...field} autoComplete="off" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                            <div className="flex gap-4 justify-end">
+                                <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="mr-2 h-4 w-4" />
+                                            Save Changes
+                                        </>
+                                    )}
+                                </Button>
                             </div>
-
-                            {error && (
-                                <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive text-center">
-                                    {error}
-                                </div>
-                            )}
-
-                            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Onboarding...
-                                    </>
-                                ) : (
-                                    "Complete Onboarding"
-                                )}
-                            </Button>
                         </form>
                     </Form>
                 </CardContent>

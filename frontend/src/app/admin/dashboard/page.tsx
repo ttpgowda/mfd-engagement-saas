@@ -80,7 +80,9 @@ export default function AdminDashboardPage() {
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant="ghost" size="sm">Manage</Button>
+                                        <Link href={`/admin/tenants/${tenant.id}/edit`}>
+                                            <Button variant="ghost" size="sm">Manage</Button>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))}

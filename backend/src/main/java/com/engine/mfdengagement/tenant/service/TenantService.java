@@ -25,6 +25,12 @@ public class TenantService {
                 .primaryColor(dto.getPrimaryColor())
                 .secondaryColor(dto.getSecondaryColor())
                 .website(dto.getWebsite())
+                .faviconUrl(dto.getFaviconUrl())
+                .darkLogoUrl(dto.getDarkLogoUrl())
+                .mobileLogoUrl(dto.getMobileLogoUrl())
+                .instagramUrl(dto.getInstagramUrl())
+                .linkedinUrl(dto.getLinkedinUrl())
+                .twitterUrl(dto.getTwitterUrl())
                 .build();
 
         return tenantRepository.save(tenant);
@@ -50,6 +56,12 @@ public class TenantService {
         existing.setPrimaryColor(dto.getPrimaryColor());
         existing.setSecondaryColor(dto.getSecondaryColor());
         existing.setWebsite(dto.getWebsite());
+        existing.setFaviconUrl(dto.getFaviconUrl());
+        existing.setDarkLogoUrl(dto.getDarkLogoUrl());
+        existing.setMobileLogoUrl(dto.getMobileLogoUrl());
+        existing.setInstagramUrl(dto.getInstagramUrl());
+        existing.setLinkedinUrl(dto.getLinkedinUrl());
+        existing.setTwitterUrl(dto.getTwitterUrl());
 
         return tenantRepository.save(existing);
     }
