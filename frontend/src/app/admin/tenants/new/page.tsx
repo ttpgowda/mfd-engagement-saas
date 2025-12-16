@@ -185,7 +185,7 @@ export default function OnboardTenantPage() {
                             {/* Section 1.5: Branding */}
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-center gap-2 pb-2 border-b">
-                                    <Image asIcon className="h-5 w-5 text-primary" />
+                                    <Image className="h-5 w-5 text-primary" />
                                     <h3 className="font-semibold text-lg text-foreground">Branding & Style</h3>
                                 </div>
 
