@@ -7,9 +7,12 @@ import { Menu } from 'lucide-react';
 
 interface DashboardNavbarProps {
     onMenuClick?: () => void;
+    logoUrl?: string;
+    tenantName?: string;
+    mobileLogoUrl?: string;
 }
 
-export function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
+export function DashboardNavbar({ onMenuClick, logoUrl, tenantName = "MFD Engage", mobileLogoUrl }: DashboardNavbarProps) {
     return (
         <div className="flex items-center justify-between gap-4 border-b bg-background px-4 md:px-8 py-4">
             {/* Left side - Hamburger menu and brand */}
@@ -26,8 +29,19 @@ export function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
 
                 {/* Brand name - always visible */}
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0" />
-                    <span className="text-lg md:text-xl font-bold whitespace-nowrap">MFD Engage</span>
+                    {logoUrl ? (
+                        <>
+                            {/* Desktop Logo */}
+                            <img src={logoUrl} alt={tenantName} className="hidden md:block h-8 w-auto object-contain" />
+                            {/* Mobile Logo (fallback to desktop if no mobile) */}
+                            <img src={mobileLogoUrl || logoUrl} alt={tenantName} className="md:hidden h-8 w-auto object-contain" />
+                        </>
+                    ) : (
+                        <div className="h-8 w-8 rounded-lg bg-primary flex-shrink-0 flex items-center justify-center text-primary-foreground font-bold">
+                            {tenantName.charAt(0)}
+                        </div>
+                    )}
+                    <span className="text-lg md:text-xl font-bold whitespace-nowrap hidden sm:inline-block">{tenantName}</span>
                 </div>
             </div>
 
