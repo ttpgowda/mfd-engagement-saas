@@ -58,11 +58,18 @@ public class TenantFilter implements Filter {
 
             // 3. Fallback to default
             if (tenantId == null || tenantId.isBlank()) {
-                tenantId = TenantUtil.DEFAULT_TENANT;
+                tenantId = "saas-provider";
             }
 
-            // Set tenant ID in context
-            TenantContext.setTenantId(tenantId);
+            // Skip setting tenant context for public endpoints to avoid filtering
+            String path = httpRequest.getRequestURI();
+            if (path.startsWith("/api/public/")) {
+                // Do not set tenantId in context, so Aspect won't enable filter
+                TenantContext.clear();
+            } else {
+                // Set tenant ID in context
+                TenantContext.setTenantId(tenantId);
+            }
 
             chain.doFilter(request, response);
 
