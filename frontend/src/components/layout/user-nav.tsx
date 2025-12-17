@@ -37,11 +37,18 @@ export function UserNav() {
             console.error("Logout failed", e);
         }
 
+        try {
+            // Call Next.js API route to clear cookies server-side
+            await fetch('/api/logout', { method: 'POST' });
+        } catch (e) {
+            console.error("Failed to clear cookies server-side", e);
+        }
+
         // Clear tokens
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
 
-        // Clear cookies
+        // Clear cookies client-side
         document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 

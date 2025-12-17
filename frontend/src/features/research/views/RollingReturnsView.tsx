@@ -139,7 +139,7 @@ export default function RollingReturnsView({ defaultValues, isPublicView = false
                         <PublicShareButton />
                     ) : (
                         <ShareDialog
-                            toolSlug="rolling-returns"
+                            toolSlug="rolling-returns-analysis"
                             config={{
                                 category,
                                 schemeCodes: selectedFunds.map(f => f.schemeCode),

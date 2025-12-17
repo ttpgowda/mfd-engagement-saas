@@ -226,7 +226,7 @@ export function GoalReadinessWizard({ isPublicView = false, sharedCode, onComple
                     description="Get a detailed report and professional guidance."
                 />
 
-                isPublicView && (
+                {isPublicView && (
                 <div className="mt-8">
                     <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
                     <RecommendedTools
@@ -234,7 +234,7 @@ export function GoalReadinessWizard({ isPublicView = false, sharedCode, onComple
                         currentShortCode={sharedCode}
                     />
                 </div>
-                )
+                )}
             </div>
         );
     }

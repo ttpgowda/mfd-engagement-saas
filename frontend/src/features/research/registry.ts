@@ -33,4 +33,15 @@ export const RESEARCH_TOOLS: ResearchToolItem[] = RESEARCH_TOOL_META.map(meta =>
     component: COMPONENT_MAP[meta.id]
 }));
 
-export const getResearchTool = (id: string) => RESEARCH_TOOLS.find(t => t.id === id);
+export const getResearchTool = (id: string) => {
+    if (id === 'research-sip') return RESEARCH_TOOLS.find(t => t.id === 'sip-calculator');
+    if (id === 'fund-comparison') return RESEARCH_TOOLS.find(t => t.id === 'fund-compare');
+    if (id === 'rolling-returns') return RESEARCH_TOOLS.find(t => t.id === 'rolling-returns-analysis');
+
+    // Legacy / Share link aliases
+    if (id === 'lumpsum-returns') return RESEARCH_TOOLS.find(t => t.id === 'top-lumpsum');
+    if (id === 'research-stp') return RESEARCH_TOOLS.find(t => t.id === 'stp-calculator');
+    if (id === 'research-swp') return RESEARCH_TOOLS.find(t => t.id === 'swp-calculator');
+
+    return RESEARCH_TOOLS.find(t => t.id === id);
+};
