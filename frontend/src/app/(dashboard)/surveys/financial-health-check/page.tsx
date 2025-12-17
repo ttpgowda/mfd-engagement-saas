@@ -1,7 +1,6 @@
-import { FinancialHealthCheckWizard } from "@/features/surveys/components/FinancialHealthCheckWizard";
-import { ClientPageTitle } from "@/components/utils/ClientPageTitle";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
+import {FinancialHealthCheckWizard} from "@/features/surveys/components/FinancialHealthCheckWizard";
+import {ClientPageTitle} from "@/components/utils/ClientPageTitle";
+import {ShareDialog} from "@/features/share/components/ShareDialog";
 
 export default function FinancialHealthCheckPage() {
     return (

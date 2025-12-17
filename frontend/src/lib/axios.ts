@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Adjust if your backend port differs
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -141,7 +141,7 @@ api.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post('http://localhost:8080/api/auth/refresh', {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/auth/refresh`, {
           refreshToken
         });
 
