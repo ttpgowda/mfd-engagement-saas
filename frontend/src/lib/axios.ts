@@ -99,6 +99,7 @@ const clearAuthAndRedirect = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('refreshToken');
   document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
   // Use a small timeout to ensure cleanup completes
   setTimeout(() => {
@@ -128,7 +129,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = getCookie('refreshToken') || localStorage.getItem('refreshToken');
 
       if (!refreshToken) {
         // No refresh token, logout
@@ -147,11 +148,14 @@ api.interceptors.response.use(
         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
         localStorage.setItem('token', accessToken);
+        // Update access token cookie
+        document.cookie = `token=${accessToken}; path=/; max-age=86400; SameSite=Strict`;
+
         if (newRefreshToken) {
           localStorage.setItem('refreshToken', newRefreshToken);
+          // Update refresh token cookie to keep middleware in sync
+          document.cookie = `refreshToken=${newRefreshToken}; path=/; max-age=604800; SameSite=Strict`;
         }
-        // Update cookie if needed
-        document.cookie = `token=${accessToken}; path=/; max-age=86400; SameSite=Strict`;
 
         api.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
         originalRequest.headers['Authorization'] = 'Bearer ' + accessToken;
