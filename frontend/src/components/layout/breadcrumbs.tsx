@@ -16,6 +16,9 @@ import { cn } from "@/lib/utils";
 
 export function Breadcrumbs({ className }: { className?: string }) {
     const pathname = usePathname();
+
+    if (!pathname) return null;
+
     const segments = pathname.split("/").filter((item) => item !== "");
 
     if (segments.length === 0) return null;

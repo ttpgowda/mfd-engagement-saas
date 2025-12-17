@@ -144,7 +144,7 @@ export default function SwpCalculatorView({ defaultValues, isPublicView = false 
                         <PublicShareButton />
                     ) : (
                         <ShareDialog
-                            toolSlug="research-swp"
+                            toolSlug="swp-calculator"
                             config={{
                                 category,
                                 schemeCode: selectedScheme?.schemeCode,

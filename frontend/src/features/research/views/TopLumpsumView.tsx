@@ -120,7 +120,7 @@ export default function TopLumpsumView({ defaultValues, isPublicView = false }: 
                         <PublicShareButton />
                     ) : (
                         <ShareDialog
-                            toolSlug="lumpsum-returns"
+                            toolSlug="top-lumpsum"
                             config={{ category, amount, years }}
                             defaultTitle="Lumpsum Returns Analysis"
                             defaultDescription={`Top funds for ₹${amount.toLocaleString()} investment over ${years} years.`}

@@ -151,7 +151,7 @@ export function StpCalculatorView({ defaultValues, isPublicView = false }: Calcu
                         <PublicShareButton />
                     ) : (
                         <ShareDialog
-                            toolSlug="research-stp"
+                            toolSlug="stp-calculator"
                             config={{
                                 initialAmount,
                                 transferAmount,
