@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { AuthService } from "@/services/api";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import {
@@ -98,6 +99,45 @@ export function DashboardShell({ children, tenant }: DashboardShellProps) {
 
     const logoUrl = getFullImageUrl(tenant?.logoUrl);
     const tenantName = tenant?.name || "MFD Panel";
+
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        try {
+            // Try to get username from token for backend logout
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    if (payload.sub) {
+                        await AuthService.logout(payload.sub);
+                    }
+                } catch (e) {
+                    console.error("Error decoding token for logout", e);
+                }
+            }
+        } catch (e) {
+            console.error("Logout failed", e);
+        }
+
+        try {
+            // Call Next.js API route to clear cookies server-side
+            await fetch('/api/logout', { method: 'POST' });
+        } catch (e) {
+            console.error("Failed to clear cookies server-side", e);
+        }
+
+        // Clear tokens
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+
+        // Clear cookies client-side
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+        // Redirect to login (hard refresh to clear any in-memory state)
+        window.location.href = '/login';
+    };
 
     return (
         <div className="relative min-h-screen bg-background/50 flex flex-col md:flex-row font-sans antialiased selection:bg-primary/20">
@@ -283,7 +323,10 @@ export function DashboardShell({ children, tenant }: DashboardShellProps) {
                                     <span>Settings</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
+                                <DropdownMenuItem
+                                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                                    onClick={handleLogout}
+                                >
                                     <LogOut className="mr-2 h-4 w-4" />
                                     <span>Log out</span>
                                 </DropdownMenuItem>
