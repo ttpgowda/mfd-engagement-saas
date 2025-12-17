@@ -284,7 +284,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                 <AutoPopupTrigger shouldShow={isPublicView && !hasLinkedLead && currentStep === 99} onTrigger={() => setShowLeadModal(true)} />
 
                 {/* Recommendations */}
-                isPublicView && (
+                {isPublicView && (
                 <div className="mt-8">
                     <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
                     <RecommendedTools
@@ -292,7 +292,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                         currentShortCode={sharedCode}
                     />
                 </div>
-                )
+                )}
 
                 <SurveyLeadForm
                     open={showLeadModal}

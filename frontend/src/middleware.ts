@@ -46,8 +46,9 @@ export async function middleware(request: NextRequest) {
     // 2. Refresh Logic (if invalid/missing token but have refresh token)
     if (!hasValidToken && refreshToken) {
         try {
-            console.log("Middleware: Attempting to refresh token...");
-            const refreshRes = await fetch('http://localhost:8080/api/auth/refresh', {
+            const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+            const refreshRes = await fetch(`${baseURL}/api/auth/refresh`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

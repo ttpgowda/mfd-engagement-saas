@@ -225,7 +225,7 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
                 />
 
                 {/* Recommendations */}
-                isPublicView && (
+                {isPublicView && (
                     <div className="mt-8">
                         <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
                         <RecommendedTools
@@ -233,7 +233,7 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
                             currentShortCode={sharedCode}
                         />
                     </div>
-                )
+                )}
             </div>
         );
     }
