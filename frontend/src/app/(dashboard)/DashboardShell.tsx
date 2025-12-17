@@ -35,6 +35,7 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 // --- UPDATED NAVIGATION ITEMS (From your Sidebar snippet) ---
 const navItems = [
@@ -295,6 +296,7 @@ export function DashboardShell({ children, tenant }: DashboardShellProps) {
                 <main className="flex-1 p-6 md:p-8 overflow-x-hidden relative">
                     {/* Content Fade-in animation */}
                     <div className="animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
+                        <Breadcrumbs />
                         {children}
                     </div>
                 </main>
