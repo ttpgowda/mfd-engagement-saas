@@ -26,7 +26,7 @@ export default function SharedLinkPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [config, setConfig] = useState<Record<string, unknown> | null>(null);
-    const [, setTenantName] = useState<string | null>(null);
+    const [tenantName, setTenantName] = useState<string | null>(null);
 
     const { showLeadCapture, setShowLeadCapture, trackInteraction, trackConversion } = useAnalytics(shortCode, toolSlug);
 
@@ -80,12 +80,25 @@ export default function SharedLinkPage() {
     }
 
 
-    // Set Document Title
+    // Set Document Title with Tenant Branding
     useEffect(() => {
-        if (Calculator) {
-            document.title = Calculator.title;
-        }
-    }, [Calculator]);
+        const updateTitle = async () => {
+            if (Calculator) {
+                // If we don't have tenant name yet, try to get it from API or registry
+                // However, since this is a client component, we might need a simpler way 
+                // or just wait for the 'config' fetch which also has tenantName (line 45)
+
+                // RootLayout title template is: "%s | ${title}"
+                // So document.title = "SIP Calculator" will result in "SIP Calculator | TenantName" 
+                // IF we let Next.js handle it. But document.title = ... overwrites it completely.
+
+                // Let's use the fetched tenantName from the config effect if available
+                const displayTenantName = tenantName || "MFD Engagement";
+                document.title = `${Calculator.title} | ${displayTenantName}`;
+            }
+        };
+        updateTitle();
+    }, [Calculator, tenantName]);
 
     if (loading) {
         return (
