@@ -45,15 +45,19 @@ export default function FundCompareView({ defaultValues, isPublicView = false }:
 
     // 1. Sync State with URL or Default Values
     useEffect(() => {
-        if (defaultValues?.schemes && Array.isArray(defaultValues.schemes)) {
-            setSelectedIds(defaultValues.schemes);
-            return;
-        }
-
         const schemesParam = searchParams.get('schemes');
         if (schemesParam) {
             const ids = schemesParam.split(',').map(Number).filter(n => !isNaN(n));
-            setSelectedIds(ids);
+            // Only update if different to avoid infinite loops or unnecessary renders
+            setSelectedIds(prev => {
+                if (JSON.stringify(prev) === JSON.stringify(ids)) return prev;
+                return ids;
+            });
+            return;
+        }
+
+        if (defaultValues?.schemes && Array.isArray(defaultValues.schemes)) {
+            setSelectedIds(defaultValues.schemes);
         }
     }, [searchParams, defaultValues]);
 

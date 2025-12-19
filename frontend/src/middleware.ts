@@ -47,11 +47,21 @@ export async function middleware(request: NextRequest) {
     if (!hasValidToken && refreshToken) {
         try {
             const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+            const host = request.nextUrl.hostname;
+            const parts = host.split('.');
+            let tenantId = 'saas-provider';
+
+            if (host.endsWith('localhost')) {
+                if (parts.length > 1 && parts[0] !== 'localhost' && parts[0] !== 'www') tenantId = parts[0];
+            } else if (parts.length > 2 && parts[0] !== 'www') {
+                tenantId = parts[0];
+            }
 
             const refreshRes = await fetch(`${baseURL}/api/auth/refresh`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-Tenant-ID': tenantId,
                 },
                 body: JSON.stringify({ refreshToken }),
             });
@@ -132,10 +142,17 @@ export const config = {
         '/',
         '/login',
         '/register',
+        '/dashboard',
         '/dashboard/:path*',
+        '/research/:path*',
         '/leads/:path*',
+        '/surveys/:path*',
+        '/reports/:path*',
+        '/calculators/:path*',
+        '/users/:path*',
+        '/admin/:path*',
+        '/settings/:path*',
         '/studio/:path*',
         '/funds/:path*',
-        '/calculators/:path*',
     ],
 };

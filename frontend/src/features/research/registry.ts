@@ -39,6 +39,7 @@ export const getResearchTool = (id: string) => {
     if (id === 'rolling-returns') return RESEARCH_TOOLS.find(t => t.id === 'rolling-returns-analysis');
 
     // Legacy / Share link aliases
+    if (id === 'top-performing-funds') return RESEARCH_TOOLS.find(t => t.id === 'top-performing');
     if (id === 'lumpsum-returns') return RESEARCH_TOOLS.find(t => t.id === 'top-lumpsum');
     if (id === 'research-stp') return RESEARCH_TOOLS.find(t => t.id === 'stp-calculator');
     if (id === 'research-swp') return RESEARCH_TOOLS.find(t => t.id === 'swp-calculator');
