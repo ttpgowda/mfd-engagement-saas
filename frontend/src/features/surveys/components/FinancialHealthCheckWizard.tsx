@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -44,6 +44,13 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
     });
 
     const [hasLinkedLead, setHasLinkedLead] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('lead_token');
+            if (token) setHasLinkedLead(true);
+        }
+    }, []);
 
     // Navigation Logic with Skips
     const getNextQuestionId = (currentQId: number, currentOptionIndex: number) => {
@@ -285,13 +292,13 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
 
                 {/* Recommendations */}
                 {isPublicView && (
-                <div className="mt-8">
-                    <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
-                    <RecommendedTools
-                        currentToolSlug="financial-health-check"
-                        currentShortCode={sharedCode}
-                    />
-                </div>
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                        <RecommendedTools
+                            currentToolSlug="financial-health-check"
+                            currentShortCode={sharedCode}
+                        />
+                    </div>
                 )}
 
                 <SurveyLeadForm

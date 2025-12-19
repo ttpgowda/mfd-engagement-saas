@@ -36,6 +36,13 @@ export function GoalReadinessWizard({ isPublicView = false, sharedCode, onComple
     const [showLeadForm, setShowLeadForm] = useState(false);
     const [hasLinkedLead, setHasLinkedLead] = useState(false);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('lead_token');
+            if (token) setHasLinkedLead(true);
+        }
+    }, []);
+
     // Combine core questions and follow-ups based on logic if needed. 
     // For simplicity, we'll just flow through the core questions first.
     // The spec mentions progressive disclosure, but for V1 we can do a linear flow of core questions.
@@ -227,13 +234,13 @@ export function GoalReadinessWizard({ isPublicView = false, sharedCode, onComple
                 />
 
                 {isPublicView && (
-                <div className="mt-8">
-                    <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
-                    <RecommendedTools
-                        currentToolSlug="financial-health-check"
-                        currentShortCode={sharedCode}
-                    />
-                </div>
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                        <RecommendedTools
+                            currentToolSlug="financial-health-check"
+                            currentShortCode={sharedCode}
+                        />
+                    </div>
                 )}
             </div>
         );

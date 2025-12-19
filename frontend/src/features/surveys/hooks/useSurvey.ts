@@ -57,6 +57,7 @@ export function useSurvey({ surveyType, sharedCode }: SurveyConfig) {
                 surveyType // redundant but helpful context
             };
             const res = await axios.post(`/public/surveys/${responseId}/link-lead`, payload);
+            localStorage.setItem('lead_token', 'captured-survey-' + Date.now());
             toast.success("Profile Saved!");
             return res.data; // Lead ID
         } catch (error) {
