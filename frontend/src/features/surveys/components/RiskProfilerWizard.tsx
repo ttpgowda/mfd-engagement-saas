@@ -52,6 +52,13 @@ export function RiskProfilerWizard({ isPublicView = false, sharedCode, onComplet
     const [finishTriggered, setFinishTriggered] = useState(false);
     const [hasLinkedLead, setHasLinkedLead] = useState(false);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('lead_token');
+            if (token) setHasLinkedLead(true);
+        }
+    }, []);
+
     const handleStart = () => {
         setIsTransitioning(true);
         setTimeout(() => {

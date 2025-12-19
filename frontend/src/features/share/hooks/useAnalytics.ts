@@ -43,7 +43,10 @@ export const useAnalytics = (shortCode: string | undefined, toolSlug?: string) =
         // Lead Capture Timer
         const timeoutId = setTimeout(() => {
             const hasLeadToken = localStorage.getItem('lead_token');
-            if (toolSlug !== 'financial-health-check' && !hasLeadToken) { // Skip for Survey
+            const surveyTools = ['financial-health-check', 'risk-profiler', 'goal-readiness', 'retirement-prep'];
+            const isSurvey = surveyTools.includes(toolSlug || '');
+
+            if (!isSurvey && !hasLeadToken) {
                 setShowLeadCapture(true);
             }
         }, LEAD_CAPTURE_TRIGGER);
