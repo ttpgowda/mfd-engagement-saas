@@ -126,7 +126,7 @@ export default async function PublicLayout({
                         {/* Left: Persuasive Text */}
                         <div className="space-y-4 text-center lg:text-left">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                                Let's start a conversation.
+                                Let&#39;s start a conversation.
                             </h2>
                             <p className="text-muted-foreground text-lg max-w-xl mx-auto lg:mx-0">
                                 Whether you have questions about your portfolio or need advice on your financial goals, {tenantName} is here to guide your wealth creation journey.
