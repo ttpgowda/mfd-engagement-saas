@@ -36,6 +36,13 @@ export function RetirementPrepWizard({ isPublicView = false, sharedCode, onCompl
     const [showLeadForm, setShowLeadForm] = useState(false);
     const [hasLinkedLead, setHasLinkedLead] = useState(false);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('lead_token');
+            if (token) setHasLinkedLead(true);
+        }
+    }, []);
+
     const questions = RETIREMENT_PREP_DATA.questions;
 
     const { isSaving, saveProgress, submitLead, responseId } = useSurvey({
@@ -221,15 +228,15 @@ export function RetirementPrepWizard({ isPublicView = false, sharedCode, onCompl
                     description="Get a detailed 15-page retirement roadmap and consultation."
                 />
 
-                isPublicView && (
-                <div className="mt-8">
-                    <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
-                    <RecommendedTools
-                        currentToolSlug="financial-health-check"
-                        currentShortCode={sharedCode}
-                    />
-                </div>
-                )
+                {isPublicView && (
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                        <RecommendedTools
+                            currentToolSlug="financial-health-check"
+                            currentShortCode={sharedCode}
+                        />
+                    </div>
+                )}
             </div>
         );
     }
