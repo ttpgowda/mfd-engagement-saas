@@ -3,12 +3,16 @@ spring:
     allow-bean-definition-overriding: true
     lazy-initialization: true
   datasource:
-    url: jdbc:postgresql://${DATASOURCE_URL:localhost}/${DATASOURCE_DATABASE:amfi_db}
-    username: ${DATASOURCE_USERNAME:postgres}
-    password: ${DATASOURCE_PASSWORD:root}
+    url: jdbc:postgresql://${DATASOURCE_URL}/${DATASOURCE_DATABASE}?options=-c%20timezone=Asia/Kolkata
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
   servlet:
     multipart:
       max-file-size: 10MB
