@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # --- Database Service ---
+  db:
+    image: postgres:15
+    container_name: mfd_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DATASOURCE_DATABASE}
+      POSTGRES_USER: ${DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data # Persist data if container restarts
+    networks:
+      - app-network
+
+  # --- Spring Boot App Service ---
+  app:
+    build: . # Uses the Dockerfile in the current directory
+    container_name: mfd_backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      # Database Config (Note: 'db' is the hostname of the postgres container above)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DATASOURCE_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+
+      # App Config
+      JASYPT_ENCRYPTION_PASSWORD: ${JASYPT_ENCRYPTION_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+
+      # Mail Config
+      SPRING_MAIL_HOST: ${MAIL_HOST}
+      SPRING_MAIL_PORT: ${MAIL_PORT}
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+    networks:
+      - app-network
+
+volumes:
+  pg_data:
+
+networks:
+  app-network:
+    driver: bridge

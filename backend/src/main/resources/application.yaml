@@ -3,9 +3,9 @@ spring:
     allow-bean-definition-overriding: true
     lazy-initialization: true
   datasource:
-    url: jdbc:postgresql://${DATASOURCE_URL}/${DATASOURCE_DATABASE}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:postgresql://${DATASOURCE_URL:localhost}/${DATASOURCE_DATABASE:amfi_db}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:root}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,10 +14,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:none}
+    password: ${MAIL_PASSWORD:none}
     properties:
       mail:
         smtp:
@@ -28,17 +28,11 @@ spring:
             trust: smtpout.secureserver.net
             enable: false
             protocols: TLSv1.2
-          from: ${MAIL_FROM}
+          from: ${MAIL_FROM:noreply@localhost}
+# App settings for Tenant resolution
+app:
+  domain: ${APP_DOMAIN:localhost}
+
 # Jwt secret
 jwt:
-  secret: ${JWT_SECRET}
-
-app:
-  domain: localhost # Default to localhost for dev, override with thewealthweb.in for prod
-
-
-MAIL_FROM: info@thewealthweb.in
-MAIL_HOST: smtpout.secureserver.net
-MAIL_PORT: 587
-MAIL_USERNAME: info@thewealthweb.in
-MAIL_PASSWORD: Jx/*UpS4x&VvYL.
+  secret: ${JWT_SECRET:dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3Itand0LXRoYXQtc2hvdWxkLWJlLWNoYW5nZWQtaW4tcHJvZHVjdGlvbg==}
