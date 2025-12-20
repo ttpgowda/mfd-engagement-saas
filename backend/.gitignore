@@ -34,3 +34,5 @@ build/
 .env
 env
 start-backend.ps1
+my_backup.sql
+.terraform

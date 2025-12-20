@@ -120,3 +120,16 @@ default load one scheme
 
 ### for adding DNS
     C:\Windows\System32\drivers\etc\hosts   
+
+
+
+## Configure DNS Records for Vercel Deployment
+https://gemini.google.com/app/6929f81f9b73f430
+
+
+
+# 1. Navigate to where you want the file saved
+cd C:\thimme\projects\mfd-engagement-saas
+
+# 2. Run pg_dump (Adjust path if needed)
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -h localhost -d mf_db_new -f my_backup.sql --clean --if-exists
