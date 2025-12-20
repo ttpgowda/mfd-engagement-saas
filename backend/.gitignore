@@ -36,3 +36,5 @@ env
 start-backend.ps1
 my_backup.sql
 .terraform
+terraform.tfstate
+.terraform.lock.hcl
