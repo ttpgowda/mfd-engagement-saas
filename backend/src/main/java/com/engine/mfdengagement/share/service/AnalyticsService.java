@@ -136,6 +136,13 @@ public class AnalyticsService {
                         .parentShortCode(parentShortCode) // Track referrer journey
                         .tenant(link.getTenant())
                         .build();
+            } else {
+                // Existing log found. If it doesn't have a parentShortCode but we do now,
+                // update it.
+                if ((log.getParentShortCode() == null || log.getParentShortCode().isEmpty())
+                        && parentShortCode != null && !parentShortCode.isEmpty()) {
+                    log.setParentShortCode(parentShortCode);
+                }
             }
 
             // Update metrics based on event type
