@@ -29,6 +29,7 @@ public class RefreshTokenService {
 
         RefreshToken refreshToken = existingTokenOpt.orElse(new RefreshToken());
         refreshToken.setUser(user);
+        refreshToken.setTenant(user.getTenant());
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
 

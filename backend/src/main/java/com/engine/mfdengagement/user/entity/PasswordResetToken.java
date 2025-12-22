@@ -1,22 +1,28 @@
 package com.engine.mfdengagement.user.entity;
 
+import com.engine.mfdengagement.common.entity.BaseEntity;
+import com.engine.mfdengagement.tenant.entity.Tenant;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Filter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-public class PasswordResetToken {
+@AllArgsConstructor
+@Builder
+@Filter(name = "tenantFilter", condition = "tenant_id IN (SELECT t.id FROM tenants t WHERE t.tenantid = :tenantIdentifier)")
+public class PasswordResetToken extends BaseEntity {
 
     private static final int EXPIRATION = 60 * 24; // 24 hours
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
 
     private String token;
 
@@ -28,6 +34,7 @@ public class PasswordResetToken {
 
     public PasswordResetToken(User user) {
         this.user = user;
+        this.tenant = user.getTenant();
         this.token = UUID.randomUUID().toString();
         this.expiryDate = LocalDateTime.now().plusMinutes(EXPIRATION);
     }

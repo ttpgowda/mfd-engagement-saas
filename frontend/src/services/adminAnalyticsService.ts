@@ -46,17 +46,17 @@ export const adminAnalyticsService = {
     },
 
     async getFunnel(): Promise<{ stage: string; count: number; dropoffPercentage: number; }[]> {
-        const res = await axiosInstance.get('/public/analytics/funnel');
+        const res = await axiosInstance.get('/admin/analytics/funnel');
         return res.data;
     },
 
     async getHeatmap(): Promise<{ dayOfWeek: number; hourOfDay: number; intensity: number; }[]> {
-        const res = await axiosInstance.get('/public/analytics/heatmap');
+        const res = await axiosInstance.get('/admin/analytics/heatmap');
         return res.data;
     },
 
     async getPatterns(): Promise<{ sourceTool: string; targetTool: string; count: number; }[]> {
-        const res = await axiosInstance.get('/public/analytics/patterns');
+        const res = await axiosInstance.get('/admin/analytics/patterns');
         return res.data;
     }
 };

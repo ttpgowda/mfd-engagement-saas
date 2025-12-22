@@ -64,4 +64,31 @@ public class AnalyticsReportDTO {
         private Double avgDurationSeconds;
         private LocalDateTime lastActive;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class FunnelDTO {
+        private String stage;
+        private Long count;
+        private Double dropoffPercentage;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HeatmapDTO {
+        private Integer dayOfWeek; // 1-7 (Sun-Sat)
+        private Integer hourOfDay; // 0-23
+        private Long intensity;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PatternDTO {
+        private String sourceTool;
+        private String targetTool;
+        private Long count;
+    }
 }
