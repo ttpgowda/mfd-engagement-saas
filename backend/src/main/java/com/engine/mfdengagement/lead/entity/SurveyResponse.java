@@ -5,6 +5,7 @@ import com.engine.mfdengagement.tenant.entity.Tenant;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Filter;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Filter(name = "tenantFilter", condition = "tenant_id IN (SELECT t.id FROM tenants t WHERE t.tenantid = :tenantIdentifier)")
 public class SurveyResponse extends BaseEntity {
 
     @Column(nullable = false, length = 50)

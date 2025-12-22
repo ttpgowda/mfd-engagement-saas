@@ -65,10 +65,12 @@ public interface AnalyticsLogRepository extends JpaRepository<AnalyticsLog, Long
         List<Object[]> getFunnelMetrics();
 
         @Query(value = "SELECT " +
-                        "CAST(EXTRACT(DOW FROM createdat) AS INTEGER) as dow, " +
-                        "CAST(EXTRACT(HOUR FROM createdat) AS INTEGER) as hour, " +
-                        "COUNT(*) " +
-                        "FROM analytics_logs " +
-                        "GROUP BY EXTRACT(DOW FROM createdat), EXTRACT(HOUR FROM createdat)", nativeQuery = true)
-        List<Object[]> getHourlyActivity();
+                        "CAST(EXTRACT(DOW FROM a.createdat) AS INTEGER) as dow, " +
+                        "CAST(EXTRACT(HOUR FROM a.createdat) AS INTEGER) as hour, " +
+                        "COUNT(a.*) " +
+                        "FROM analytics_logs a " +
+                        "JOIN tenants t ON a.tenant_id = t.id " +
+                        "WHERE t.tenantid = :tenantId " +
+                        "GROUP BY EXTRACT(DOW FROM a.createdat), EXTRACT(HOUR FROM a.createdat)", nativeQuery = true)
+        List<Object[]> getHourlyActivity(@org.springframework.data.repository.query.Param("tenantId") String tenantId);
 }
