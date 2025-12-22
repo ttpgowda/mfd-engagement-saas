@@ -121,7 +121,7 @@ export default function TopPerformingFundsView({ defaultValues, isPublicView = f
                 <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 w-full md:w-auto">
                     {/* Added min-w-0 to prevent flex overflow issues */}
                     <div className="w-full md:w-[280px] min-w-0 space-y-1.5 flex-1">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider ml-1">Category</label>
+
                         <Select
                             value={request.category}
                             onValueChange={(v) => setRequest(prev => ({ ...prev, category: v, page: 0 }))}

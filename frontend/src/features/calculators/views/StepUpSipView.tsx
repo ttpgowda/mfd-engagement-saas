@@ -102,10 +102,31 @@ export default function StepUpSipView({ defaultValues, isPublicView = false }: C
                                         <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <XAxis dataKey="year" hide={years > 15} />
-                                <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`} axisLine={false} tickLine={false} />
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
+                                <XAxis
+                                    dataKey="year"
+                                    hide={years > 15}
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                />
+                                <YAxis
+                                    tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                <Tooltip
+                                    formatter={(value: number) => [CurrencyFormatter(value), '']}
+                                    contentStyle={{
+                                        backgroundColor: "hsl(var(--popover))",
+                                        borderColor: "hsl(var(--border))",
+                                        color: "hsl(var(--popover-foreground))"
+                                    }}
+                                    labelStyle={{ color: "hsl(var(--foreground))" }}
+                                />
                                 <Area type="monotone" dataKey="corpus" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorCorpus)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
