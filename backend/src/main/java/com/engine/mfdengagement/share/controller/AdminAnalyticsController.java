@@ -21,4 +21,22 @@ public class AdminAnalyticsController {
     public ResponseEntity<AnalyticsReportDTO> getDashboardAnalytics() {
         return ResponseEntity.ok(analyticsService.getDashboardAnalytics());
     }
+
+    @GetMapping("/funnel")
+    @PreAuthorize("hasRole('COMPANY_ADMIN')")
+    public ResponseEntity<java.util.List<AnalyticsReportDTO.FunnelDTO>> getFunnel() {
+        return ResponseEntity.ok(analyticsService.getFunnelMetrics());
+    }
+
+    @GetMapping("/heatmap")
+    @PreAuthorize("hasRole('COMPANY_ADMIN')")
+    public ResponseEntity<java.util.List<AnalyticsReportDTO.HeatmapDTO>> getHeatmap() {
+        return ResponseEntity.ok(analyticsService.getHeatmapMetrics());
+    }
+
+    @GetMapping("/patterns")
+    @PreAuthorize("hasRole('COMPANY_ADMIN')")
+    public ResponseEntity<java.util.List<AnalyticsReportDTO.PatternDTO>> getPatterns() {
+        return ResponseEntity.ok(analyticsService.getPatterns());
+    }
 }

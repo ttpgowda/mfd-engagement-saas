@@ -6,6 +6,7 @@ import com.engine.mfdengagement.share.dto.AnalyticsReportDTO.*;
 import com.engine.mfdengagement.share.entity.SharedLink;
 import com.engine.mfdengagement.share.repository.AnalyticsLogRepository;
 import com.engine.mfdengagement.share.repository.SharedLinkRepository;
+import com.engine.mfdengagement.tenant.config.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -196,5 +197,59 @@ public class AdminAnalyticsService {
         if (obj instanceof Number)
             return ((Number) obj).doubleValue();
         return 0.0;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnalyticsReportDTO.PatternDTO> getPatterns() {
+        List<Object[]> results = analyticsLogRepository.findPatterns();
+        List<AnalyticsReportDTO.PatternDTO> patterns = new ArrayList<>();
+
+        for (Object[] row : results) {
+            String parentShortCode = (String) row[0];
+            String targetToolSlug = (String) row[1];
+            Long count = toLong(row[2]);
+
+            // Optimistic lookup for source tool name
+            String sourceToolSlug = sharedLinkRepository.findByShortCode(parentShortCode)
+                    .map(SharedLink::getToolSlug)
+                    .orElse("Unknown (" + parentShortCode + ")");
+
+            patterns.add(new AnalyticsReportDTO.PatternDTO(sourceToolSlug, targetToolSlug, count));
+        }
+        return patterns;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnalyticsReportDTO.FunnelDTO> getFunnelMetrics() {
+        List<Object[]> results = analyticsLogRepository.getFunnelMetrics();
+        List<AnalyticsReportDTO.FunnelDTO> funnel = new ArrayList<>();
+
+        if (!results.isEmpty()) {
+            Object[] row = results.get(0);
+            Long total = toLong(row[0]);
+            Long engaged = toLong(row[1]);
+            Long converted = toLong(row[2]);
+
+            funnel.add(new AnalyticsReportDTO.FunnelDTO("Total Views", total, 0.0));
+            funnel.add(new AnalyticsReportDTO.FunnelDTO("Engaged Users", engaged,
+                    total > 0 ? 100.0 - ((double) engaged / total * 100) : 0.0));
+            funnel.add(new AnalyticsReportDTO.FunnelDTO("Converted", converted,
+                    engaged > 0 ? 100.0 - ((double) converted / engaged * 100) : 0.0));
+        }
+        return funnel;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnalyticsReportDTO.HeatmapDTO> getHeatmapMetrics() {
+        List<Object[]> results = analyticsLogRepository.getHourlyActivity(TenantContext.getTenantId());
+        List<AnalyticsReportDTO.HeatmapDTO> heatmap = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Integer dow = ((Number) row[0]).intValue();
+            Integer hour = ((Number) row[1]).intValue();
+            Long count = toLong(row[2]);
+            heatmap.add(new AnalyticsReportDTO.HeatmapDTO(dow, hour, count));
+        }
+        return heatmap;
     }
 }
