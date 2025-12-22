@@ -239,7 +239,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#EC1212" && r.hint).map(r => (
                                             <li key={r.questionId} className="p-3 bg-red-50 text-red-900 rounded-lg text-sm border-l-4 border-red-500 shadow-sm">
-                                                {r.hint}
+                                                <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
                                     </ul>
@@ -252,7 +252,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#907326" && r.hint).map(r => (
                                             <li key={r.questionId} className="p-3 bg-orange-50 text-orange-900 rounded-lg text-sm border-l-4 border-orange-500 shadow-sm">
-                                                {r.hint}
+                                                <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
                                     </ul>
@@ -265,7 +265,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#008A29" && r.hint).map(r => (
                                             <li key={r.questionId} className="p-3 bg-green-50 text-green-900 rounded-lg text-sm border-l-4 border-green-500 shadow-sm">
-                                                {r.hint}
+                                                <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
                                     </ul>
@@ -373,7 +373,7 @@ export function FinancialHealthCheckWizard({ isPublicView = false, sharedCode, o
                     )}>
                         {currentResponse.scoreColor === "#008A29" ? <CheckCircle2 className="w-5 h-5 shrink-0" /> :
                             currentResponse.scoreColor === "#907326" ? <AlertTriangle className="w-5 h-5 shrink-0" /> : <XCircle className="w-5 h-5 shrink-0" />}
-                        <div>{currentResponse.hint}</div>
+                        <div dangerouslySetInnerHTML={{ __html: currentResponse.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                     </div>
                 )}
             </CardContent>

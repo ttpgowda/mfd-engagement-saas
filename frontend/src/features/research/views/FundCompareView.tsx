@@ -304,7 +304,7 @@ function FundSelector({
             category: activeCategory,
             page: page,
             size: 10,
-            sortBy: 'return_1y',
+            sortBy: 'return_3y',
             sortDirection: 'DESC'
         }).then(res => {
             setFunds(res.funds);
