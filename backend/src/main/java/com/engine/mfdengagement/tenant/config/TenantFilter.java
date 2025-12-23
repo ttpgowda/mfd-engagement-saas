@@ -69,6 +69,7 @@ public class TenantFilter implements Filter {
             } else {
                 // Set tenant ID in context
                 TenantContext.setTenantId(tenantId);
+                System.out.println("TenantFilter: Resolved tenant ID: " + tenantId + " for URI: " + path);
             }
 
             chain.doFilter(request, response);

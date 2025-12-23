@@ -141,8 +141,14 @@ api.interceptors.response.use(
       }
 
       try {
+        const tenantId = getTenantFromSubdomain();
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/auth/refresh`, {
           refreshToken
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            ...(tenantId && { 'X-Tenant-ID': tenantId }),
+          },
         });
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
