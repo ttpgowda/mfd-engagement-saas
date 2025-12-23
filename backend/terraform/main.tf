@@ -81,3 +81,81 @@ resource "aws_instance" "app_server" {
 output "public_ip" {
   value = aws_instance.app_server.public_ip
 }
+
+
+# --- S3 Bucket for Assets ---
+resource "aws_s3_bucket" "assets" {
+  bucket = "mfd-engagement-assets-${random_id.suffix.hex}" # Ensures global uniqueness
+}
+
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
+# Disable "Block Public Access" so we can apply a public read policy
+resource "aws_s3_bucket_public_access_block" "assets_access" {
+  bucket = aws_s3_bucket.assets.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Policy to allow public READ (so users can see the logos/favicons)
+resource "aws_s3_bucket_policy" "public_read" {
+  bucket = aws_s3_bucket.assets.id
+  depends_on = [aws_s3_bucket_public_access_block.assets_access]
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.assets.arn}/*"
+      },
+    ]
+  })
+}
+
+# --- IAM User for Spring Boot Uploads ---
+resource "aws_iam_user" "app_user" {
+  name = "mfd-app-s3-user"
+}
+
+resource "aws_iam_access_key" "app_key" {
+  user = aws_iam_user.app_user.name
+}
+
+resource "aws_iam_user_policy" "app_upload_policy" {
+  name = "MfdAppUploadPolicy"
+  user = aws_iam_user.app_user.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = ["s3:PutObject", "s3:DeleteObject", "s3:PutObjectAcl"]
+        Resource = "${aws_s3_bucket.assets.arn}/*"
+      }
+    ]
+  })
+}
+
+# --- Outputs ---
+output "s3_bucket_name" {
+  value = aws_s3_bucket.assets.id
+}
+
+output "s3_access_key" {
+  value = aws_iam_access_key.app_key.id
+}
+
+output "s3_secret_key" {
+  value     = aws_iam_access_key.app_key.secret
+  sensitive = true
+}

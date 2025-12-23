@@ -14,40 +14,51 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ResponseStatus
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(DepartmentNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleDepartmentNotFoundException(DepartmentNotFoundException exception, WebRequest request) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.NOT_FOUND.value(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
+        @ExceptionHandler(DepartmentNotFoundException.class)
+        public ResponseEntity<ErrorMessage> handleDepartmentNotFoundException(DepartmentNotFoundException exception,
+                        WebRequest request) {
+                ErrorMessage message = new ErrorMessage(
+                                HttpStatus.NOT_FOUND.value(),
+                                exception.getMessage(),
+                                request.getDescription(false));
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(message);
-    }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(message);
+        }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> handleGlobalException(Exception exception, WebRequest request) {
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorMessage> handleGlobalException(Exception exception, WebRequest request) {
+                ErrorMessage message = new ErrorMessage(
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                exception.getMessage(),
+                                request.getDescription(false));
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(message);
-    }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(message);
+        }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorMessage> handleIllegalArgumentException(IllegalArgumentException exception, WebRequest request) {
+        @ExceptionHandler(IllegalArgumentException.class)
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+        public ResponseEntity<ErrorMessage> handleIllegalArgumentException(IllegalArgumentException exception,
+                        WebRequest request) {
 
-        ErrorMessage message = new ErrorMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(message);
-    }
+                ErrorMessage message = new ErrorMessage(
+                                HttpStatus.BAD_REQUEST.value(),
+                                exception.getMessage(),
+                                request.getDescription(false));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(message);
+        }
+
+        @ExceptionHandler({ org.springframework.security.authentication.BadCredentialsException.class,
+                        org.springframework.security.authentication.CredentialsExpiredException.class })
+        public ResponseEntity<ErrorMessage> handleAuthException(Exception exception, WebRequest request) {
+                ErrorMessage message = new ErrorMessage(
+                                HttpStatus.UNAUTHORIZED.value(),
+                                exception.getMessage(),
+                                request.getDescription(false));
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(message);
+        }
 }

@@ -148,6 +148,13 @@ public class AuthService {
     }
 
     public AuthResponse refreshAccessToken(String refreshTokenStr) {
+        String tenantId = TenantContext.getTenantId();
+        if (tenantId != null && !tenantId.isEmpty()) {
+            Session session = entityManager.unwrap(Session.class);
+            Filter filter = session.enableFilter("tenantFilter");
+            filter.setParameter("tenantIdentifier", tenantId);
+        }
+
         RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenStr)
                 .map(refreshTokenService::verifyExpiration)
                 .orElseThrow(() -> new org.springframework.security.authentication.BadCredentialsException(

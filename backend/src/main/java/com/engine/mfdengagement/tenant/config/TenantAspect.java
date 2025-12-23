@@ -46,12 +46,11 @@ public class TenantAspect {
             if (tenantId != null) {
                 Filter filter = session.enableFilter("tenantFilter");
                 filter.setParameter("tenantIdentifier", tenantId);
-                // System.out.println("TenantAspect: Enabled tenantFilter for tenant: " +
-                // tenantId);
+                System.out.println("TenantAspect: Enabled tenantFilter for tenant: " + tenantId);
             } else {
                 // If no tenantId, maybe we should disable the filter to be safe?
                 // Or leave it as is (disabled by default)
-                // System.out.println("TenantAspect: No tenantId found in context.");
+                System.out.println("TenantAspect: No tenantId found in context.");
             }
         }
     }
