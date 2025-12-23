@@ -1,7 +1,7 @@
 # Stage 1: Extract the layers
 FROM eclipse-temurin:17-jdk-alpine as builder
 WORKDIR /app
-COPY target/*.jar app.jar
+COPY app.jar app.jar
 # Extract the layers from the jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
