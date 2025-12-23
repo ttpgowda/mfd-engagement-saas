@@ -83,23 +83,25 @@ export default function CategoryMonitorView({ isPublicView = false }: Calculator
 
             <Card className="border-border/50 shadow-md">
                 <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <CardTitle className="text-sm font-medium uppercase">Category Performance Matrix</CardTitle>
-                            <Badge variant="outline" className="bg-background">
-                                {data.length} Categories Tracked
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
+                            <CardTitle className="text-sm font-medium uppercase truncate">Category Performance Matrix</CardTitle>
+                            <Badge variant="outline" className="bg-background shrink-0">
+                                {data.length} Categories
                             </Badge>
                         </div>
-                        {isPublicView ? (
-                            <PublicShareButton />
-                        ) : (
-                            <ShareDialog
-                                toolSlug="category-monitor"
-                                config={{}}
-                                defaultTitle="Mutual Fund Category Monitor"
-                                defaultDescription="Check out the performance of all mutual fund categories."
-                            />
-                        )}
+                        <div className="self-end sm:self-auto">
+                            {isPublicView ? (
+                                <PublicShareButton />
+                            ) : (
+                                <ShareDialog
+                                    toolSlug="category-monitor"
+                                    config={{}}
+                                    defaultTitle="Mutual Fund Category Monitor"
+                                    defaultDescription="Check out the performance of all mutual fund categories."
+                                />
+                            )}
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -107,7 +109,7 @@ export default function CategoryMonitorView({ isPublicView = false }: Calculator
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="w-[250px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Category Name</TableHead>
+                                    <TableHead className="w-[160px] sm:w-[250px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Category Name</TableHead>
                                     <SortableHead label="1M" sortKey="avgReturn1M" activeSort={sortConfig} onSort={handleSort} />
                                     <SortableHead label="3M" sortKey="avgReturn3M" activeSort={sortConfig} onSort={handleSort} />
                                     <SortableHead label="6M" sortKey="avgReturn6M" activeSort={sortConfig} onSort={handleSort} />
@@ -195,7 +197,7 @@ interface DataCellProps {
 }
 
 const DataCell = ({ val, getStyle, bold }: DataCellProps) => (
-    <TableCell className={`text-right font-mono text-sm border-l border-border/30 ${getStyle(val)} ${bold ? 'bg-muted/20' : ''}`}>
+    <TableCell className={`text-right font-mono text-sm border-l border-border/30 whitespace-nowrap px-4 ${getStyle(val)} ${bold ? 'bg-muted/20' : ''}`}>
         {(val !== null && val !== undefined) ? `${val.toFixed(2)}%` : '-'}
     </TableCell>
 );

@@ -40,3 +40,13 @@ app:
 # Jwt secret
 jwt:
   secret: ${JWT_SECRET:dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3Itand0LXRoYXQtc2hvdWxkLWJlLWNoYW5nZWQtaW4tcHJvZHVjdGlvbg==}
+
+
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+    region: ${AWS_S3_REGION}
+  access:
+    key: ${AWS_ACCESS_KEY}
+  secret:
+    key: ${AWS_SECRET_KEY}

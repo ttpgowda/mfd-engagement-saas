@@ -89,23 +89,25 @@ export default function BenchmarkMonitorView({ isPublicView = false }: Calculato
 
             <Card className="border-border/50 shadow-md">
                 <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <CardTitle className="text-sm font-medium uppercase">Market Indices Matrix</CardTitle>
-                            <Badge variant="outline" className="bg-background">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
+                            <CardTitle className="text-sm font-medium uppercase truncate">Market Indices Matrix</CardTitle>
+                            <Badge variant="outline" className="bg-background shrink-0">
                                 {data.length} Indices
                             </Badge>
                         </div>
-                        {isPublicView ? (
-                            <PublicShareButton />
-                        ) : (
-                            <ShareDialog
-                                toolSlug="benchmark-monitor"
-                                config={{}}
-                                defaultTitle="Benchmark Monitor"
-                                defaultDescription="Track the performance of major market indices and benchmarks."
-                            />
-                        )}
+                        <div className="self-end sm:self-auto">
+                            {isPublicView ? (
+                                <PublicShareButton />
+                            ) : (
+                                <ShareDialog
+                                    toolSlug="benchmark-monitor"
+                                    config={{}}
+                                    defaultTitle="Benchmark Monitor"
+                                    defaultDescription="Track the performance of major market indices and benchmarks."
+                                />
+                            )}
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -113,7 +115,7 @@ export default function BenchmarkMonitorView({ isPublicView = false }: Calculato
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="w-[300px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Benchmark</TableHead>
+                                    <TableHead className="w-[160px] sm:w-[300px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Benchmark</TableHead>
                                     <SortableHead label="1 Year" sortKey="return1Y" activeSort={sortConfig} onSort={handleSort} />
                                     <SortableHead label="3 Year" sortKey="return3Y" activeSort={sortConfig} onSort={handleSort} />
                                     <SortableHead label="5 Year" sortKey="return5Y" activeSort={sortConfig} onSort={handleSort} />
@@ -200,7 +202,7 @@ interface DataCellProps {
 }
 
 const DataCell = ({ val, getStyle }: DataCellProps) => (
-    <TableCell className={`text-right font-mono text-sm border-l border-border/30 ${getStyle(val)}`}>
+    <TableCell className={`text-right font-mono text-sm border-l border-border/30 whitespace-nowrap px-4 ${getStyle(val)}`}>
         {(val !== null && val !== undefined) ? `${val.toFixed(2)}%` : '-'}
     </TableCell>
 );

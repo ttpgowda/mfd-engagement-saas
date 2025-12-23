@@ -106,10 +106,16 @@ public class ShareService {
     }
 
     @Transactional
-    public void captureLead(String shortCode, String name, String email, String phone) {
-        // Global lookup reuse
-        Optional<SharedLink> linkOpt = getLink(shortCode);
-        SharedLink link = linkOpt.orElseThrow(() -> new RuntimeException("Link not found"));
+    public void captureLead(String shortCode, String toolSlug, String name, String email, String phone) {
+        SharedLink link;
+
+        if ("demo".equals(shortCode) && toolSlug != null) {
+            link = getOrCreateDemoLink(toolSlug);
+        } else {
+            // Global lookup reuse
+            Optional<SharedLink> linkOpt = getLink(shortCode);
+            link = linkOpt.orElseThrow(() -> new RuntimeException("Link not found"));
+        }
 
         com.engine.mfdengagement.lead.entity.Lead lead = com.engine.mfdengagement.lead.entity.Lead.builder()
                 .name(name)
@@ -122,5 +128,33 @@ public class ShareService {
                 .build();
 
         leadRepository.save(lead);
+    }
+
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public SharedLink getOrCreateDemoLink(String toolSlug) {
+        String demoShortCode = "demo-" + toolSlug;
+
+        // Optimistic check
+        Optional<SharedLink> existing = sharedLinkRepository.findByShortCode(demoShortCode);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        // Find a system tenant (fallback to any tenant)
+        Tenant systemTenant = entityManager
+                .createQuery("FROM Tenant", Tenant.class)
+                .setMaxResults(1)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
+
+        return sharedLinkRepository.save(SharedLink.builder()
+                .shortCode(demoShortCode)
+                .toolSlug(toolSlug)
+                .title("Demo: " + toolSlug)
+                .tenant(systemTenant)
+                .configJson("{}")
+                .build());
     }
 }

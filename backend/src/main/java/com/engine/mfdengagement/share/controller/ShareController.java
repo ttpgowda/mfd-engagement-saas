@@ -53,7 +53,8 @@ public class ShareController {
 
     @PostMapping("/public/links/{shortCode}/leads")
     public ResponseEntity<Void> captureLead(@PathVariable String shortCode, @RequestBody CaptureLeadRequest request) {
-        shareService.captureLead(shortCode, request.getName(), request.getEmail(), request.getPhone());
+        shareService.captureLead(shortCode, request.getToolSlug(), request.getName(), request.getEmail(),
+                request.getPhone());
         return ResponseEntity.ok().build();
     }
 
@@ -67,6 +68,7 @@ public class ShareController {
 
     @Data
     public static class CaptureLeadRequest {
+        private String toolSlug;
         private String name;
         private String email;
         private String phone;

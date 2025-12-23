@@ -41,7 +41,11 @@ export function LeadCaptureModal({ open, onOpenChange, shortCode }: LeadCaptureM
             await axios.post(`/public/links/${shortCode}/leads`, values);
 
             // Success
-            localStorage.setItem('lead_token', 'captured-' + shortCode + '-' + Date.now());
+            const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+            localStorage.setItem('lead_token', JSON.stringify({
+                value: 'captured-' + shortCode,
+                expiry: expiry
+            }));
             onOpenChange(false);
             form.reset();
         } catch (err) {

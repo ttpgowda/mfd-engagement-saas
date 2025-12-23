@@ -112,11 +112,36 @@ export default function SipDelayCostView({ defaultValues, isPublicView = false }
                                         <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <XAxis dataKey="year" hide={years > 15} />
-                                <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`} axisLine={false} tickLine={false} />
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
-                                <Legend verticalAlign="top" height={36} />
+                                <XAxis
+                                    dataKey="year"
+                                    hide={years > 15}
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                />
+                                <YAxis
+                                    tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    stroke="hsl(var(--muted-foreground))"
+                                    fontSize={12}
+                                />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                <Tooltip
+                                    formatter={(value: number) => [CurrencyFormatter(value), '']}
+                                    contentStyle={{
+                                        backgroundColor: "hsl(var(--popover))",
+                                        borderColor: "hsl(var(--border))",
+                                        color: "hsl(var(--popover-foreground))"
+                                    }}
+                                    labelStyle={{ color: "hsl(var(--foreground))" }}
+                                />
+                                <Legend
+                                    verticalAlign="top"
+                                    height={36}
+                                    wrapperStyle={{ color: "hsl(var(--foreground))" }}
+                                />
 
                                 <Area type="monotone" dataKey="nowValue" name="Start Now" stroke="#16a34a" fillOpacity={1} fill="url(#colorNow)" strokeWidth={2} />
                                 <Area type="monotone" dataKey="laterValue" name={`Start After ${delayYears}y`} stroke="#ea580c" fillOpacity={1} fill="url(#colorLater)" strokeWidth={2} />

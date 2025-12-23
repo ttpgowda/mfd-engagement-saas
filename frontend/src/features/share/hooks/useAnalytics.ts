@@ -42,11 +42,27 @@ export const useAnalytics = (shortCode: string | undefined, toolSlug?: string) =
 
         // Lead Capture Timer
         const timeoutId = setTimeout(() => {
-            const hasLeadToken = localStorage.getItem('lead_token');
             const surveyTools = ['financial-health-check', 'risk-profiler', 'goal-readiness', 'retirement-prep'];
             const isSurvey = surveyTools.includes(toolSlug || '');
 
-            if (!isSurvey && !hasLeadToken) {
+            let hasValidToken = false;
+            const tokenStr = localStorage.getItem('lead_token');
+            if (tokenStr) {
+                try {
+                    const token = JSON.parse(tokenStr);
+                    if (token && token.expiry && token.expiry > Date.now()) {
+                        hasValidToken = true;
+                    } else {
+                        // Expired
+                        localStorage.removeItem('lead_token');
+                    }
+                } catch (e) {
+                    // Invalid format (e.g. old string format), clear it
+                    localStorage.removeItem('lead_token');
+                }
+            }
+
+            if (!isSurvey && !hasValidToken) {
                 setShowLeadCapture(true);
             }
         }, LEAD_CAPTURE_TRIGGER);

@@ -29,9 +29,10 @@ public class AdminAnalyticsService {
     @Transactional(readOnly = true)
     public AnalyticsReportDTO getDashboardAnalytics() {
         AnalyticsReportDTO report = new AnalyticsReportDTO();
+        String tenantId = TenantContext.getTenantId();
 
         // 1. Global Stats
-        Long totalViews = analyticsLogRepository.countTotalUniqueSessions();
+        Long totalViews = analyticsLogRepository.countTotalUniqueSessions(tenantId);
         if (totalViews == null)
             totalViews = 0L;
 
@@ -39,7 +40,7 @@ public class AdminAnalyticsService {
         if (totalLeads == null)
             totalLeads = 0L;
 
-        Double avgDuration = analyticsLogRepository.getAverageSessionDuration();
+        Double avgDuration = analyticsLogRepository.getAverageSessionDuration(tenantId);
         if (avgDuration == null)
             avgDuration = 0.0;
 
@@ -48,12 +49,12 @@ public class AdminAnalyticsService {
         report.setSummary(new GlobalStatsDTO(totalViews, totalLeads, conversionRate, avgDuration));
 
         // 2. Traffic Trends (Merge Views and Leads by Date)
-        List<Object[]> dailyViews = analyticsLogRepository.getDailyUniqueViews(PageRequest.of(0, 30));
+        List<Object[]> dailyViews = analyticsLogRepository.getDailyUniqueViews(tenantId, PageRequest.of(0, 30));
         List<Object[]> dailyLeads = leadRepository.getDailyLeads(PageRequest.of(0, 30));
         report.setTrafficTrend(mergeDailyTrends(dailyViews, dailyLeads));
 
         // 3. Tool Performance (Merge Views and Leads by Tool Slug)
-        List<Object[]> toolViews = analyticsLogRepository.getViewsAndDurationByTool();
+        List<Object[]> toolViews = analyticsLogRepository.getViewsAndDurationByTool(tenantId);
         List<Object[]> toolLeads = leadRepository.getLeadsByTool();
         report.setTopTools(mergeToolStats(toolViews, toolLeads));
 
@@ -61,7 +62,7 @@ public class AdminAnalyticsService {
         // pagination later
         // We need Leads by Link too
 
-        report.setTopLinks(mergeLinkStats(10));
+        report.setTopLinks(mergeLinkStats(10, tenantId));
 
         return report;
     }
@@ -69,14 +70,14 @@ public class AdminAnalyticsService {
     private List<DailyTrendDTO> mergeDailyTrends(List<Object[]> views, List<Object[]> leads) {
         Map<LocalDate, DailyTrendDTO> map = new HashMap<>();
 
-        // Process Views (Native Query)
+        // Process Views
         for (Object[] row : views) {
             LocalDate date = toLocalDate(row[0]);
             Long count = toLong(row[1]);
             map.put(date, new DailyTrendDTO(date, count, 0L));
         }
 
-        // Process Leads (Native Query)
+        // Process Leads
         for (Object[] row : leads) {
             LocalDate date = toLocalDate(row[0]);
             Long count = toLong(row[1]);
@@ -93,7 +94,7 @@ public class AdminAnalyticsService {
     private List<ToolPerformanceDTO> mergeToolStats(List<Object[]> views, List<Object[]> leads) {
         Map<String, ToolPerformanceDTO> map = new HashMap<>();
 
-        // Views (JPQL)
+        // Views
         for (Object[] row : views) {
             String slug = (String) row[0];
             Long count = toLong(row[1]);
@@ -101,7 +102,7 @@ public class AdminAnalyticsService {
             map.put(slug, new ToolPerformanceDTO(slug, count, 0L, 0.0, duration));
         }
 
-        // Leads (JPQL)
+        // Leads
         for (Object[] row : leads) {
             String slug = (String) row[0];
             Long count = toLong(row[1]);
@@ -122,8 +123,10 @@ public class AdminAnalyticsService {
                 .collect(Collectors.toList());
     }
 
-    private List<LinkPerformanceDTO> mergeLinkStats(int limit) {
+    private List<LinkPerformanceDTO> mergeLinkStats(int limit, String tenantId) {
         // 1. Fetch recent links first (Driver)
+        // ... [Assuming sharedLinkRepository is filtered by tenant via Aspect, so
+        // findAll is safe. If not, needs filter too]
         List<SharedLink> links = sharedLinkRepository.findAll(
                 PageRequest.of(0, limit, org.springframework.data.domain.Sort.by("createdAt").descending()))
                 .getContent();
@@ -132,11 +135,7 @@ public class AdminAnalyticsService {
             return new ArrayList<>();
 
         // 2. Fetch Views for these specific links
-        // We need to update Repository to filter by IDs, or just fetch all and filter
-        // in memory (inefficient but safe for now if list is small)
-        // Better: Update repository to take ID list.
-        // For now: Fetch all aggregates (as before) and map. Optimizable later.
-        List<Object[]> views = analyticsLogRepository.getViewsAndDurationByLink();
+        List<Object[]> views = analyticsLogRepository.getViewsAndDurationByLink(tenantId);
         List<Object[]> leads = leadRepository.getLeadsByLink();
 
         Map<Long, Long> viewsMap = new HashMap<>();
@@ -201,7 +200,10 @@ public class AdminAnalyticsService {
 
     @Transactional(readOnly = true)
     public List<AnalyticsReportDTO.PatternDTO> getPatterns() {
-        List<Object[]> results = analyticsLogRepository.findPatterns();
+        String tenantId = TenantContext.getTenantId();
+        System.out.println("DEBUG PATTERNS: TenantId=" + tenantId);
+        List<Object[]> results = analyticsLogRepository.findPatterns(tenantId);
+        System.out.println("DEBUG PATTERNS: Results size=" + results.size());
         List<AnalyticsReportDTO.PatternDTO> patterns = new ArrayList<>();
 
         for (Object[] row : results) {
@@ -221,7 +223,7 @@ public class AdminAnalyticsService {
 
     @Transactional(readOnly = true)
     public List<AnalyticsReportDTO.FunnelDTO> getFunnelMetrics() {
-        List<Object[]> results = analyticsLogRepository.getFunnelMetrics();
+        List<Object[]> results = analyticsLogRepository.getFunnelMetrics(TenantContext.getTenantId());
         List<AnalyticsReportDTO.FunnelDTO> funnel = new ArrayList<>();
 
         if (!results.isEmpty()) {
