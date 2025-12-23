@@ -133,3 +133,5 @@ cd C:\thimme\projects\mfd-engagement-saas
 
 # 2. Run pg_dump (Adjust path if needed)
 & "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -h localhost -d mf_db_new -f my_backup.sql --clean --if-exists
+
+& "C:\Program Files\PostgreSQL\17\bin\pg_dump.exe" -U postgres -h 52.66.249.82 -d amfi_db -f server_backup.sql --clean --if-exists
