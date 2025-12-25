@@ -23,9 +23,10 @@ import { researchService, FundCompareResponse, FundRowDto } from '@/services/res
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 import { CalculatorViewProps } from '@/features/calculators/types';
-import { ShareDialog } from '@/features/share/components/ShareDialog';
+
 import { PublicShareButton } from '@/features/share/components/PublicShareButton';
 import { publicResearchService } from '@/services/publicResearchService';
+import { ToolPageLayout } from "@/features/calculators/components/ToolPageLayout";
 
 export default function FundCompareView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const router = useRouter();
@@ -119,147 +120,146 @@ export default function FundCompareView({ defaultValues, isPublicView = false }:
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-700 pb-20">
-            <div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                            <ArrowUpDown className="w-6 h-6 text-emerald-500" />
-                            Fund Comparison
-                        </h1>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            Compare up to 5 mutual funds side-by-side.
-                        </p>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="fund-comparison"
-                            config={{ schemes: selectedIds }}
-                            defaultTitle="Fund Comparison"
-                            defaultDescription={`Comparing ${selectedIds.length} funds.`}
-                        />
-                    )}
-                </div>
-            </div>
-
-            <ErrorAlert message={error} />
-
-            {/* Selection Bar */}
-            <Card className="border-border/50 shadow-sm">
-                <CardContent className="p-4 flex flex-wrap gap-3 items-center">
-                    {data?.funds.map((f, i) => (
-                        <Badge key={f.schemeCode} variant="secondary" className="pl-2 pr-1 py-1 h-8 text-sm border border-border bg-background hover:bg-muted flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                            <span className="truncate max-w-[200px]" title={f.schemeName}>{f.schemeName}</span>
-                            <button onClick={() => handleRemoveFund(f.schemeCode)} className="hover:text-red-500 p-0.5 rounded-full hover:bg-red-50 transition-colors">
-                                <X className="w-3 h-3" />
-                            </button>
-                        </Badge>
-                    ))}
-
-                    {selectedIds.length < 5 && (
-                        <Dialog open={isSelectorOpen} onOpenChange={setIsSelectorOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 border-dashed border-emerald-500/50 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500">
-                                    <Plus className="w-3 h-3 mr-1" /> Add Fund
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl h-[80vh] flex flex-col p-0 gap-0">
-                                <FundSelector
-                                    onSelect={handleAddFund}
-                                    currentlySelected={selectedIds}
-                                    initialCategory={lastCategory}
-                                    onCategoryChange={setLastCategory}
-                                    isPublicView={isPublicView}
-                                />
-                            </DialogContent>
-                        </Dialog>
-                    )}
-                </CardContent>
-            </Card>
-
-            {/* Comparison Content */}
-            {data && (
-                <div className="grid grid-cols-1 gap-6">
-                    {/* Performance Chart */}
-                    <Card className="border-border/50 shadow-sm">
-                        <CardHeader>
-                            <CardTitle className="text-sm font-medium uppercase">Performance Comparison (3 Year Returns)</CardTitle>
-                        </CardHeader>
-                        <CardContent className="h-[400px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={data.funds} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                                    <XAxis dataKey="schemeName" tick={false} axisLine={false} />
-                                    <YAxis tickFormatter={(val) => `${val}%`} />
-                                    <Tooltip
-                                        cursor={{ fill: 'transparent' }}
-                                        content={({ active, payload }) => {
-                                            if (active && payload && payload.length) {
-                                                const d = payload[0].payload;
-                                                return (
-                                                    <div className="bg-background border border-border p-2 rounded shadow-lg text-xs">
-                                                        <p className="font-bold mb-1">{d.schemeName}</p>
-                                                        <p>3Y Return: <span className="font-mono text-emerald-600">{d.return3y?.toFixed(2)}%</span></p>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }}
-                                    />
-                                    <Bar dataKey="return3y" radius={[4, 4, 0, 0]}>
-                                        {data.funds.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-
-                    {/* Detailed Table */}
-                    <Card className="border-border/50 shadow-sm overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted/30 text-muted-foreground font-medium">
-                                    <tr>
-                                        <th className="px-6 py-4 w-[200px]">Metric</th>
-                                        {data.funds.map((f, i) => (
-                                            <th key={f.schemeCode} className="px-6 py-4 min-w-[150px]">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                                                    <span className="line-clamp-2" title={f.schemeName}>{f.schemeName}</span>
-                                                </div>
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border/40">
-                                    <tr className="hover:bg-muted/5">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">Category</td>
-                                        {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3">{f.category}</td>)}
-                                    </tr>
-                                    <tr className="hover:bg-muted/5">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">1Y Return</td>
-                                        {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return1y?.toFixed(2)}%</td>)}
-                                    </tr>
-                                    <tr className="hover:bg-muted/5">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">3Y Return</td>
-                                        {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return3y?.toFixed(2)}%</td>)}
-                                    </tr>
-                                    <tr className="hover:bg-muted/5">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">5Y Return</td>
-                                        {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return5y?.toFixed(2)}%</td>)}
-                                    </tr>
-                                </tbody>
-                            </table>
+        <ToolPageLayout
+            toolSlug="fund-comparison"
+            config={{ schemes: selectedIds }}
+            title="Fund Comparison"
+            description="Compare up to 5 mutual funds side-by-side."
+            isPublicView={isPublicView}
+        >
+            <div className="space-y-6 animate-in fade-in duration-700 pb-20">
+                <div>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                                <ArrowUpDown className="w-6 h-6 text-emerald-500" />
+                                Fund Comparison
+                            </h1>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Compare up to 5 mutual funds side-by-side.
+                            </p>
                         </div>
-                    </Card>
+                        {isPublicView && <PublicShareButton />}
+                    </div>
                 </div>
-            )}
-        </div>
+
+                <ErrorAlert message={error} />
+
+                {/* Selection Bar */}
+                <Card className="border-border/50 shadow-sm">
+                    <CardContent className="p-4 flex flex-wrap gap-3 items-center">
+                        {data?.funds.map((f, i) => (
+                            <Badge key={f.schemeCode} variant="secondary" className="pl-2 pr-1 py-1 h-8 text-sm border border-border bg-background hover:bg-muted flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                                <span className="truncate max-w-[200px]" title={f.schemeName}>{f.schemeName}</span>
+                                <button onClick={() => handleRemoveFund(f.schemeCode)} className="hover:text-red-500 p-0.5 rounded-full hover:bg-red-50 transition-colors">
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </Badge>
+                        ))}
+
+                        {selectedIds.length < 5 && (
+                            <Dialog open={isSelectorOpen} onOpenChange={setIsSelectorOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" size="sm" className="h-8 border-dashed border-emerald-500/50 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-500">
+                                        <Plus className="w-3 h-3 mr-1" /> Add Fund
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-2xl h-[80vh] flex flex-col p-0 gap-0">
+                                    <FundSelector
+                                        onSelect={handleAddFund}
+                                        currentlySelected={selectedIds}
+                                        initialCategory={lastCategory}
+                                        onCategoryChange={setLastCategory}
+                                        isPublicView={isPublicView}
+                                    />
+                                </DialogContent>
+                            </Dialog>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Comparison Content */}
+                {data && (
+                    <div className="grid grid-cols-1 gap-6">
+                        {/* Performance Chart */}
+                        <Card className="border-border/50 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-medium uppercase">Performance Comparison (3 Year Returns)</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-[400px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={data.funds} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
+                                        <XAxis dataKey="schemeName" tick={false} axisLine={false} />
+                                        <YAxis tickFormatter={(val) => `${val}%`} />
+                                        <Tooltip
+                                            cursor={{ fill: 'transparent' }}
+                                            content={({ active, payload }) => {
+                                                if (active && payload && payload.length) {
+                                                    const d = payload[0].payload;
+                                                    return (
+                                                        <div className="bg-background border border-border p-2 rounded shadow-lg text-xs">
+                                                            <p className="font-bold mb-1">{d.schemeName}</p>
+                                                            <p>3Y Return: <span className="font-mono text-emerald-600">{d.return3y?.toFixed(2)}%</span></p>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            }}
+                                        />
+                                        <Bar dataKey="return3y" radius={[4, 4, 0, 0]}>
+                                            {data.funds.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        {/* Detailed Table */}
+                        <Card className="border-border/50 shadow-sm overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted/30 text-muted-foreground font-medium">
+                                        <tr>
+                                            <th className="px-6 py-4 w-[200px]">Metric</th>
+                                            {data.funds.map((f, i) => (
+                                                <th key={f.schemeCode} className="px-6 py-4 min-w-[150px]">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                                                        <span className="line-clamp-2" title={f.schemeName}>{f.schemeName}</span>
+                                                    </div>
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border/40">
+                                        <tr className="hover:bg-muted/5">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">Category</td>
+                                            {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3">{f.category}</td>)}
+                                        </tr>
+                                        <tr className="hover:bg-muted/5">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">1Y Return</td>
+                                            {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return1y?.toFixed(2)}%</td>)}
+                                        </tr>
+                                        <tr className="hover:bg-muted/5">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">3Y Return</td>
+                                            {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return3y?.toFixed(2)}%</td>)}
+                                        </tr>
+                                        <tr className="hover:bg-muted/5">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">5Y Return</td>
+                                            {data.funds.map(f => <td key={f.schemeCode} className="px-6 py-3 font-mono text-emerald-600">{f.return5y?.toFixed(2)}%</td>)}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Card>
+                    </div>
+                )}
+            </div>
+        </ToolPageLayout>
     );
 }
 
