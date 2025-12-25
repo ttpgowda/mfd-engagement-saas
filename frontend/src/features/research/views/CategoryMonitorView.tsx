@@ -18,8 +18,8 @@ import { researchService, CategoryMonitorResponse } from '@/services/researchSer
 import { Loader2 } from 'lucide-react';
 
 import { CalculatorViewProps } from '@/features/calculators/types';
-import { ShareDialog } from '@/features/share/components/ShareDialog';
-import { PublicShareButton } from '@/features/share/components/PublicShareButton';
+import { ToolPageLayout } from "@/features/calculators/components/ToolPageLayout";
+import { PublicShareButton } from "@/features/share/components/PublicShareButton";
 import { publicResearchService } from '@/services/publicResearchService';
 
 export default function CategoryMonitorView({ isPublicView = false }: CalculatorViewProps) {
@@ -70,102 +70,101 @@ export default function CategoryMonitorView({ isPublicView = false }: Calculator
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-700 pb-20">
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <LayoutDashboard className="w-6 h-6 text-emerald-500" />
-                    Mutual Fund Category Monitor
-                </h1>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Bird&#39;s-eye view of how different sectors and categories are performing.
-                </p>
-            </div>
+        <ToolPageLayout
+            toolSlug="category-monitor"
+            config={{}}
+            title="Mutual Fund Category Monitor"
+            description="Check out the performance of all mutual fund categories."
+            isPublicView={isPublicView}
+        >
+            <div className="space-y-6 animate-in fade-in duration-700 pb-20">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <LayoutDashboard className="w-6 h-6 text-emerald-500" />
+                        Mutual Fund Category Monitor
+                    </h1>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Bird&#39;s-eye view of how different sectors and categories are performing.
+                    </p>
+                </div>
 
-            <Card className="border-border/50 shadow-md">
-                <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
-                            <CardTitle className="text-sm font-medium uppercase truncate">Category Performance Matrix</CardTitle>
-                            <Badge variant="outline" className="bg-background shrink-0">
-                                {data.length} Categories
-                            </Badge>
+                <Card className="border-border/50 shadow-md">
+                    <CardHeader className="pb-2 bg-muted/10 border-b border-border/50">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
+                                <CardTitle className="text-sm font-medium uppercase truncate">Category Performance Matrix</CardTitle>
+                                <Badge variant="outline" className="bg-background shrink-0">
+                                    {data.length} Categories
+                                </Badge>
+                            </div>
+                            <div className="self-end sm:self-auto">
+                                {isPublicView && <PublicShareButton />}
+                            </div>
                         </div>
-                        <div className="self-end sm:self-auto">
-                            {isPublicView ? (
-                                <PublicShareButton />
-                            ) : (
-                                <ShareDialog
-                                    toolSlug="category-monitor"
-                                    config={{}}
-                                    defaultTitle="Mutual Fund Category Monitor"
-                                    defaultDescription="Check out the performance of all mutual fund categories."
-                                />
-                            )}
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="hover:bg-transparent">
-                                    <TableHead className="w-[160px] sm:w-[250px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Category Name</TableHead>
-                                    <SortableHead label="1M" sortKey="avgReturn1M" activeSort={sortConfig} onSort={handleSort} />
-                                    <SortableHead label="3M" sortKey="avgReturn3M" activeSort={sortConfig} onSort={handleSort} />
-                                    <SortableHead label="6M" sortKey="avgReturn6M" activeSort={sortConfig} onSort={handleSort} />
-                                    <SortableHead label="1Y" sortKey="avgReturn1Y" activeSort={sortConfig} onSort={handleSort} />
-                                    <SortableHead label="3Y" sortKey="avgReturn3Y" activeSort={sortConfig} onSort={handleSort} />
-                                    <SortableHead label="5Y" sortKey="avgReturn5Y" activeSort={sortConfig} onSort={handleSort} />
-                                    <TableHead className="text-center w-[100px]">
-                                        <div className="flex items-center justify-center gap-1">
-                                            Vol.
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground" /></TooltipTrigger>
-                                                    <TooltipContent>Avg Standard Deviation (Risk)</TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        </div>
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {loading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={9} className="h-48 text-center">
-                                            <Loader2 className="w-8 h-8 animate-spin mx-auto text-emerald-500 mb-2" />
-                                            <p className="text-muted-foreground">Aggregating market data...</p>
-                                        </TableCell>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                        <TableHead className="w-[160px] sm:w-[250px] sticky left-0 bg-background z-20 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">Category Name</TableHead>
+                                        <SortableHead label="1M" sortKey="avgReturn1M" activeSort={sortConfig} onSort={handleSort} />
+                                        <SortableHead label="3M" sortKey="avgReturn3M" activeSort={sortConfig} onSort={handleSort} />
+                                        <SortableHead label="6M" sortKey="avgReturn6M" activeSort={sortConfig} onSort={handleSort} />
+                                        <SortableHead label="1Y" sortKey="avgReturn1Y" activeSort={sortConfig} onSort={handleSort} />
+                                        <SortableHead label="3Y" sortKey="avgReturn3Y" activeSort={sortConfig} onSort={handleSort} />
+                                        <SortableHead label="5Y" sortKey="avgReturn5Y" activeSort={sortConfig} onSort={handleSort} />
+                                        <TableHead className="text-center w-[100px]">
+                                            <div className="flex items-center justify-center gap-1">
+                                                Vol.
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger><Info className="w-3 h-3 text-muted-foreground" /></TooltipTrigger>
+                                                        <TooltipContent>Avg Standard Deviation (Risk)</TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </div>
+                                        </TableHead>
                                     </TableRow>
-                                ) : (
-                                    sortedData.map((cat) => (
-                                        <TableRow key={cat.categoryName} className="group">
-                                            <TableCell className="font-medium sticky left-0 bg-background z-10 group-hover:bg-muted/50 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">
-                                                {cat.categoryName}
-                                                <div className="text-[10px] text-muted-foreground font-normal">
-                                                    {cat.schemeCount} Schemes
-                                                </div>
-                                            </TableCell>
-                                            <DataCell val={cat.avgReturn1M} getStyle={getCellClass} />
-                                            <DataCell val={cat.avgReturn3M} getStyle={getCellClass} />
-                                            <DataCell val={cat.avgReturn6M} getStyle={getCellClass} />
-                                            <DataCell val={cat.avgReturn1Y} getStyle={getCellClass} />
-                                            <DataCell val={cat.avgReturn3Y} getStyle={getCellClass} bold />
-                                            <DataCell val={cat.avgReturn5Y} getStyle={getCellClass} />
-                                            <TableCell className="text-center font-mono text-xs text-muted-foreground">
-                                                {cat.avgStdDev !== undefined && cat.avgStdDev !== null
-                                                    ? cat.avgStdDev.toFixed(2)
-                                                    : '-'}
+                                </TableHeader>
+                                <TableBody>
+                                    {loading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={9} className="h-48 text-center">
+                                                <Loader2 className="w-8 h-8 animate-spin mx-auto text-emerald-500 mb-2" />
+                                                <p className="text-muted-foreground">Aggregating market data...</p>
                                             </TableCell>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                                    ) : (
+                                        sortedData.map((cat) => (
+                                            <TableRow key={cat.categoryName} className="group">
+                                                <TableCell className="font-medium sticky left-0 bg-background z-10 group-hover:bg-muted/50 shadow-[1px_0_0_0_rgba(0,0,0,0.1)]">
+                                                    {cat.categoryName}
+                                                    <div className="text-[10px] text-muted-foreground font-normal">
+                                                        {cat.schemeCount} Schemes
+                                                    </div>
+                                                </TableCell>
+                                                <DataCell val={cat.avgReturn1M} getStyle={getCellClass} />
+                                                <DataCell val={cat.avgReturn3M} getStyle={getCellClass} />
+                                                <DataCell val={cat.avgReturn6M} getStyle={getCellClass} />
+                                                <DataCell val={cat.avgReturn1Y} getStyle={getCellClass} />
+                                                <DataCell val={cat.avgReturn3Y} getStyle={getCellClass} bold />
+                                                <DataCell val={cat.avgReturn5Y} getStyle={getCellClass} />
+                                                <TableCell className="text-center font-mono text-xs text-muted-foreground">
+                                                    {cat.avgStdDev !== undefined && cat.avgStdDev !== null
+                                                        ? cat.avgStdDev.toFixed(2)
+                                                        : '-'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </ToolPageLayout>
     );
 }
 

@@ -26,7 +26,7 @@ import { Loader2 } from 'lucide-react';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 import { CalculatorViewProps } from '@/features/calculators/types';
-import { ShareDialog } from '@/features/share/components/ShareDialog';
+import { ToolPageLayout } from "@/features/calculators/components/ToolPageLayout";
 import { publicResearchService } from '@/services/publicResearchService';
 import { PublicShareButton } from '@/features/share/components/PublicShareButton';
 
@@ -124,256 +124,256 @@ export default function FdVsDebtView({ defaultValues, isPublicView = false }: Ca
     }).format(val);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 pb-20">
-            {/* Header */}
-            <div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                            <Scale className="w-6 h-6 text-emerald-500" />
-                            Debt Funds vs Fixed Deposit
-                        </h1>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            Compare post-tax returns of Debt Mutual Funds against traditional Fixed Deposits.
-                        </p>
+        <ToolPageLayout
+            toolSlug="fd-vs-debt"
+            config={{
+                category,
+                schemeCode: selectedScheme?.schemeCode,
+                amount,
+                fdRate,
+                taxRate,
+                startDate,
+                endDate
+            }}
+            title="Debt Funds vs Fixed Deposit"
+            description="Compare post-tax returns of Debt Mutual Funds against traditional Fixed Deposits."
+            isPublicView={isPublicView}
+        >
+            <div className="space-y-8 animate-in fade-in duration-700 pb-20">
+                {/* Header */}
+                <div>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                                <Scale className="w-6 h-6 text-emerald-500" />
+                                Debt Funds vs Fixed Deposit
+                            </h1>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Compare post-tax returns of Debt Mutual Funds against traditional Fixed Deposits.
+                            </p>
+                        </div>
+                        {isPublicView && <PublicShareButton />}
                     </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="fd-vs-debt"
-                            config={{
-                                category,
-                                schemeCode: selectedScheme?.schemeCode,
-                                amount,
-                                fdRate,
-                                taxRate,
-                                startDate,
-                                endDate
-                            }}
-                            defaultTitle="FD vs Debt Comparison"
-                            defaultDescription={`Comparison: FD @ ${fdRate}% vs ${selectedScheme?.schemeName || 'Debt Fund'}.`}
-                        />
-                    )}
                 </div>
-            </div>
 
-            {/* Input Card */}
-            <Card className="border-border/50 shadow-md bg-card">
-                <CardHeader className="bg-muted/10 pb-4 border-b border-border/50">
-                    <CardTitle className="text-base text-blue-600 dark:text-blue-400">Comparison Parameters</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-6">
+                {/* Input Card */}
+                <Card className="border-border/50 shadow-md bg-card">
+                    <CardHeader className="bg-muted/10 pb-4 border-b border-border/50">
+                        <CardTitle className="text-base text-blue-600 dark:text-blue-400">Comparison Parameters</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-6">
 
-                    {/* Top Row: FD vs Debt Config */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Top Row: FD vs Debt Config */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                        {/* 1. FD Configuration */}
-                        <div className="space-y-4 p-4 rounded-xl bg-orange-50/50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Landmark className="w-4 h-4 text-orange-600" />
-                                <h3 className="text-sm font-bold text-orange-700 dark:text-orange-400">Fixed Deposit</h3>
-                            </div>
+                            {/* 1. FD Configuration */}
+                            <div className="space-y-4 p-4 rounded-xl bg-orange-50/50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Landmark className="w-4 h-4 text-orange-600" />
+                                    <h3 className="text-sm font-bold text-orange-700 dark:text-orange-400">Fixed Deposit</h3>
+                                </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Deposit Amount</label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-muted-foreground uppercase">Deposit Amount</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
+                                        <Input
+                                            type="number"
+                                            value={amount}
+                                            onChange={(e) => setAmount(Number(e.target.value))}
+                                            className="pl-7 bg-background"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-muted-foreground uppercase">Interest Rate (%)</label>
                                     <Input
                                         type="number"
-                                        value={amount}
-                                        onChange={(e) => setAmount(Number(e.target.value))}
-                                        className="pl-7 bg-background"
+                                        value={fdRate}
+                                        onChange={(e) => setFdRate(Number(e.target.value))}
+                                        className="bg-background"
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Interest Rate (%)</label>
-                                <Input
-                                    type="number"
-                                    value={fdRate}
-                                    onChange={(e) => setFdRate(Number(e.target.value))}
-                                    className="bg-background"
-                                />
+
+                            {/* 2. Debt Fund Configuration */}
+                            <div className="space-y-4 p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                                    <h3 className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Debt Mutual Fund</h3>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-muted-foreground uppercase">Category</label>
+                                    <Select value={category} onValueChange={setCategory}>
+                                        <SelectTrigger className="bg-background h-10 w-full">
+                                            {/* TRUNCATION FIX: Wraps text to prevent layout breaking */}
+                                            <span className="truncate text-left block w-full pr-2">
+                                                <SelectValue />
+                                            </span>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold text-muted-foreground uppercase">Scheme</label>
+                                    <Popover open={comboOpen} onOpenChange={setComboOpen}>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="outline" role="combobox" className="w-full justify-between bg-background text-muted-foreground font-normal h-10 px-3">
+                                                <span className="truncate">{selectedScheme ? selectedScheme.schemeName : "Select Fund..."}</span>
+                                                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[300px] p-0" align="start">
+                                            <Command>
+                                                <CommandInput placeholder="Search debt fund..." />
+                                                <CommandEmpty>No fund found.</CommandEmpty>
+                                                <CommandGroup className="max-h-[250px] overflow-auto">
+                                                    {schemes.map((s) => (
+                                                        <CommandItem
+                                                            key={s.schemeCode}
+                                                            value={s.schemeName}
+                                                            onSelect={() => {
+                                                                setSelectedScheme(s);
+                                                                setComboOpen(false);
+                                                            }}
+                                                        >
+                                                            <Check className={cn("mr-2 h-4 w-4", selectedScheme?.schemeCode === s.schemeCode ? "opacity-100" : "opacity-0")} />
+                                                            <span className="truncate">{s.schemeName}</span>
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                             </div>
                         </div>
 
-                        {/* 2. Debt Fund Configuration */}
-                        <div className="space-y-4 p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/30">
-                            <div className="flex items-center gap-2 mb-2">
-                                <TrendingUp className="w-4 h-4 text-emerald-600" />
-                                <h3 className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Debt Mutual Fund</h3>
-                            </div>
-
+                        {/* Common Params: Dates & Tax */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                             <div className="space-y-2">
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Category</label>
-                                <Select value={category} onValueChange={setCategory}>
-                                    <SelectTrigger className="bg-background h-10 w-full">
-                                        {/* TRUNCATION FIX: Wraps text to prevent layout breaking */}
-                                        <span className="truncate text-left block w-full pr-2">
-                                            <SelectValue />
-                                        </span>
-                                    </SelectTrigger>
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Start Date</label>
+                                <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">End Date</label>
+                                <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Tax Slab (%)</label>
+                                <Select value={taxRate.toString()} onValueChange={(v) => setTaxRate(Number(v))}>
+                                    <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                                        <SelectItem value="0">0% (No Tax)</SelectItem>
+                                        <SelectItem value="10">10%</SelectItem>
+                                        <SelectItem value="20">20%</SelectItem>
+                                        <SelectItem value="30">30%</SelectItem>
+                                        <SelectItem value="39">39% (Highest)</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
+                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Scheme</label>
-                                <Popover open={comboOpen} onOpenChange={setComboOpen}>
-                                    <PopoverTrigger asChild>
-                                        <Button variant="outline" role="combobox" className="w-full justify-between bg-background text-muted-foreground font-normal h-10 px-3">
-                                            <span className="truncate">{selectedScheme ? selectedScheme.schemeName : "Select Fund..."}</span>
-                                            <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-[300px] p-0" align="start">
-                                        <Command>
-                                            <CommandInput placeholder="Search debt fund..." />
-                                            <CommandEmpty>No fund found.</CommandEmpty>
-                                            <CommandGroup className="max-h-[250px] overflow-auto">
-                                                {schemes.map((s) => (
-                                                    <CommandItem
-                                                        key={s.schemeCode}
-                                                        value={s.schemeName}
-                                                        onSelect={() => {
-                                                            setSelectedScheme(s);
-                                                            setComboOpen(false);
-                                                        }}
-                                                    >
-                                                        <Check className={cn("mr-2 h-4 w-4", selectedScheme?.schemeCode === s.schemeCode ? "opacity-100" : "opacity-0")} />
-                                                        <span className="truncate">{s.schemeName}</span>
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </Command>
-                                    </PopoverContent>
-                                </Popover>
+                        <Button onClick={handleCalculate} disabled={loading || !selectedScheme} className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md">
+                            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Compare Returns"}
+                        </Button>
+
+                    </CardContent>
+                </Card>
+
+
+                <ErrorAlert message={error} />
+
+                {/* Results */}
+                {data && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        {/* Comparison Summary */}
+                        <Card className="lg:col-span-3 border-border/50 shadow-sm bg-gradient-to-br from-background to-muted/20">
+                            <CardHeader className="text-center pb-2">
+                                <CardTitle className="text-xl">Analysis Summary</CardTitle>
+                                <CardDescription>
+                                    {data.debtWins
+                                        ? <span className="text-emerald-600 font-bold flex items-center justify-center gap-1"><TrendingUp className="w-4 h-4" /> Debt Fund Wins by {fmt(data.wealthDifference)}</span>
+                                        : <span className="text-orange-600 font-bold flex items-center justify-center gap-1"><Landmark className="w-4 h-4" /> Fixed Deposit Wins by {fmt(Math.abs(data.wealthDifference))}</span>}
+                                </CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        {/* Left: FD Result */}
+                        <ResultCard
+                            title="Fixed Deposit"
+                            icon={Landmark}
+                            colorClass="text-orange-600"
+                            bgClass="bg-orange-50 dark:bg-orange-950/10"
+                            data={{
+                                maturity: data.fdMaturityValue,
+                                profit: data.fdPreTaxProfit,
+                                tax: data.fdTaxLiability,
+                                postTax: data.fdPostTaxValue,
+                                xirr: data.fdPostTaxReturnPercent
+                            }}
+                        />
+
+                        {/* Right: Debt Result */}
+                        <ResultCard
+                            title="Debt Mutual Fund"
+                            subTitle={data.schemeName}
+                            icon={TrendingUp}
+                            colorClass="text-emerald-600"
+                            bgClass="bg-emerald-50 dark:bg-emerald-950/10"
+                            isWinner={data.debtWins}
+                            data={{
+                                maturity: data.debtMaturityValue,
+                                profit: data.debtPreTaxProfit,
+                                tax: data.debtTaxLiability,
+                                postTax: data.debtPostTaxValue,
+                                xirr: data.debtPostTaxReturnPercent
+                            }}
+                        />
+
+                        {/* Tax Impact Breakdown Table (Full Width) */}
+                        <Card className="lg:col-span-3 border-border/50">
+                            <CardHeader className="bg-muted/10 py-3 border-b border-border/50">
+                                <CardTitle className="text-sm font-bold uppercase">Taxation Impact Breakdown</CardTitle>
+                            </CardHeader>
+                            <div className="p-0 overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted/30 text-muted-foreground font-medium">
+                                        <tr>
+                                            <th className="px-6 py-3">Metric</th>
+                                            <th className="px-6 py-3 text-right">Fixed Deposit</th>
+                                            <th className="px-6 py-3 text-right text-emerald-700 dark:text-emerald-400">Debt Fund</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border/40">
+                                        <tr className="hover:bg-muted/10">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">Pre-Tax Profit</td>
+                                            <td className="px-6 py-3 text-right font-mono">{fmt(data.fdPreTaxProfit)}</td>
+                                            <td className="px-6 py-3 text-right font-mono font-bold">{fmt(data.debtPreTaxProfit)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-muted/10">
+                                            <td className="px-6 py-3 font-medium text-muted-foreground">Tax Payable ({taxRate}%)</td>
+                                            <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.fdTaxLiability)}</td>
+                                            <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.debtTaxLiability)}</td>
+                                        </tr>
+                                        <tr className="bg-muted/5 font-bold">
+                                            <td className="px-6 py-3 text-foreground">Net Post-Tax Profit</td>
+                                            <td className="px-6 py-3 text-right text-orange-600">{fmt(data.fdPostTaxValue - amount)}</td>
+                                            <td className="px-6 py-3 text-right text-emerald-600">{fmt(data.debtPostTaxValue - amount)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
+                        </Card>
                     </div>
-
-                    {/* Common Params: Dates & Tax */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Start Date</label>
-                            <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">End Date</label>
-                            <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-muted-foreground uppercase">Tax Slab (%)</label>
-                            <Select value={taxRate.toString()} onValueChange={(v) => setTaxRate(Number(v))}>
-                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="0">0% (No Tax)</SelectItem>
-                                    <SelectItem value="10">10%</SelectItem>
-                                    <SelectItem value="20">20%</SelectItem>
-                                    <SelectItem value="30">30%</SelectItem>
-                                    <SelectItem value="39">39% (Highest)</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    <Button onClick={handleCalculate} disabled={loading || !selectedScheme} className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md">
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Compare Returns"}
-                    </Button>
-
-                </CardContent>
-            </Card>
-
-            <ErrorAlert message={error} />
-
-            {/* Results */}
-            {data && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    {/* Comparison Summary */}
-                    <Card className="lg:col-span-3 border-border/50 shadow-sm bg-gradient-to-br from-background to-muted/20">
-                        <CardHeader className="text-center pb-2">
-                            <CardTitle className="text-xl">Analysis Summary</CardTitle>
-                            <CardDescription>
-                                {data.debtWins
-                                    ? <span className="text-emerald-600 font-bold flex items-center justify-center gap-1"><TrendingUp className="w-4 h-4" /> Debt Fund Wins by {fmt(data.wealthDifference)}</span>
-                                    : <span className="text-orange-600 font-bold flex items-center justify-center gap-1"><Landmark className="w-4 h-4" /> Fixed Deposit Wins by {fmt(Math.abs(data.wealthDifference))}</span>}
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
-
-                    {/* Left: FD Result */}
-                    <ResultCard
-                        title="Fixed Deposit"
-                        icon={Landmark}
-                        colorClass="text-orange-600"
-                        bgClass="bg-orange-50 dark:bg-orange-950/10"
-                        data={{
-                            maturity: data.fdMaturityValue,
-                            profit: data.fdPreTaxProfit,
-                            tax: data.fdTaxLiability,
-                            postTax: data.fdPostTaxValue,
-                            xirr: data.fdPostTaxReturnPercent
-                        }}
-                    />
-
-                    {/* Right: Debt Result */}
-                    <ResultCard
-                        title="Debt Mutual Fund"
-                        subTitle={data.schemeName}
-                        icon={TrendingUp}
-                        colorClass="text-emerald-600"
-                        bgClass="bg-emerald-50 dark:bg-emerald-950/10"
-                        isWinner={data.debtWins}
-                        data={{
-                            maturity: data.debtMaturityValue,
-                            profit: data.debtPreTaxProfit,
-                            tax: data.debtTaxLiability,
-                            postTax: data.debtPostTaxValue,
-                            xirr: data.debtPostTaxReturnPercent
-                        }}
-                    />
-
-                    {/* Tax Impact Breakdown Table (Full Width) */}
-                    <Card className="lg:col-span-3 border-border/50">
-                        <CardHeader className="bg-muted/10 py-3 border-b border-border/50">
-                            <CardTitle className="text-sm font-bold uppercase">Taxation Impact Breakdown</CardTitle>
-                        </CardHeader>
-                        <div className="p-0 overflow-x-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted/30 text-muted-foreground font-medium">
-                                    <tr>
-                                        <th className="px-6 py-3">Metric</th>
-                                        <th className="px-6 py-3 text-right">Fixed Deposit</th>
-                                        <th className="px-6 py-3 text-right text-emerald-700 dark:text-emerald-400">Debt Fund</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border/40">
-                                    <tr className="hover:bg-muted/10">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">Pre-Tax Profit</td>
-                                        <td className="px-6 py-3 text-right font-mono">{fmt(data.fdPreTaxProfit)}</td>
-                                        <td className="px-6 py-3 text-right font-mono font-bold">{fmt(data.debtPreTaxProfit)}</td>
-                                    </tr>
-                                    <tr className="hover:bg-muted/10">
-                                        <td className="px-6 py-3 font-medium text-muted-foreground">Tax Payable ({taxRate}%)</td>
-                                        <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.fdTaxLiability)}</td>
-                                        <td className="px-6 py-3 text-right text-red-500 font-mono">-{fmt(data.debtTaxLiability)}</td>
-                                    </tr>
-                                    <tr className="bg-muted/5 font-bold">
-                                        <td className="px-6 py-3 text-foreground">Net Post-Tax Profit</td>
-                                        <td className="px-6 py-3 text-right text-orange-600">{fmt(data.fdPostTaxValue - amount)}</td>
-                                        <td className="px-6 py-3 text-right text-emerald-600">{fmt(data.debtPostTaxValue - amount)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </Card>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </ToolPageLayout>
     );
 }
 

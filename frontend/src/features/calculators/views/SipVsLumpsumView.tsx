@@ -32,8 +32,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 );
 
 import { CalculatorViewProps } from "../types";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
-import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { ToolPageLayout, ToolInputHeader } from "@/features/calculators/components/ToolPageLayout";
 
 export default function SipVsLumpsumView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 500000); // 5 Lakhs
@@ -46,80 +45,77 @@ export default function SipVsLumpsumView({ defaultValues, isPublicView = false }
         [amount, years, rate, inflationAdjusted]);
 
     return (
-        <div className="grid gap-6 lg:grid-cols-12">
-            {/* Configuration */}
-            <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="space-y-1">
-                        <CardTitle>Comparison Setup</CardTitle>
-                        <CardDescription>Compare investing all at once vs. spreading it out.</CardDescription>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="sip-vs-lumpsum"
-                            config={{ amount, years, rate, inflationAdjusted }}
-                            defaultTitle="SIP vs Lumpsum Comparison"
-                            defaultDescription={`Comparing ₹${amount.toLocaleString()} investment over ${years} years.`}
-                        />
-                    )}
-                </CardHeader>
-                <CardContent className="space-y-8">
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Total Capital to Invest (₹)</Label>{amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</div>
-                        <Input type="range" min="10000" max="5000000" step="5000" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
-                        <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="mt-2" />
-                        <p className="text-xs text-muted-foreground">
-                            In SIP mode, this is spread as ₹{summary.monthlySipAmount.toLocaleString()}/mo
-                        </p>
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Time Horizon (Years)</Label><span className="text-sm font-medium bg-primary/10 px-2 py-0.5 rounded text-primary">{years} Years</span></div>
-                        <Slider value={[years]} onValueChange={(v) => setYears(v[0])} max={30} step={1} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Expected Return (%)</Label><span className="text-sm font-medium">{rate}%</span></div>
-                        <Slider value={[rate]} onValueChange={(v) => setRate(v[0])} max={30} step={0.5} />
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t">
-                        <div className="space-y-0.5"><Label>Inflation Adjusted?</Label><p className="text-xs text-muted-foreground">Adjust final value for 6% inflation</p></div>
-                        <Switch checked={inflationAdjusted} onCheckedChange={setInflationAdjusted} />
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Results */}
-            <div className="lg:col-span-8 grid gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatCard title="Lumpsum Result" value={CurrencyFormatter(summary.lumpsumValue)} icon={Briefcase} colorClass="text-purple-600 bg-purple-100" />
-                    <StatCard title="SIP Result" value={CurrencyFormatter(summary.sipValue)} icon={Coins} colorClass="text-blue-600 bg-blue-100" />
-                    <StatCard
-                        title="Winning Strategy"
-                        value={summary.winningStrategy}
-                        icon={Trophy}
-                        colorClass="text-amber-600 bg-amber-100"
-                        subtext={`By ${CurrencyFormatter(Math.abs(summary.difference))}`}
+        <ToolPageLayout
+            toolSlug="sip-vs-lumpsum"
+            config={{ amount, years, rate, inflationAdjusted }}
+            title="SIP vs Lumpsum Comparison"
+            description={`Comparing ₹${amount.toLocaleString()} investment over ${years} years.`}
+            isPublicView={isPublicView}
+        >
+            <div className="grid gap-6 lg:grid-cols-12">
+                {/* Configuration */}
+                <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
+                    <ToolInputHeader
+                        title="Comparison Setup"
+                        description="Compare investing all at once vs. spreading it out."
+                        isPublicView={isPublicView}
                     />
-                </div>
-
-                <Card className="flex-1 border-border/60 shadow-sm">
-                    <CardHeader><CardTitle>Growth Comparison</CardTitle></CardHeader>
-                    <CardContent className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="year" />
-                                <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`} axisLine={false} tickLine={false} />
-                                <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
-                                <Legend />
-                                <Line type="monotone" dataKey="lumpsumValue" name="Lumpsum Growth" stroke="#9333ea" strokeWidth={3} dot={false} />
-                                <Line type="monotone" dataKey="sipValue" name="SIP Growth" stroke="#2563eb" strokeWidth={3} dot={false} />
-                            </LineChart>
-                        </ResponsiveContainer>
+                    <CardContent className="space-y-8 pt-4">
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Total Capital to Invest (₹)</Label>{amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</div>
+                            <Input type="range" min="10000" max="5000000" step="5000" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
+                            <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="mt-2" />
+                            <p className="text-xs text-muted-foreground">
+                                In SIP mode, this is spread as ₹{summary.monthlySipAmount.toLocaleString()}/mo
+                            </p>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Time Horizon (Years)</Label><span className="text-sm font-medium bg-primary/10 px-2 py-0.5 rounded text-primary">{years} Years</span></div>
+                            <Slider value={[years]} onValueChange={(v) => setYears(v[0])} max={30} step={1} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Expected Return (%)</Label><span className="text-sm font-medium">{rate}%</span></div>
+                            <Slider value={[rate]} onValueChange={(v) => setRate(v[0])} max={30} step={0.5} />
+                        </div>
+                        <div className="flex items-center justify-between pt-4 border-t">
+                            <div className="space-y-0.5"><Label>Inflation Adjusted?</Label><p className="text-xs text-muted-foreground">Adjust final value for 6% inflation</p></div>
+                            <Switch checked={inflationAdjusted} onCheckedChange={setInflationAdjusted} />
+                        </div>
                     </CardContent>
                 </Card>
+
+                {/* Results */}
+                <div className="lg:col-span-8 grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <StatCard title="Lumpsum Result" value={CurrencyFormatter(summary.lumpsumValue)} icon={Briefcase} colorClass="text-purple-600 bg-purple-100" />
+                        <StatCard title="SIP Result" value={CurrencyFormatter(summary.sipValue)} icon={Coins} colorClass="text-blue-600 bg-blue-100" />
+                        <StatCard
+                            title="Winning Strategy"
+                            value={summary.winningStrategy}
+                            icon={Trophy}
+                            colorClass="text-amber-600 bg-amber-100"
+                            subtext={`By ${CurrencyFormatter(Math.abs(summary.difference))}`}
+                        />
+                    </div>
+
+                    <Card className="flex-1 border-border/60 shadow-sm">
+                        <CardHeader><CardTitle>Growth Comparison</CardTitle></CardHeader>
+                        <CardContent className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="year" />
+                                    <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`} axisLine={false} tickLine={false} />
+                                    <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="lumpsumValue" name="Lumpsum Growth" stroke="#9333ea" strokeWidth={3} dot={false} />
+                                    <Line type="monotone" dataKey="sipValue" name="SIP Growth" stroke="#2563eb" strokeWidth={3} dot={false} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </ToolPageLayout>
     );
 }

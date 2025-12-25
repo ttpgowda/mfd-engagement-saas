@@ -32,8 +32,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 );
 
 import { CalculatorViewProps } from "../types";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
-import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { ToolPageLayout, ToolInputHeader } from "@/features/calculators/components/ToolPageLayout";
 
 export default function StepUpSipView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 15000);
@@ -47,92 +46,89 @@ export default function StepUpSipView({ defaultValues, isPublicView = false }: C
         [amount, years, rate, increase, inflationAdjusted]);
 
     return (
-        <div className="grid gap-6 lg:grid-cols-12">
-            <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="space-y-1">
-                        <CardTitle>Step-Up Strategy</CardTitle>
-                        <CardDescription>Small increases create massive wealth.</CardDescription>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="step-up-sip"
-                            config={{ amount, years, rate, increase, inflationAdjusted }}
-                            defaultTitle="Step-Up SIP Plan"
-                            defaultDescription={`Plan for ₹${amount.toLocaleString()} SIP with ${increase}% annual step-up.`}
-                        />
-                    )}
-                </CardHeader>
-                <CardContent className="space-y-8">
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Initial SIP Amount</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
-                        <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Yearly Step-Up (%)</Label><span className="text-sm font-medium bg-primary/10 px-2 py-0.5 rounded text-primary">{increase}%</span></div>
-                        <Slider value={[increase]} onValueChange={(v) => setIncrease(v[0])} max={30} step={1} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-3"><Label>Return (%)</Label><Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} /></div>
-                        <div className="space-y-3"><Label>Years</Label><Input type="number" value={years} onChange={(e) => setYears(Number(e.target.value))} /></div>
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t">
-                        <div className="space-y-0.5"><Label>Inflation Adjusted?</Label><p className="text-xs text-muted-foreground">Adjust final value for 6% inflation</p></div>
-                        <Switch checked={inflationAdjusted} onCheckedChange={setInflationAdjusted} />
-                    </div>
-                </CardContent>
-            </Card>
-
-            <div className="lg:col-span-8 grid gap-6">
-                <div className="grid grid-cols-2 gap-4">
-                    <StatCard title="Total Invested" value={CurrencyFormatter(summary.invested)} icon={PieChart} colorClass="text-blue-600 bg-blue-100" />
-                    <StatCard title={inflationAdjusted ? "Real Value" : "Future Value"} value={CurrencyFormatter(summary.corpus)} icon={TrendingUp} colorClass="text-emerald-600 bg-emerald-100" subtext={`Wealth Gained: ${CurrencyFormatter(summary.growth)}`} />
-                </div>
-
-                <Card className="flex-1 border-border/60 shadow-sm">
-                    <CardHeader><CardTitle>Wealth Growth Trajectory</CardTitle></CardHeader>
-                    <CardContent className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorCorpus" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis
-                                    dataKey="year"
-                                    hide={years > 15}
-                                    stroke="hsl(var(--muted-foreground))"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <YAxis
-                                    tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    stroke="hsl(var(--muted-foreground))"
-                                    fontSize={12}
-                                />
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                                <Tooltip
-                                    formatter={(value: number) => [CurrencyFormatter(value), '']}
-                                    contentStyle={{
-                                        backgroundColor: "hsl(var(--popover))",
-                                        borderColor: "hsl(var(--border))",
-                                        color: "hsl(var(--popover-foreground))"
-                                    }}
-                                    labelStyle={{ color: "hsl(var(--foreground))" }}
-                                />
-                                <Area type="monotone" dataKey="corpus" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorCorpus)" strokeWidth={2} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+        <ToolPageLayout
+            toolSlug="step-up-sip"
+            config={{ amount, years, rate, increase, inflationAdjusted }}
+            title="Step-Up SIP Plan"
+            description={`Plan for ₹${amount.toLocaleString()} SIP with ${increase}% annual step-up.`}
+            isPublicView={isPublicView}
+        >
+            <div className="grid gap-6 lg:grid-cols-12">
+                <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
+                    <ToolInputHeader
+                        title="Step-Up Strategy"
+                        description="Small increases create massive wealth."
+                        isPublicView={isPublicView}
+                    />
+                    <CardContent className="space-y-8 pt-4">
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Initial SIP Amount</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
+                            <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Yearly Step-Up (%)</Label><span className="text-sm font-medium bg-primary/10 px-2 py-0.5 rounded text-primary">{increase}%</span></div>
+                            <Slider value={[increase]} onValueChange={(v) => setIncrease(v[0])} max={30} step={1} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-3"><Label>Return (%)</Label><Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} /></div>
+                            <div className="space-y-3"><Label>Years</Label><Input type="number" value={years} onChange={(e) => setYears(Number(e.target.value))} /></div>
+                        </div>
+                        <div className="flex items-center justify-between pt-4 border-t">
+                            <div className="space-y-0.5"><Label>Inflation Adjusted?</Label><p className="text-xs text-muted-foreground">Adjust final value for 6% inflation</p></div>
+                            <Switch checked={inflationAdjusted} onCheckedChange={setInflationAdjusted} />
+                        </div>
                     </CardContent>
                 </Card>
+
+                <div className="lg:col-span-8 grid gap-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        <StatCard title="Total Invested" value={CurrencyFormatter(summary.invested)} icon={PieChart} colorClass="text-blue-600 bg-blue-100" />
+                        <StatCard title={inflationAdjusted ? "Real Value" : "Future Value"} value={CurrencyFormatter(summary.corpus)} icon={TrendingUp} colorClass="text-emerald-600 bg-emerald-100" subtext={`Wealth Gained: ${CurrencyFormatter(summary.growth)}`} />
+                    </div>
+
+                    <Card className="flex-1 border-border/60 shadow-sm">
+                        <CardHeader><CardTitle>Wealth Growth Trajectory</CardTitle></CardHeader>
+                        <CardContent className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorCorpus" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis
+                                        dataKey="year"
+                                        hide={years > 15}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <YAxis
+                                        tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={12}
+                                    />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                    <Tooltip
+                                        formatter={(value: number) => [CurrencyFormatter(value), '']}
+                                        contentStyle={{
+                                            backgroundColor: "hsl(var(--popover))",
+                                            borderColor: "hsl(var(--border))",
+                                            color: "hsl(var(--popover-foreground))"
+                                        }}
+                                        labelStyle={{ color: "hsl(var(--foreground))" }}
+                                    />
+                                    <Area type="monotone" dataKey="corpus" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorCorpus)" strokeWidth={2} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </ToolPageLayout>
     );
 }

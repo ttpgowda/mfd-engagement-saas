@@ -41,6 +41,10 @@ export const TenantService = {
     onboardTenant: async (data: OnboardTenantRequest) => {
         const response = await api.post<Tenant>('/onboard-tenant', data);
         return response.data;
+    },
+    getPublicTenant: async (tenantId: string) => {
+        const response = await api.get<Tenant>(`/public/tenant/${tenantId}`);
+        return response.data;
     }
 };
 
