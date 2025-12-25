@@ -2,12 +2,10 @@
 
 ## 1. Product Summary
 **Platform Overview:**
-This is a sophisticated **SaaS (Software as a Service)** platform designed specifically for the Wealth Management industry. It serves as a "Digital Office" for financial professionals, equipping them with high-end tools to engage clients, analyze market data, and generate business leads.
+This is a sophisticated **SaaS (Software as a Service)** platform designed specifically for the Mutual Fund Distributors (MFDs). It serves as a "Digital Office" for financial professionals, equipping them with high-end tools to engage clients, analyze market data, and generate business leads.
 
 **Target Audience:**
 *   **Mutual Fund Distributors (MFDs)**
-*   **Wealth Managers & Financial Advisors**
-*   **Advisory Firms** aiming to digitize their client interactions.
 
 ## 2. Key Features ("What it Does")
 The platform is engineered to drive **Growth** and **Engagement** through three main pillars:

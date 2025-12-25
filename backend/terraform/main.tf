@@ -16,12 +16,27 @@ data "aws_ami" "ubuntu" {
 resource "aws_security_group" "app_sg" {
   name        = "wealthweb-sg"
   description = "Allow SSH and HTTP traffic"
+  vpc_id = "vpc-0012e98b1d988c2da"
 
   ingress { # SSH
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # For tighter security, replace 0.0.0.0/0 with your home IP
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress { # HTTP
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress { # HTTPS
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress { # Spring Boot App
@@ -31,13 +46,21 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress { # Allow server to reach the internet (for updates)
+  ingress { # PostgreSQL
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress { # Allow all outbound
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 # 3. Upload your local SSH public key to AWS
 resource "aws_key_pair" "deployer" {
@@ -48,7 +71,7 @@ resource "aws_key_pair" "deployer" {
 # 4. Create the Server
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.small" # 2GB RAM. t2.micro (1GB) is risky for Java+Postgres.
+  instance_type = "t3.medium" # 2GB RAM. t2.micro (1GB) is risky for Java+Postgres.
   key_name      = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 
