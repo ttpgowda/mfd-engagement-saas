@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
+import { TenantService } from '@/services/api';
 import { useState, useEffect } from 'react';
 
 const formSchema = z.object({
@@ -112,33 +113,44 @@ export default function LoginPage() {
 
     const onWorkspaceSubmit = async (values: z.infer<typeof workspaceSchema>) => {
         const subdomain = values.workspace.toLowerCase();
-        const host = window.location.hostname;
-        const protocol = window.location.protocol;
-        const port = window.location.port ? `:${window.location.port}` : '';
 
-        let newUrl = '';
-        if (host.includes('localhost')) {
-            // Handle localhost logic
-            const root = host.replace('www.', ''); // strip www if present
-            // if we are already at localhost (no dots), root is localhost.
-            // If we are (somehow) at www.localhost, root is localhost.
-            // We want {subdomain}.localhost
-            // If current host is 'localhost', we append.
-            // If current host is 'www.localhost', we replace 'www'?? simpler to just hardcode localhost base if detected.
-            if (host.endsWith('localhost')) {
-                newUrl = `${protocol}//${subdomain}.localhost${port}/login`;
+        try {
+            // Validate workspace exists before redirecting
+            await TenantService.getPublicTenant(subdomain);
+
+            // If valid, proceed with redirect
+            const host = window.location.hostname;
+            const protocol = window.location.protocol;
+            const port = window.location.port ? `:${window.location.port}` : '';
+
+            let newUrl = '';
+            if (host.includes('localhost')) {
+                // Handle localhost logic
+                if (host.endsWith('localhost')) {
+                    newUrl = `${protocol}//${subdomain}.localhost${port}/login`;
+                }
+            } else {
+                // Production logic
+                const rootDomain = host.startsWith('www.') ? host.substring(4) : host;
+                newUrl = `${protocol}//${subdomain}.${rootDomain}${port}/login`;
             }
-        } else {
-            // Production logic
-            // domain.com -> subdomain.domain.com
-            // www.domain.com -> subdomain.domain.com
-            const rootDomain = host.startsWith('www.') ? host.substring(4) : host;
-            newUrl = `${protocol}//${subdomain}.${rootDomain}${port}/login`;
-        }
 
-        // Simple client-side redirect. 
-        // Real validation happens when the user lands on the new URL (backend/middleware validation).
-        window.location.href = newUrl;
+            window.location.href = newUrl;
+        } catch (err: any) {
+            console.error("Workspace validation error:", err);
+            // Assume 404 means not found
+            if (err.response?.status === 404) {
+                workspaceForm.setError('workspace', {
+                    type: 'manual',
+                    message: 'Workspace not found. Please check the name and try again.'
+                });
+            } else {
+                workspaceForm.setError('workspace', {
+                    type: 'manual',
+                    message: 'Unable to verify workspace. Please try again later.'
+                });
+            }
+        }
     };
 
     if (checkingDomain) return null; // Or a loader
