@@ -178,8 +178,7 @@ export default function LoginPage() {
                                                 <div className="flex items-center">
                                                     <Input placeholder="your-company" {...field} className="rounded-r-none border-r-0 focus-visible:ring-0" />
                                                     <div className="h-10 px-3 bg-muted border border-l-0 border-input rounded-r-md flex items-center text-sm text-muted-foreground whitespace-nowrap">
-                                                        {window.location.hostname.replace('www.', '').replace(window.location.hostname.split('.')[0] + '.', '.')}
-                                                        {window.location.hostname === 'localhost' ? '.localhost' : (window.location.hostname.includes('localhost') ? '.localhost' : '.' + window.location.hostname.replace('www.', ''))}
+                                                        .{window.location.hostname.replace(/^www\./, '')}
                                                     </div>
                                                     {/* The above suffix logic is complex to get right dynamically for visual placeholder. Simpler: */}
                                                 </div>
@@ -252,12 +251,12 @@ export default function LoginPage() {
                             </Button>
                         </form>
                     </Form>
-                    <div className="mt-4 text-center text-sm">
+                    {/* <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{" "}
                         <Link href="/register" className="underline">
                             Sign up
                         </Link>
-                    </div>
+                    </div> */}
                 </CardContent>
             </Card>
         </div>
