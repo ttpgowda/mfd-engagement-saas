@@ -31,8 +31,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 );
 
 import { CalculatorViewProps } from "../types";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
-import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { ToolPageLayout, ToolInputHeader } from "@/features/calculators/components/ToolPageLayout";
 
 export default function RetirementPlanningView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [currentAge, setCurrentAge] = useState<number>(defaultValues?.currentAge ?? 30);
@@ -59,98 +58,95 @@ export default function RetirementPlanningView({ defaultValues, isPublicView = f
     );
 
     return (
-        <div className="grid gap-6 lg:grid-cols-12">
-            {/* Configuration */}
-            <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="space-y-1">
-                        <CardTitle>Plan Your Retirement</CardTitle>
-                        <CardDescription>Estimate corpus and SIP needed.</CardDescription>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="retirement-planning"
-                            config={{ currentAge, retirementAge, lifeExpectancy, monthlyExpenses, currentCorpus, inflationRate, preRetirementReturn, postRetirementReturn }}
-                            defaultTitle="Retirement Plan"
-                            defaultDescription={`Retirement plan for age ${retirementAge} with monthly expenses of ₹${monthlyExpenses.toLocaleString()}.`}
-                        />
-                    )}
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Current Age</Label><span className="text-sm font-medium">{currentAge} Years</span></div>
-                        <Slider value={[currentAge]} onValueChange={(v) => setCurrentAge(v[0])} min={18} max={retirementAge - 1} step={1} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Retirement Age</Label><span className="text-sm font-medium">{retirementAge} Years</span></div>
-                        <Slider value={[retirementAge]} onValueChange={(v) => setRetirementAge(v[0])} min={currentAge + 1} max={80} step={1} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Life Expectancy</Label><span className="text-sm font-medium">{lifeExpectancy} Years</span></div>
-                        <Slider value={[lifeExpectancy]} onValueChange={(v) => setLifeExpectancy(v[0])} min={retirementAge + 1} max={100} step={1} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Monthly Expenses (Today)</Label><span className="text-sm font-medium text-primary">₹{monthlyExpenses.toLocaleString()}</span></div>
-                        <Input type="number" value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(Number(e.target.value))} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Current Savings (Corpus)</Label><span className="text-sm font-medium text-primary">₹{currentCorpus.toLocaleString()}</span></div>
-                        <Input type="number" value={currentCorpus} onChange={(e) => setCurrentCorpus(Number(e.target.value))} />
-                    </div>
+        <ToolPageLayout
+            toolSlug="retirement-planning"
+            config={{ currentAge, retirementAge, lifeExpectancy, monthlyExpenses, currentCorpus, inflationRate, preRetirementReturn, postRetirementReturn }}
+            title="Plan Your Retirement"
+            description={`Estimate corpus and SIP needed.`}
+            isPublicView={isPublicView}
+        >
+            <div className="grid gap-6 lg:grid-cols-12">
+                {/* Configuration */}
+                <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
+                    <ToolInputHeader
+                        title="Plan Your Retirement"
+                        description="Estimate corpus and SIP needed."
+                        isPublicView={isPublicView}
+                    />
+                    <CardContent className="space-y-6 pt-4">
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Current Age</Label><span className="text-sm font-medium">{currentAge} Years</span></div>
+                            <Slider value={[currentAge]} onValueChange={(v) => setCurrentAge(v[0])} min={18} max={retirementAge - 1} step={1} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Retirement Age</Label><span className="text-sm font-medium">{retirementAge} Years</span></div>
+                            <Slider value={[retirementAge]} onValueChange={(v) => setRetirementAge(v[0])} min={currentAge + 1} max={80} step={1} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Life Expectancy</Label><span className="text-sm font-medium">{lifeExpectancy} Years</span></div>
+                            <Slider value={[lifeExpectancy]} onValueChange={(v) => setLifeExpectancy(v[0])} min={retirementAge + 1} max={100} step={1} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Monthly Expenses (Today)</Label><span className="text-sm font-medium text-primary">₹{monthlyExpenses.toLocaleString()}</span></div>
+                            <Input type="number" value={monthlyExpenses} onChange={(e) => setMonthlyExpenses(Number(e.target.value))} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Current Savings (Corpus)</Label><span className="text-sm font-medium text-primary">₹{currentCorpus.toLocaleString()}</span></div>
+                            <Input type="number" value={currentCorpus} onChange={(e) => setCurrentCorpus(Number(e.target.value))} />
+                        </div>
 
-                    <div className="pt-4 border-t space-y-4">
-                        <h4 className="font-medium text-sm text-muted-foreground">Assumptions</h4>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs">Inflation (%)</Label>
-                                <Input type="number" value={inflationRate} onChange={(e) => setInflationRate(Number(e.target.value))} className="h-8 text-xs" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs">Pre-Ret. Return (%)</Label>
-                                <Input type="number" value={preRetirementReturn} onChange={(e) => setPreRetirementReturn(Number(e.target.value))} className="h-8 text-xs" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs">Post-Ret. Return (%)</Label>
-                                <Input type="number" value={postRetirementReturn} onChange={(e) => setPostRetirementReturn(Number(e.target.value))} className="h-8 text-xs" />
+                        <div className="pt-4 border-t space-y-4">
+                            <h4 className="font-medium text-sm text-muted-foreground">Assumptions</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Inflation (%)</Label>
+                                    <Input type="number" value={inflationRate} onChange={(e) => setInflationRate(Number(e.target.value))} className="h-8 text-xs" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Pre-Ret. Return (%)</Label>
+                                    <Input type="number" value={preRetirementReturn} onChange={(e) => setPreRetirementReturn(Number(e.target.value))} className="h-8 text-xs" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs">Post-Ret. Return (%)</Label>
+                                    <Input type="number" value={postRetirementReturn} onChange={(e) => setPostRetirementReturn(Number(e.target.value))} className="h-8 text-xs" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Results */}
-            <div className="lg:col-span-8 grid gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatCard title="Required Corpus" value={CurrencyFormatter(summary.requiredCorpus)} icon={Target} colorClass="text-purple-600 bg-purple-100" subtext={`To sustain ₹${CurrencyFormatter(summary.monthlyExpensesAtRetirement)}/mo expenses`} />
-                    <StatCard title="Monthly SIP Needed" value={CurrencyFormatter(summary.monthlySipRequired)} icon={Coins} colorClass="text-blue-600 bg-blue-100" subtext="To bridge the gap" />
-                    <StatCard
-                        title="Corpus Gap"
-                        value={CurrencyFormatter(summary.gap)}
-                        icon={TrendingUp}
-                        colorClass="text-amber-600 bg-amber-100"
-                        subtext={`Existing savings grow to ${CurrencyFormatter(summary.fvCurrentCorpus)}`}
-                    />
-                </div>
-
-                <Card className="flex-1 border-border/60 shadow-sm">
-                    <CardHeader><CardTitle>Wealth Accumulation Path</CardTitle></CardHeader>
-                    <CardContent className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="year" />
-                                <YAxis tickFormatter={(value) => `${(value / 10000000).toFixed(1)}Cr`} axisLine={false} tickLine={false} />
-                                <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
-                                <Legend />
-                                <Line type="monotone" dataKey="corpus" name="Projected Corpus" stroke="#2563eb" strokeWidth={3} dot={false} />
-                                <Line type="monotone" dataKey="required" name="Target Corpus" stroke="#9333ea" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                            </LineChart>
-                        </ResponsiveContainer>
                     </CardContent>
                 </Card>
+
+                {/* Results */}
+                <div className="lg:col-span-8 grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <StatCard title="Required Corpus" value={CurrencyFormatter(summary.requiredCorpus)} icon={Target} colorClass="text-purple-600 bg-purple-100" subtext={`To sustain ₹${CurrencyFormatter(summary.monthlyExpensesAtRetirement)}/mo expenses`} />
+                        <StatCard title="Monthly SIP Needed" value={CurrencyFormatter(summary.monthlySipRequired)} icon={Coins} colorClass="text-blue-600 bg-blue-100" subtext="To bridge the gap" />
+                        <StatCard
+                            title="Corpus Gap"
+                            value={CurrencyFormatter(summary.gap)}
+                            icon={TrendingUp}
+                            colorClass="text-amber-600 bg-amber-100"
+                            subtext={`Existing savings grow to ${CurrencyFormatter(summary.fvCurrentCorpus)}`}
+                        />
+                    </div>
+
+                    <Card className="flex-1 border-border/60 shadow-sm">
+                        <CardHeader><CardTitle>Wealth Accumulation Path</CardTitle></CardHeader>
+                        <CardContent className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="year" />
+                                    <YAxis tickFormatter={(value) => `${(value / 10000000).toFixed(1)}Cr`} axisLine={false} tickLine={false} />
+                                    <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="corpus" name="Projected Corpus" stroke="#2563eb" strokeWidth={3} dot={false} />
+                                    <Line type="monotone" dataKey="required" name="Target Corpus" stroke="#9333ea" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </ToolPageLayout>
     );
 }

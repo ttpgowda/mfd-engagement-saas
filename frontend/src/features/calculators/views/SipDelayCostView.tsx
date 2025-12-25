@@ -31,8 +31,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 );
 
 import { CalculatorViewProps } from "../types";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
-import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { ToolPageLayout, ToolInputHeader } from "@/features/calculators/components/ToolPageLayout";
 
 export default function SipDelayCostView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [amount, setAmount] = useState<number>(defaultValues?.amount ?? 10000);
@@ -46,110 +45,107 @@ export default function SipDelayCostView({ defaultValues, isPublicView = false }
         [amount, years, rate, delayYears]);
 
     return (
-        <div className="grid gap-6 lg:grid-cols-12">
-            {/* Inputs */}
-            <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="space-y-1">
-                        <CardTitle>Delay Scenarios</CardTitle>
-                        <CardDescription>See how a small delay creates a huge gap.</CardDescription>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="sip-delay-cost"
-                            config={{ amount, years, rate, delayYears }}
-                            defaultTitle="Cost of Delay Analysis"
-                            defaultDescription={`See the cost of delaying a ₹${amount.toLocaleString()} SIP by ${delayYears} years.`}
-                        />
-                    )}
-                </CardHeader>
-                <CardContent className="space-y-8">
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Monthly SIP (₹)</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
-                        <Input type="range" min="1000" max="100000" step="500" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
-                        <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="mt-2" />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Delay Period (Years)</Label><span className="text-sm font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded">{delayYears} Years</span></div>
-                        <Slider value={[delayYears]} onValueChange={(v) => setDelayYears(v[0])} max={10} step={1} className="py-2" />
-                        <p className="text-xs text-muted-foreground">You wait {delayYears} years before starting.</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-3"><Label>Return (%)</Label><Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} /></div>
-                        <div className="space-y-3"><Label>Total Duration</Label><Input type="number" value={years} onChange={(e) => setYears(Number(e.target.value))} /></div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Results */}
-            <div className="lg:col-span-8 grid gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatCard title="Start Now Value" value={CurrencyFormatter(summary.nowCorpus)} icon={Wallet} colorClass="text-green-600 bg-green-100" />
-                    <StatCard title="Start Later Value" value={CurrencyFormatter(summary.laterCorpus)} icon={Wallet} colorClass="text-amber-600 bg-amber-100" />
-                    <StatCard
-                        title="Cost of Waiting"
-                        value={CurrencyFormatter(summary.lossAmount)}
-                        icon={AlertTriangle}
-                        colorClass="text-red-600 bg-red-100"
-                        subtext={`Loss due to ${delayYears}yr delay`}
+        <ToolPageLayout
+            toolSlug="sip-delay-cost"
+            config={{ amount, years, rate, delayYears }}
+            title="Cost of Delay Analysis"
+            description={`See the cost of delaying a ₹${amount.toLocaleString()} SIP by ${delayYears} years.`}
+            isPublicView={isPublicView}
+        >
+            <div className="grid gap-6 lg:grid-cols-12">
+                {/* Inputs */}
+                <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
+                    <ToolInputHeader
+                        title="Delay Scenarios"
+                        description="See how a small delay creates a huge gap."
+                        isPublicView={isPublicView}
                     />
-                </div>
-
-                <Card className="flex-1 border-border/60 shadow-sm">
-                    <CardHeader><CardTitle>The Wealth Gap</CardTitle></CardHeader>
-                    <CardContent className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorNow" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#16a34a" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
-                                    </linearGradient>
-                                    <linearGradient id="colorLater" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#ea580c" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <XAxis
-                                    dataKey="year"
-                                    hide={years > 15}
-                                    stroke="hsl(var(--muted-foreground))"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <YAxis
-                                    tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
-                                    axisLine={false}
-                                    tickLine={false}
-                                    stroke="hsl(var(--muted-foreground))"
-                                    fontSize={12}
-                                />
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                                <Tooltip
-                                    formatter={(value: number) => [CurrencyFormatter(value), '']}
-                                    contentStyle={{
-                                        backgroundColor: "hsl(var(--popover))",
-                                        borderColor: "hsl(var(--border))",
-                                        color: "hsl(var(--popover-foreground))"
-                                    }}
-                                    labelStyle={{ color: "hsl(var(--foreground))" }}
-                                />
-                                <Legend
-                                    verticalAlign="top"
-                                    height={36}
-                                    wrapperStyle={{ color: "hsl(var(--foreground))" }}
-                                />
-
-                                <Area type="monotone" dataKey="nowValue" name="Start Now" stroke="#16a34a" fillOpacity={1} fill="url(#colorNow)" strokeWidth={2} />
-                                <Area type="monotone" dataKey="laterValue" name={`Start After ${delayYears}y`} stroke="#ea580c" fillOpacity={1} fill="url(#colorLater)" strokeWidth={2} />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                    <CardContent className="space-y-8 pt-4">
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Monthly SIP (₹)</Label><span className="text-sm font-medium text-primary">₹{amount.toLocaleString()}</span></div>
+                            <Input type="range" min="1000" max="100000" step="500" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="accent-primary" />
+                            <Input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="mt-2" />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Delay Period (Years)</Label><span className="text-sm font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded">{delayYears} Years</span></div>
+                            <Slider value={[delayYears]} onValueChange={(v) => setDelayYears(v[0])} max={10} step={1} className="py-2" />
+                            <p className="text-xs text-muted-foreground">You wait {delayYears} years before starting.</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-3"><Label>Return (%)</Label><Input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} /></div>
+                            <div className="space-y-3"><Label>Total Duration</Label><Input type="number" value={years} onChange={(e) => setYears(Number(e.target.value))} /></div>
+                        </div>
                     </CardContent>
                 </Card>
+
+                {/* Results */}
+                <div className="lg:col-span-8 grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <StatCard title="Start Now Value" value={CurrencyFormatter(summary.nowCorpus)} icon={Wallet} colorClass="text-green-600 bg-green-100" />
+                        <StatCard title="Start Later Value" value={CurrencyFormatter(summary.laterCorpus)} icon={Wallet} colorClass="text-amber-600 bg-amber-100" />
+                        <StatCard
+                            title="Cost of Waiting"
+                            value={CurrencyFormatter(summary.lossAmount)}
+                            icon={AlertTriangle}
+                            colorClass="text-red-600 bg-red-100"
+                            subtext={`Loss due to ${delayYears}yr delay`}
+                        />
+                    </div>
+
+                    <Card className="flex-1 border-border/60 shadow-sm">
+                        <CardHeader><CardTitle>The Wealth Gap</CardTitle></CardHeader>
+                        <CardContent className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorNow" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#16a34a" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
+                                        </linearGradient>
+                                        <linearGradient id="colorLater" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ea580c" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <XAxis
+                                        dataKey="year"
+                                        hide={years > 15}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <YAxis
+                                        tickFormatter={(value) => `${(value / 100000).toFixed(0)}L`}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        fontSize={12}
+                                    />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                                    <Tooltip
+                                        formatter={(value: number) => [CurrencyFormatter(value), '']}
+                                        contentStyle={{
+                                            backgroundColor: "hsl(var(--popover))",
+                                            borderColor: "hsl(var(--border))",
+                                            color: "hsl(var(--popover-foreground))"
+                                        }}
+                                        labelStyle={{ color: "hsl(var(--foreground))" }}
+                                    />
+                                    <Legend
+                                        verticalAlign="top"
+                                        height={36}
+                                        wrapperStyle={{ color: "hsl(var(--foreground))" }}
+                                    />
+
+                                    <Area type="monotone" dataKey="nowValue" name="Start Now" stroke="#16a34a" fillOpacity={1} fill="url(#colorNow)" strokeWidth={2} />
+                                    <Area type="monotone" dataKey="laterValue" name={`Start After ${delayYears}y`} stroke="#ea580c" fillOpacity={1} fill="url(#colorLater)" strokeWidth={2} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </ToolPageLayout>
     );
 }

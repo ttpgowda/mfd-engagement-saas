@@ -31,8 +31,7 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass }: StatCardPro
 );
 
 import { CalculatorViewProps } from "../types";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
-import { PublicShareButton } from "@/features/share/components/PublicShareButton";
+import { ToolPageLayout, ToolInputHeader } from "@/features/calculators/components/ToolPageLayout";
 
 export default function InflationImpactView({ defaultValues, isPublicView = false }: CalculatorViewProps) {
     const [currentCost, setCurrentCost] = useState<number>(defaultValues?.currentCost ?? 100000); // 1 Lakh
@@ -49,76 +48,73 @@ export default function InflationImpactView({ defaultValues, isPublicView = fals
     );
 
     return (
-        <div className="grid gap-6 lg:grid-cols-12">
-            {/* Configuration */}
-            <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                    <div className="space-y-1">
-                        <CardTitle>Inflation Impact</CardTitle>
-                        <CardDescription>See how inflation erodes purchasing power.</CardDescription>
-                    </div>
-                    {isPublicView ? (
-                        <PublicShareButton />
-                    ) : (
-                        <ShareDialog
-                            toolSlug="inflation-impact"
-                            config={{ currentCost, inflationRate, timePeriodYears }}
-                            defaultTitle="Inflation Analysis"
-                            defaultDescription={`See the impact of ${inflationRate}% inflation on ₹${currentCost.toLocaleString()} over ${timePeriodYears} years.`}
-                        />
-                    )}
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Current Cost</Label><span className="text-sm font-medium text-primary">₹{currentCost.toLocaleString()}</span></div>
-                        <Input type="number" value={currentCost} onChange={(e) => setCurrentCost(Number(e.target.value))} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Inflation Rate (%)</Label><span className="text-sm font-medium">{inflationRate}%</span></div>
-                        <Slider value={[inflationRate]} onValueChange={(v) => setInflationRate(v[0])} min={1} max={15} step={0.5} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex justify-between"><Label>Time Period</Label><span className="text-sm font-medium">{timePeriodYears} Years</span></div>
-                        <Slider value={[timePeriodYears]} onValueChange={(v) => setTimePeriodYears(v[0])} min={1} max={50} step={1} />
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Results */}
-            <div className="lg:col-span-8 grid gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatCard title="Future Cost" value={CurrencyFormatter(summary.futureCost)} icon={TrendingUp} colorClass="text-red-600 bg-red-100" subtext={`In ${timePeriodYears} years`} />
-                    <StatCard title="Cost Increase" value={CurrencyFormatter(summary.costIncrease)} icon={ArrowUpRight} colorClass="text-orange-600 bg-orange-100" subtext="Additional amount needed" />
-                    <StatCard
-                        title="Multiplier"
-                        value={`${summary.multiplier}x`}
-                        icon={AlertTriangle}
-                        colorClass="text-yellow-600 bg-yellow-100"
-                        subtext="Cost multiplication factor"
+        <ToolPageLayout
+            toolSlug="inflation-impact"
+            config={{ currentCost, inflationRate, timePeriodYears }}
+            title="Inflation Impact"
+            description={`See how inflation erodes purchasing power.`}
+            isPublicView={isPublicView}
+        >
+            <div className="grid gap-6 lg:grid-cols-12">
+                {/* Configuration */}
+                <Card className="lg:col-span-4 border-border/60 shadow-sm h-fit">
+                    <ToolInputHeader
+                        title="Inflation Impact"
+                        description="See how inflation erodes purchasing power."
+                        isPublicView={isPublicView}
                     />
-                </div>
-
-                <Card className="flex-1 border-border/60 shadow-sm">
-                    <CardHeader><CardTitle>Cost Projection</CardTitle></CardHeader>
-                    <CardContent className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="year" />
-                                <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(1)}L`} axisLine={false} tickLine={false} />
-                                <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
-                                <Area type="monotone" dataKey="cost" stroke="#ef4444" fillOpacity={1} fill="url(#colorCost)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                    <CardContent className="space-y-6 pt-4">
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Current Cost</Label><span className="text-sm font-medium text-primary">₹{currentCost.toLocaleString()}</span></div>
+                            <Input type="number" value={currentCost} onChange={(e) => setCurrentCost(Number(e.target.value))} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Inflation Rate (%)</Label><span className="text-sm font-medium">{inflationRate}%</span></div>
+                            <Slider value={[inflationRate]} onValueChange={(v) => setInflationRate(v[0])} min={1} max={15} step={0.5} />
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between"><Label>Time Period</Label><span className="text-sm font-medium">{timePeriodYears} Years</span></div>
+                            <Slider value={[timePeriodYears]} onValueChange={(v) => setTimePeriodYears(v[0])} min={1} max={50} step={1} />
+                        </div>
                     </CardContent>
                 </Card>
+
+                {/* Results */}
+                <div className="lg:col-span-8 grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <StatCard title="Future Cost" value={CurrencyFormatter(summary.futureCost)} icon={TrendingUp} colorClass="text-red-600 bg-red-100" subtext={`In ${timePeriodYears} years`} />
+                        <StatCard title="Cost Increase" value={CurrencyFormatter(summary.costIncrease)} icon={ArrowUpRight} colorClass="text-orange-600 bg-orange-100" subtext="Additional amount needed" />
+                        <StatCard
+                            title="Multiplier"
+                            value={`${summary.multiplier}x`}
+                            icon={AlertTriangle}
+                            colorClass="text-yellow-600 bg-yellow-100"
+                            subtext="Cost multiplication factor"
+                        />
+                    </div>
+
+                    <Card className="flex-1 border-border/60 shadow-sm">
+                        <CardHeader><CardTitle>Cost Projection</CardTitle></CardHeader>
+                        <CardContent className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="year" />
+                                    <YAxis tickFormatter={(value) => `${(value / 100000).toFixed(1)}L`} axisLine={false} tickLine={false} />
+                                    <Tooltip formatter={(value: number) => [CurrencyFormatter(value), '']} />
+                                    <Area type="monotone" dataKey="cost" stroke="#ef4444" fillOpacity={1} fill="url(#colorCost)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </ToolPageLayout>
     );
 }

@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Trophy, FolderClock, TrendingUp } 
 import { RETIREMENT_PREP_DATA } from "../data/retirement-prep";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { ShareDialog } from "@/features/share/components/ShareDialog";
+import { ToolPageLayout } from "@/features/calculators/components/ToolPageLayout";
 import { PublicShareButton } from "@/features/share/components/PublicShareButton";
 import { RecommendedTools } from "@/features/share/components/RecommendedTools";
 import { SurveyLeadForm, AutoPopupTrigger } from "./SurveyLeadForm";
@@ -153,22 +153,30 @@ export function RetirementPrepWizard({ isPublicView = false, sharedCode, onCompl
 
     if (currentStep === 0) {
         return (
-            <Card className="max-w-2xl mx-auto border-t-4 border-t-indigo-600 shadow-xl">
-                <CardHeader className="text-center pb-2 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20">
-                    <div className="mx-auto bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
-                        <FolderClock className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <CardTitle className="text-3xl font-black text-slate-800 dark:text-slate-100">{RETIREMENT_PREP_DATA.meta.name}</CardTitle>
-                    <CardDescription className="text-lg mt-2 max-w-md mx-auto">
-                        {RETIREMENT_PREP_DATA.meta.description}
-                    </CardDescription>
-                </CardHeader>
-                <CardFooter className="justify-center pb-10">
-                    <Button size="lg" onClick={handleStart} className="w-full md:w-auto px-12 text-lg h-14 rounded-full shadow-lg hover:shadow-indigo-500/25 bg-indigo-600 hover:bg-indigo-700 transition-all">
-                        Start Assessment <TrendingUp className="ml-2 w-5 h-5" />
-                    </Button>
-                </CardFooter>
-            </Card>
+            <ToolPageLayout
+                toolSlug="retirement-prep"
+                config={{}}
+                title={RETIREMENT_PREP_DATA.meta.name}
+                description={RETIREMENT_PREP_DATA.meta.description}
+                isPublicView={isPublicView}
+            >
+                <Card className="max-w-2xl mx-auto border-t-4 border-t-indigo-600 shadow-xl">
+                    <CardHeader className="text-center pb-2 bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-indigo-950/20">
+                        <div className="mx-auto bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
+                            <FolderClock className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+                        </div>
+                        <CardTitle className="text-3xl font-black text-slate-800 dark:text-slate-100">{RETIREMENT_PREP_DATA.meta.name}</CardTitle>
+                        <CardDescription className="text-lg mt-2 max-w-md mx-auto">
+                            {RETIREMENT_PREP_DATA.meta.description}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardFooter className="justify-center pb-10">
+                        <Button size="lg" onClick={handleStart} className="w-full md:w-auto px-12 text-lg h-14 rounded-full shadow-lg hover:shadow-indigo-500/25 bg-indigo-600 hover:bg-indigo-700 transition-all">
+                            Start Assessment <TrendingUp className="ml-2 w-5 h-5" />
+                        </Button>
+                    </CardFooter>
+                </Card>
+            </ToolPageLayout>
         );
     }
 
@@ -184,123 +192,139 @@ export function RetirementPrepWizard({ isPublicView = false, sharedCode, onCompl
         else if (status === 'partiallyPrepared') { colorClass = "border-t-amber-500"; scoreClass = "border-amber-200 text-amber-600 bg-amber-50"; }
 
         return (
-            <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <Card className={cn("border-t-4 shadow-2xl overflow-hidden", colorClass)}>
-                    <CardHeader className="text-center relative border-b bg-slate-50/50 dark:bg-slate-900/50">
-                        <CardTitle className="text-2xl font-bold">Preparedness Result</CardTitle>
-                        <div className="absolute right-4 top-4">
-                            {isPublicView ? <PublicShareButton /> : <ShareDialog toolSlug="retirement-prep" config={{}} defaultTitle="Retirement Plan" />}
-                        </div>
-                    </CardHeader>
-                    <CardContent className="p-8">
-                        <div className="text-center mb-8">
-                            <div className={cn("inline-flex items-center justify-center w-32 h-32 rounded-full border-4 text-4xl font-black mb-4", scoreClass)}>
-                                {score}%
+            <ToolPageLayout
+                toolSlug="retirement-prep"
+                config={{}}
+                title="Retirement Plan"
+                description={`Score: ${score}%`}
+                isPublicView={isPublicView}
+            >
+                <div className="space-y-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <Card className={cn("border-t-4 shadow-2xl overflow-hidden", colorClass)}>
+                        <CardHeader className="text-center relative border-b bg-slate-50/50 dark:bg-slate-900/50">
+                            <CardTitle className="text-2xl font-bold">Preparedness Result</CardTitle>
+                            <div className="absolute right-4 top-4">
+                                {isPublicView && <PublicShareButton />}
                             </div>
-                            <h2 className="text-3xl font-bold mb-2">{label}</h2>
-                            <p className="text-muted-foreground max-w-lg mx-auto">{note}</p>
+                        </CardHeader>
+                        <CardContent className="p-8">
+                            <div className="text-center mb-8">
+                                <div className={cn("inline-flex items-center justify-center w-32 h-32 rounded-full border-4 text-4xl font-black mb-4", scoreClass)}>
+                                    {score}%
+                                </div>
+                                <h2 className="text-3xl font-bold mb-2">{label}</h2>
+                                <p className="text-muted-foreground max-w-lg mx-auto">{note}</p>
+                            </div>
+
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-xl border">
+                                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                                    <CheckCircle2 className="w-5 h-5 text-indigo-600" /> Recommended Actions
+                                </h3>
+                                <ul className="space-y-3">
+                                    {actions.map((action, i) => (
+                                        <li key={i} className="flex gap-3 text-sm text-slate-700 dark:text-slate-300">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2 shrink-0" />
+                                            {action}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <AutoPopupTrigger shouldShow={isPublicView && !hasLinkedLead && currentStep === 99} onTrigger={() => setShowLeadForm(true)} />
+
+                    <SurveyLeadForm
+                        open={showLeadForm}
+                        onOpenChange={setShowLeadForm}
+                        onSubmit={submitData}
+                        isLoading={false}
+                        title="Unlock Your Retirement Plan"
+                        description="Get a detailed 15-page retirement roadmap and consultation."
+                    />
+
+                    {isPublicView && (
+                        <div className="mt-8">
+                            <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
+                            <RecommendedTools
+                                currentToolSlug="financial-health-check"
+                                currentShortCode={sharedCode}
+                            />
                         </div>
-
-                        <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-xl border">
-                            <h3 className="font-semibold mb-4 flex items-center gap-2">
-                                <CheckCircle2 className="w-5 h-5 text-indigo-600" /> Recommended Actions
-                            </h3>
-                            <ul className="space-y-3">
-                                {actions.map((action, i) => (
-                                    <li key={i} className="flex gap-3 text-sm text-slate-700 dark:text-slate-300">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2 shrink-0" />
-                                        {action}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <AutoPopupTrigger shouldShow={isPublicView && !hasLinkedLead && currentStep === 99} onTrigger={() => setShowLeadForm(true)} />
-
-                <SurveyLeadForm
-                    open={showLeadForm}
-                    onOpenChange={setShowLeadForm}
-                    onSubmit={submitData}
-                    isLoading={false}
-                    title="Unlock Your Retirement Plan"
-                    description="Get a detailed 15-page retirement roadmap and consultation."
-                />
-
-                {isPublicView && (
-                    <div className="mt-8">
-                        <h3 className="text-xl font-bold mb-4">Recommended Tools</h3>
-                        <RecommendedTools
-                            currentToolSlug="financial-health-check"
-                            currentShortCode={sharedCode}
-                        />
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            </ToolPageLayout>
         );
     }
 
     const currentQuestion = questions[currentStep - 1];
 
     return (
-        <Card className="max-w-xl mx-auto border-t-4 border-t-indigo-600 shadow-xl transition-all duration-300 min-h-[400px] flex flex-col">
-            <CardHeader>
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Question {currentStep} of {questions.length}</span>
-                    <span className="text-xs text-muted-foreground">{Math.round((currentStep / questions.length) * 100)}%</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-1.5 mb-4">
-                    <div className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" style={{ width: `${(currentStep / questions.length) * 100}%` }}></div>
-                </div>
-                <CardTitle className="text-xl font-bold leading-tight">{currentQuestion.question}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 pt-2">
-                <RadioGroup
-                    key={currentQuestion.id}
-                    onValueChange={(v) => handleOptionSelect(parseInt(v), currentQuestion.options[parseInt(v)])}
-                    className="space-y-3"
-                >
-                    {currentQuestion.options.map((opt, idx) => {
-                        if (idx === 0) return null;
-                        const isSelected = responses[currentQuestion.id]?.optionIndex === idx;
-                        const hint = currentQuestion.optionsHint?.[idx];
+        <ToolPageLayout
+            toolSlug="retirement-prep"
+            config={{}}
+            title={RETIREMENT_PREP_DATA.meta.name}
+            description={RETIREMENT_PREP_DATA.meta.description}
+            isPublicView={isPublicView}
+        >
+            <Card className="max-w-xl mx-auto border-t-4 border-t-indigo-600 shadow-xl transition-all duration-300 min-h-[400px] flex flex-col">
+                <CardHeader>
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Question {currentStep} of {questions.length}</span>
+                        <span className="text-xs text-muted-foreground">{Math.round((currentStep / questions.length) * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 mb-4">
+                        <div className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" style={{ width: `${(currentStep / questions.length) * 100}%` }}></div>
+                    </div>
+                    <CardTitle className="text-xl font-bold leading-tight">{currentQuestion.question}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 pt-2">
+                    <RadioGroup
+                        key={currentQuestion.id}
+                        onValueChange={(v) => handleOptionSelect(parseInt(v), currentQuestion.options[parseInt(v)])}
+                        className="space-y-3"
+                    >
+                        {currentQuestion.options.map((opt, idx) => {
+                            if (idx === 0) return null;
+                            const isSelected = responses[currentQuestion.id]?.optionIndex === idx;
+                            const hint = currentQuestion.optionsHint?.[idx];
 
-                        return (
-                            <div key={idx}
-                                onClick={() => handleOptionSelect(idx, opt)}
-                                className={cn(
-                                    "relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md",
-                                    isSelected
-                                        ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-md"
-                                        : "border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800"
-                                )}>
-                                <RadioGroupItem value={idx.toString()} id={`opt-${idx}`} className="absolute opacity-0" />
-                                <div className="flex-1 pl-2">
-                                    <Label htmlFor={`opt-${idx}`} className="cursor-pointer font-medium text-slate-700 dark:text-slate-200 block">
-                                        {opt}
-                                    </Label>
-                                    {hint && (
-                                        <p className={cn("text-xs mt-1 font-normal", isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-muted-foreground")}>
-                                            {hint}
-                                        </p>
-                                    )}
+                            return (
+                                <div key={idx}
+                                    onClick={() => handleOptionSelect(idx, opt)}
+                                    className={cn(
+                                        "relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md",
+                                        isSelected
+                                            ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-md"
+                                            : "border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800"
+                                    )}>
+                                    <RadioGroupItem value={idx.toString()} id={`opt-${idx}`} className="absolute opacity-0" />
+                                    <div className="flex-1 pl-2">
+                                        <Label htmlFor={`opt-${idx}`} className="cursor-pointer font-medium text-slate-700 dark:text-slate-200 block">
+                                            {opt}
+                                        </Label>
+                                        {hint && (
+                                            <p className={cn("text-xs mt-1 font-normal", isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-muted-foreground")}>
+                                                {hint}
+                                            </p>
+                                        )}
+                                    </div>
+                                    {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-600 animate-in zoom-in spin-in-90 duration-300" />}
                                 </div>
-                                {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-600 animate-in zoom-in spin-in-90 duration-300" />}
-                            </div>
-                        );
-                    })}
-                </RadioGroup>
-            </CardContent>
-            <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50 dark:bg-slate-900/20">
-                <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1} className="text-slate-500 hover:text-slate-800">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
-                <Button onClick={handleNext} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 dark:shadow-none min-w-[120px]">
-                    {currentStep === questions.length ? "Analyze" : "Next"}
-                    {currentStep !== questions.length && <ArrowRight className="w-4 h-4 ml-2" />}
-                </Button>
-            </CardFooter>
-        </Card>
+                            );
+                        })}
+                    </RadioGroup>
+                </CardContent>
+                <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50 dark:bg-slate-900/20">
+                    <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1} className="text-slate-500 hover:text-slate-800">
+                        <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                    </Button>
+                    <Button onClick={handleNext} className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 dark:shadow-none min-w-[120px]">
+                        {currentStep === questions.length ? "Analyze" : "Next"}
+                        {currentStep !== questions.length && <ArrowRight className="w-4 h-4 ml-2" />}
+                    </Button>
+                </CardFooter>
+            </Card>
+        </ToolPageLayout>
     );
 }
