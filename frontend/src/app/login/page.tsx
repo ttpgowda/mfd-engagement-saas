@@ -17,11 +17,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(1, "Password is required"),
+});
+
+const workspaceSchema = z.object({
+    workspace: z.string().min(3, "Workspace name must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers, and hyphens are allowed"),
 });
 
 export default function LoginPage() {
@@ -68,6 +72,125 @@ export default function LoginPage() {
         }
     }
 
+    const [checkingDomain, setCheckingDomain] = useState(true);
+    const [isRootDomain, setIsRootDomain] = useState(false);
+
+    // Workspace Form
+    const workspaceForm = useForm<z.infer<typeof workspaceSchema>>({
+        resolver: zodResolver(workspaceSchema),
+        defaultValues: { workspace: '' },
+    });
+
+    useEffect(() => {
+        const checkDomain = () => {
+            const host = window.location.hostname;
+            const parts = host.split('.');
+            let isRoot = false;
+
+            if (host === 'localhost') {
+                isRoot = true;
+            } else if (host.endsWith('localhost')) {
+                // e.g. foo.localhost -> parts length 2. root if parts length 1 (unlikely with split) or parts[0] is www
+                // actually 'localhost' split is ['localhost'] length 1.
+                // 'foo.localhost' split is ['foo', 'localhost'] length 2.
+                if (parts.length === 1 || (parts.length === 2 && parts[0] === 'www')) {
+                    isRoot = true;
+                }
+            } else {
+                // Production: domain.com (2 parts) is root. sub.domain.com (3 parts) is tenant.
+                // Adjustable based on TLD (e.g. co.uk). Assuming standard 2-part TLD or explicitly handling www.
+                if (parts.length === 2 || (parts.length === 3 && parts[0] === 'www')) {
+                    isRoot = true;
+                }
+            }
+
+            setIsRootDomain(isRoot);
+            setCheckingDomain(false);
+        };
+        checkDomain();
+    }, []);
+
+    const onWorkspaceSubmit = async (values: z.infer<typeof workspaceSchema>) => {
+        const subdomain = values.workspace.toLowerCase();
+        const host = window.location.hostname;
+        const protocol = window.location.protocol;
+        const port = window.location.port ? `:${window.location.port}` : '';
+
+        let newUrl = '';
+        if (host.includes('localhost')) {
+            // Handle localhost logic
+            const root = host.replace('www.', ''); // strip www if present
+            // if we are already at localhost (no dots), root is localhost.
+            // If we are (somehow) at www.localhost, root is localhost.
+            // We want {subdomain}.localhost
+            // If current host is 'localhost', we append.
+            // If current host is 'www.localhost', we replace 'www'?? simpler to just hardcode localhost base if detected.
+            if (host.endsWith('localhost')) {
+                newUrl = `${protocol}//${subdomain}.localhost${port}/login`;
+            }
+        } else {
+            // Production logic
+            // domain.com -> subdomain.domain.com
+            // www.domain.com -> subdomain.domain.com
+            const rootDomain = host.startsWith('www.') ? host.substring(4) : host;
+            newUrl = `${protocol}//${subdomain}.${rootDomain}${port}/login`;
+        }
+
+        // Simple client-side redirect. 
+        // Real validation happens when the user lands on the new URL (backend/middleware validation).
+        window.location.href = newUrl;
+    };
+
+    if (checkingDomain) return null; // Or a loader
+
+    if (isRootDomain) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center px-4 bg-muted/10">
+                <Card className="w-full max-w-sm shadow-xl border-border/50">
+                    <CardHeader>
+                        <CardTitle className="text-2xl">Find your Workspace</CardTitle>
+                        <CardDescription>
+                            Enter your workspace URL to continue.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...workspaceForm}>
+                            <form onSubmit={workspaceForm.handleSubmit(onWorkspaceSubmit)} className="space-y-4">
+                                <FormField
+                                    control={workspaceForm.control}
+                                    name="workspace"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Workspace URL</FormLabel>
+                                            <FormControl>
+                                                <div className="flex items-center">
+                                                    <Input placeholder="your-company" {...field} className="rounded-r-none border-r-0 focus-visible:ring-0" />
+                                                    <div className="h-10 px-3 bg-muted border border-l-0 border-input rounded-r-md flex items-center text-sm text-muted-foreground whitespace-nowrap">
+                                                        {window.location.hostname.replace('www.', '').replace(window.location.hostname.split('.')[0] + '.', '.')}
+                                                        {window.location.hostname === 'localhost' ? '.localhost' : (window.location.hostname.includes('localhost') ? '.localhost' : '.' + window.location.hostname.replace('www.', ''))}
+                                                    </div>
+                                                    {/* The above suffix logic is complex to get right dynamically for visual placeholder. Simpler: */}
+                                                </div>
+                                            </FormControl>
+                                            <div className="text-xs text-muted-foreground mt-1">
+                                                You will be redirected to your workspace login page.
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" className="w-full">
+                                    Continue
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    // Default Login View (Subdomain)
     return (
         <div className="flex h-screen w-full items-center justify-center px-4">
             <Card className="w-full max-w-sm">
