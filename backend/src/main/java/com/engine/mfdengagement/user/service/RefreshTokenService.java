@@ -25,14 +25,18 @@ public class RefreshTokenService {
 
     // In RefreshTokenService
     public RefreshToken createRefreshToken(User user) {
-        Optional<RefreshToken> existingTokenOpt = refreshTokenRepository.findByUser(user);
-
-        RefreshToken refreshToken = existingTokenOpt.orElse(new RefreshToken());
+        RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setTenant(user.getTenant());
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
 
+        return refreshTokenRepository.save(refreshToken);
+    }
+
+    public RefreshToken rotateRefreshToken(RefreshToken refreshToken) {
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         return refreshTokenRepository.save(refreshToken);
     }
 
