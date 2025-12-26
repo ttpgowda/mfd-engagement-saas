@@ -166,7 +166,7 @@ public class AuthService {
         String newAccessToken = jwtTokenProvider.generateToken(userDetails);
 
         // Rotate Refresh Token: Generate a new one (updates token string + expiry)
-        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+        RefreshToken newRefreshToken = refreshTokenService.rotateRefreshToken(refreshToken);
 
         return new AuthResponse(newAccessToken, newRefreshToken.getToken());
     }
