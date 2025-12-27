@@ -21,8 +21,8 @@ export function SurveyLeadForm({
     onOpenChange,
     onSubmit,
     isLoading,
-    title = "Unlock Full Access",
-    description = "You've been exploring for a while! Enter your details to save your progress and get a detailed report."
+    title = "Connect with an Investment Expert",
+    description = "Share your details and our advisor will help you understand your results and guide you with suitable mutual fund options."
 }: SurveyLeadFormProps) {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");

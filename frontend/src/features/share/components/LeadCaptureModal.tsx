@@ -58,11 +58,15 @@ export function LeadCaptureModal({ open, onOpenChange, shortCode }: LeadCaptureM
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent
+               className="sm:max-w-[425px]"
+               onPointerDownOutside={(e) => e.preventDefault()}
+               onInteractOutside={(e) => e.preventDefault()}
+               onEscapeKeyDown={(e) => e.preventDefault()}>
                 <DialogHeader>
-                    <DialogTitle>Unlock Full Access</DialogTitle>
+                    <DialogTitle>Connect with an Investment Expert</DialogTitle>
                     <DialogDescription>
-                        You've been exploring for a while! Enter your details to save your progress and get a detailed report.
+                        Share your details and our advisor will help you understand your results and guide you with suitable mutual fund options.
                     </DialogDescription>
                 </DialogHeader>
 
