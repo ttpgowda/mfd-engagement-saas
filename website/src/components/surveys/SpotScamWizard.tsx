@@ -75,15 +75,15 @@ export default function SpotScamWizard() {
                         <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6 animate-in fade-in zoom-in duration-500">
                             <ShieldAlert className="w-8 h-8 text-red-600" />
                         </div>
-                        <CardTitle className="text-3xl md:text-4xl font-bold text-gray-900">{SPOT_SCAM_DATA.meta.title}</CardTitle>
-                        <CardDescription className="text-lg mt-3 text-gray-600 max-w-2xl mx-auto">
+                        <CardTitle className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">{SPOT_SCAM_DATA.meta.title}</CardTitle>
+                        <CardDescription className="text-lg mt-3 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                             {SPOT_SCAM_DATA.meta.description}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6 pt-2">
-                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 text-center">
-                            <p className="text-sm text-slate-500 uppercase tracking-widest font-semibold mb-2">Powered by Guidelines from</p>
-                            <p className="font-medium text-gray-900 text-lg flex items-center justify-center gap-2">
+                        <div className="bg-slate-50 dark:bg-gray-900 p-6 rounded-xl border border-slate-100 dark:border-gray-800 text-center">
+                            <p className="text-sm text-slate-500 dark:text-gray-400 uppercase tracking-widest font-semibold mb-2">Powered by Guidelines from</p>
+                            <p className="font-medium text-gray-900 dark:text-gray-100 text-lg flex items-center justify-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-blue-600"></span>
                                 {SPOT_SCAM_DATA.meta.sourceCredit}
                             </p>
@@ -109,8 +109,8 @@ export default function SpotScamWizard() {
                     "border-t-8 shadow-xl overflow-hidden",
                     redFlags > 0 ? "border-t-red-600" : (orangeFlags > 0 ? "border-t-orange-500" : "border-t-green-600")
                 )}>
-                    <CardHeader className="text-center bg-slate-50/50 pb-8 pt-8">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Assessment Complete</h2>
+                    <CardHeader className="text-center bg-slate-50/50 dark:bg-gray-900/50 pb-8 pt-8">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Assessment Complete</h2>
                         <div className="flex justify-center items-center gap-4 mt-6">
                             {redFlags > 0 && (
                                 <div className="flex flex-col items-center p-4 bg-red-50 rounded-xl border border-red-100 min-w-[120px]">
@@ -150,8 +150,8 @@ export default function SpotScamWizard() {
                     </CardHeader>
 
                     <CardContent className="p-8">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <ShieldAlert className="w-5 h-5 text-indigo-600" /> Guidelines for Spotting a Scam
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                            <ShieldAlert className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Guidelines for Spotting a Scam
                         </h3>
                         <ul className="space-y-4">
                             {SPOT_SCAM_DATA.guidelines.map((g, i) => (
@@ -162,17 +162,17 @@ export default function SpotScamWizard() {
                             ))}
                         </ul>
 
-                        <div className="mt-8 p-4 bg-blue-50 text-blue-900 rounded-lg text-sm border-l-4 border-blue-500">
-                            <strong>Note:</strong> Adapted from <a href={SPOT_SCAM_DATA.meta.sourceUrl} target="_blank" className="underline hover:text-blue-700">SEBI Investor Education</a>. This tool is for educational purposes only.
+                        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-200 rounded-lg text-sm border-l-4 border-blue-500">
+                            <strong>Note:</strong> Adapted from <a href={SPOT_SCAM_DATA.meta.sourceUrl} target="_blank" className="underline hover:text-blue-700 dark:hover:text-blue-300">SEBI Investor Education</a>. This tool is for educational purposes only.
                         </div>
                     </CardContent>
 
-                    <CardFooter className="justify-center bg-slate-50 p-6">
+                    <CardFooter className="justify-center bg-slate-50 dark:bg-gray-900 p-6">
                         <Button variant="outline" onClick={() => setCurrentStep(0)} className="mr-4">Check Another</Button>
                         <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => window.location.href = '/surveys'}>All Surveys</Button>
                     </CardFooter>
                 </Card>
-            </div>
+            </div >
         );
     }
 
@@ -217,7 +217,7 @@ export default function SpotScamWizard() {
                     </div>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6">
-                    <h2 className="text-xl font-bold leading-relaxed text-gray-900">{currentQuestion.question}</h2>
+                    <h2 className="text-xl font-bold leading-relaxed text-gray-900 dark:text-gray-100">{currentQuestion.question}</h2>
 
                     <div className="space-y-3">
                         {currentQuestion.options.map((opt, idx) => {
@@ -240,7 +240,7 @@ export default function SpotScamWizard() {
                                     )}>
                                         {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-indigo-600" />}
                                     </div>
-                                    <span className={cn("text-base", isSelected ? "font-semibold text-indigo-900" : "text-gray-700")}>{opt}</span>
+                                    <span className={cn("text-base", isSelected ? "font-semibold text-indigo-900 dark:text-indigo-100" : "text-gray-700 dark:text-gray-300")}>{opt}</span>
                                 </button>
                             )
                         })}
@@ -263,7 +263,7 @@ export default function SpotScamWizard() {
                     </div>
 
                 </CardContent>
-                <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50">
+                <CardFooter className="flex justify-between border-t border-gray-100 dark:border-gray-800 p-6 bg-slate-50/50 dark:bg-gray-900/50">
                     <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1}>
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>

@@ -8,10 +8,10 @@ export default function Home() {
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-6xl">
               Master Your Financial Destiny
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
               Expert guidance on Mutual Funds, SIPs, and Tax Planning tailored for the Indian investor. Build wealth with confidence.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -21,7 +21,7 @@ export default function Home() {
               >
                 Read the Blog <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href="#features" className="text-sm font-semibold leading-6 text-gray-900">
+              <a href="#features" className="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
@@ -33,7 +33,7 @@ export default function Home() {
       <div id="features" className="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-indigo-600">Why Us?</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl">
             Investing made simple, not scary.
           </p>
         </div>
@@ -57,18 +57,18 @@ export default function Home() {
                 </div>
                 Unbiased Advice
               </dt>
-              <dd className="mt-2 text-base leading-7 text-gray-600">
+              <dd className="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">
                 We prioritize your financial health over commissions. Pure, educational content.
               </dd>
             </div>
             <div className="relative pl-16">
-              <dt className="text-base font-semibold leading-7 text-gray-900">
+              <dt className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100">
                 <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
                   <Banknote className="h-6 w-6 text-white" aria-hidden="true" />
                 </div>
                 Tax Efficient
               </dt>
-              <dd className="mt-2 text-base leading-7 text-gray-600">
+              <dd className="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">
                 Learn how to save tax u/s 80C and manage capital gains effectively.
               </dd>
             </div>
