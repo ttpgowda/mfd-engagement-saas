@@ -4,7 +4,7 @@ import { Mail, MapPin, Phone, MessageSquare, Clock } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'Contact Us - Wealth Insights',
-    description: 'Get in touch with us for any queries or support.'
+    description: 'Get in touch with the Wealth Insights team. Whether you need support, have feedback, or want to schedule a meeting in Bengaluru, we are here to assist you on your financial journey.'
 };
 
 export default function ContactPage() {

@@ -4,7 +4,7 @@ import { Target, Lightbulb, Users, ShieldCheck, TrendingUp, Heart } from 'lucide
 
 export const metadata: Metadata = {
     title: 'About Us - Wealth Insights',
-    description: 'Learn more about our mission to democratize financial knowledge.'
+    description: 'Wealth Insights is dedicated to democratizing financial knowledge in India. We provide free, unbiased tools and educational resources to help you make smarter investment decisions.'
 };
 
 export default function AboutPage() {

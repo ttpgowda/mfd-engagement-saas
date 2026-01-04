@@ -21,7 +21,7 @@ export const surveys: Survey[] = [
     {
         slug: 'risk-profiler',
         title: 'Risk Profiler',
-        description: 'Analyze your investment risk tolerance with our comprehensive assessment.',
+        description: 'Discover your unique investor personality and risk tolerance. This comprehensive assessment analyzes your financial psychology to recommend the right asset allocation.',
         icon: TrendingUp,
         component: RiskProfiler,
         category: 'Assessment'
@@ -29,7 +29,7 @@ export const surveys: Survey[] = [
     {
         slug: 'financial-health-check',
         title: 'Financial Health Check',
-        description: 'A 5-minute checkup to assess your overall financial fitness and stability.',
+        description: 'Take a 5-minute diagnostic of your personal finances. Evaluate your savings, debt, insurance, and investments to identify strengths and areas for immediate improvement.',
         icon: Activity,
         component: FinancialHealthCheck,
         category: 'Audit'
@@ -37,7 +37,7 @@ export const surveys: Survey[] = [
     {
         slug: 'goal-readiness',
         title: 'Goal Readiness',
-        description: 'Evaluate how prepared you are to achieve your specific financial goals.',
+        description: 'Are you financially prepared for your major life goals? This tool evaluates your current savings and investment strategy against your specific future targets.',
         icon: Target,
         component: GoalReadiness,
         category: 'Assessment'
@@ -45,7 +45,7 @@ export const surveys: Survey[] = [
     {
         slug: 'retirement-prep',
         title: 'Retirement Preparedness',
-        description: 'See if you are on track for a secure and comfortable retirement.',
+        description: 'Assess if your retirement nest egg is on track. We analyze your current corpus, savings rate, and lifestyle expectations to give you a clear preparedness score.',
         icon: ShieldCheck,
         component: RetirementPrep,
         category: 'Assessment'
@@ -53,7 +53,7 @@ export const surveys: Survey[] = [
     {
         slug: 'spot-scam',
         title: 'Spot a Scam',
-        description: 'Protect your money by learning how to identify investment fraud red flags.',
+        description: 'Learn to identify the red flags of financial fraud. Based on SEBI guidelines, this educational tool helps you verify investment opportunities and protect your capital.',
         icon: ShieldAlert,
         component: SpotScamWizard,
         category: 'Education'
