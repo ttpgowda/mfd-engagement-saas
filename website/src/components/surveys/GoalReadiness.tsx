@@ -160,22 +160,22 @@ export default function GoalReadiness() {
                     </CardHeader>
                     <CardContent className="space-y-6 pt-4 text-center">
                         <p className="text-muted-foreground">This assessment looks at your clarity, resources, stability, and behaviors to give you a readiness score.</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left p-4 bg-slate-50 rounded-xl">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left p-4 bg-slate-50 dark:bg-gray-900 rounded-xl">
                             <div className="flex gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                <span className="text-sm text-gray-700">Validate your goal timeline & cost</span>
+                                <span className="text-sm text-gray-700 dark:text-gray-300">Validate your goal timeline & cost</span>
                             </div>
                             <div className="flex gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                <span className="text-sm text-gray-700">Check fallback options</span>
+                                <span className="text-sm text-gray-700 dark:text-gray-300">Check fallback options</span>
                             </div>
                             <div className="flex gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                <span className="text-sm text-gray-700">Assess savings discipline</span>
+                                <span className="text-sm text-gray-700 dark:text-gray-300">Assess savings discipline</span>
                             </div>
                             <div className="flex gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                <span className="text-sm text-gray-700">Get tailored recommendations</span>
+                                <span className="text-sm text-gray-700 dark:text-gray-300">Get tailored recommendations</span>
                             </div>
                         </div>
                     </CardContent>
@@ -194,38 +194,38 @@ export default function GoalReadiness() {
         return (
             <div className="space-y-8 max-w-4xl mx-auto">
                 <Card className="border-t-4 border-t-indigo-600 shadow-lg animate-in fade-in zoom-in duration-300">
-                    <CardHeader className="text-center border-b bg-slate-50 relative pb-10">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-sm border">
-                            <Target className="w-8 h-8 text-indigo-600" />
+                    <CardHeader className="text-center border-b dark:border-gray-800 bg-slate-50 dark:bg-gray-900/50 relative pb-10">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-sm border dark:border-gray-700">
+                            <Target className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div className="mt-6">
                             <CardDescription className="uppercase tracking-wider text-xs font-bold text-gray-500 mb-2"> Your Readiness Score</CardDescription>
                             <div className="flex items-baseline justify-center gap-2">
-                                <span className="text-6xl font-black text-gray-900">{percentage}%</span>
+                                <span className="text-6xl font-black text-gray-900 dark:text-gray-100">{percentage}%</span>
                             </div>
                             <div className={cn("inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-bold mt-4", bgColor, color, "border", borderColor)}>
                                 {status === "Ready" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                                 {status}
                             </div>
-                            <p className="text-gray-600 mt-4 max-w-lg mx-auto">{note}</p>
+                            <p className="text-gray-600 dark:text-gray-400 mt-4 max-w-lg mx-auto">{note}</p>
                         </div>
                     </CardHeader>
                     <CardContent className="p-8">
-                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <TrendingUp className="w-6 h-6 text-indigo-600" /> Recommended Actions
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
+                            <TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" /> Recommended Actions
                         </h3>
                         <div className="grid gap-4">
                             {actions.map((action, i) => (
-                                <div key={i} className="flex items-start gap-3 p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-indigo-100 transition-colors">
-                                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5">
-                                        <span className="text-xs font-bold text-indigo-600">{i + 1}</span>
+                                <div key={i} className="flex items-start gap-3 p-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-sm hover:border-indigo-100 dark:hover:border-indigo-900 transition-colors">
+                                    <div className="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{i + 1}</span>
                                     </div>
-                                    <p className="text-gray-700 leading-relaxed">{action}</p>
+                                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{action}</p>
                                 </div>
                             ))}
                         </div>
                     </CardContent>
-                    <CardFooter className="justify-center bg-slate-50 p-6">
+                    <CardFooter className="justify-center bg-slate-50 dark:bg-gray-900 p-6">
                         <Button variant="outline" onClick={() => setCurrentStep(0)} className="mr-4">Reset</Button>
                         <Button className="bg-indigo-600 hover:bg-indigo-700">Save My Plan</Button>
                     </CardFooter>
@@ -245,14 +245,14 @@ export default function GoalReadiness() {
             <Card className="max-w-2xl mx-auto border-t-4 border-t-indigo-600 shadow-lg min-h-[500px] flex flex-col">
                 <CardHeader>
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium text-muted-foreground">Step {currentStep} of {totalQuestions}</span>
-                        <div className="h-2 w-24 bg-slate-100 rounded-full overflow-hidden">
+                        <span className="text-sm font-medium text-muted-foreground">{currentStep} of {totalQuestions}</span>
+                        <div className="h-2 w-24 bg-slate-100 dark:bg-gray-800 rounded-full overflow-hidden">
                             <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${(currentStep / totalQuestions) * 100}%` }} />
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6 pt-2">
-                    <h2 className="text-xl font-semibold leading-relaxed text-gray-900">{currentQuestion.question}</h2>
+                    <h2 className="text-xl font-semibold leading-relaxed text-gray-900 dark:text-gray-100">{currentQuestion.question}</h2>
 
                     <div className="space-y-3">
                         {currentQuestion.options.map((opt, idx) => {
@@ -262,13 +262,13 @@ export default function GoalReadiness() {
                                 <div key={idx}
                                     onClick={() => handleOptionSelect(idx, opt)}
                                     className={cn(
-                                        "flex items-center space-x-3 border p-4 rounded-xl transition-all cursor-pointer hover:bg-slate-50 hover:border-indigo-200",
-                                        isSelected ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600" : "border-gray-200"
+                                        "flex items-center space-x-3 border p-4 rounded-xl transition-all cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-900 hover:border-indigo-200 dark:hover:border-indigo-800",
+                                        isSelected ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-900/10 ring-1 ring-indigo-600" : "border-gray-200 dark:border-gray-800"
                                     )}>
-                                    <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center shrink-0", isSelected ? "border-indigo-600" : "border-gray-300")}>
+                                    <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center shrink-0", isSelected ? "border-indigo-600" : "border-gray-300 dark:border-gray-600")}>
                                         {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-indigo-600" />}
                                     </div>
-                                    <Label className="flex-1 cursor-pointer font-medium text-gray-700">{opt}</Label>
+                                    <Label className="flex-1 cursor-pointer font-medium text-gray-700 dark:text-gray-300">{opt}</Label>
                                 </div>
                             )
                         })}
@@ -276,7 +276,7 @@ export default function GoalReadiness() {
 
                     {/* Live Hint Feedback */}
                     {currentResponse && currentQuestion.optionsHint[currentResponse.optionIndex] && (
-                        <div className="mt-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-900 text-sm animate-in fade-in slide-in-from-top-1">
+                        <div className="mt-4 p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-900 text-indigo-900 dark:text-indigo-200 text-sm animate-in fade-in slide-in-from-top-1">
                             <p className="font-medium mb-1 flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4" /> Insight
                             </p>
@@ -284,7 +284,7 @@ export default function GoalReadiness() {
                         </div>
                     )}
                 </CardContent>
-                <CardFooter className="flex justify-between border-t p-6 bg-slate-50 rounded-b-xl">
+                <CardFooter className="flex justify-between border-t border-gray-100 dark:border-gray-800 p-6 bg-slate-50 rounded-b-xl dark:bg-gray-900">
                     <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1}>
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>

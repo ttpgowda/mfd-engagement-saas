@@ -120,25 +120,25 @@ export default function FinancialHealthCheck() {
                     </CardHeader>
                     <CardContent className="space-y-6 pt-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                            <div className="p-4 bg-green-50 rounded-xl space-y-2">
-                                <CheckCircle2 className="w-8 h-8 text-green-600 mx-auto" />
-                                <h3 className="font-semibold text-green-800">Assess</h3>
-                                <p className="text-xs text-green-700">Check if you are on the right track.</p>
+                            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl space-y-2 border border-green-100 dark:border-green-900">
+                                <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400 mx-auto" />
+                                <h3 className="font-semibold text-green-800 dark:text-green-300">Assess</h3>
+                                <p className="text-xs text-green-700 dark:text-green-400">Check if you are on the right track.</p>
                             </div>
-                            <div className="p-4 bg-orange-50 rounded-xl space-y-2">
-                                <AlertTriangle className="w-8 h-8 text-orange-600 mx-auto" />
-                                <h3 className="font-semibold text-orange-800">Identify</h3>
-                                <p className="text-xs text-orange-700">Find gaps in your financial plan.</p>
+                            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl space-y-2 border border-orange-100 dark:border-orange-900">
+                                <AlertTriangle className="w-8 h-8 text-orange-600 dark:text-orange-400 mx-auto" />
+                                <h3 className="font-semibold text-orange-800 dark:text-orange-300">Identify</h3>
+                                <p className="text-xs text-orange-700 dark:text-orange-400">Find gaps in your financial plan.</p>
                             </div>
-                            <div className="p-4 bg-blue-50 rounded-xl space-y-2">
-                                <Award className="w-8 h-8 text-blue-600 mx-auto" />
-                                <h3 className="font-semibold text-blue-800">Improve</h3>
-                                <p className="text-xs text-blue-700">Get tools to fix the issues.</p>
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl space-y-2 border border-blue-100 dark:border-blue-900">
+                                <Award className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto" />
+                                <h3 className="font-semibold text-blue-800 dark:text-blue-300">Improve</h3>
+                                <p className="text-xs text-blue-700 dark:text-blue-400">Get tools to fix the issues.</p>
                             </div>
                         </div>
-                        <div className="mt-8 bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
-                            <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-1">Powered by Guidelines from</p>
-                            <p className="font-medium text-gray-900 text-sm flex items-center justify-center gap-2">
+                        <div className="mt-8 bg-slate-50 dark:bg-gray-900 p-4 rounded-xl border border-slate-100 dark:border-gray-800 text-center">
+                            <p className="text-xs text-slate-500 dark:text-gray-400 uppercase tracking-widest font-semibold mb-1">Powered by Guidelines from</p>
+                            <p className="font-medium text-gray-900 dark:text-gray-100 text-sm flex items-center justify-center gap-2">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
                                 {FINANCIAL_HEALTH_DATA.meta.sourceCredit}
                             </p>
@@ -159,20 +159,20 @@ export default function FinancialHealthCheck() {
         return (
             <div className="space-y-8 max-w-4xl mx-auto">
                 <Card className="border-t-4 border-t-indigo-600 shadow-lg animate-in fade-in zoom-in duration-300">
-                    <CardHeader className="text-center border-b bg-slate-50 relative">
-                        <CardTitle className="text-2xl">Financial Health Report</CardTitle>
-                        <CardDescription>Consolidated Summary</CardDescription>
+                    <CardHeader className="text-center border-b dark:border-gray-800 bg-slate-50 dark:bg-gray-900/50 relative">
+                        <CardTitle className="text-2xl text-gray-900 dark:text-gray-100">Financial Health Report</CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-gray-400">Consolidated Summary</CardDescription>
                     </CardHeader>
                     <CardContent className="p-6 space-y-8">
                         {/* Summary Badges */}
                         <div className="flex flex-wrap justify-center gap-4">
-                            <div className="px-6 py-2 rounded-full bg-green-100 text-green-800 font-bold border border-green-200 flex items-center gap-2">
+                            <div className="px-6 py-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 font-bold border border-green-200 dark:border-green-800 flex items-center gap-2">
                                 <CheckCircle2 className="w-5 h-5" /> Good: {green}
                             </div>
-                            <div className="px-6 py-2 rounded-full bg-orange-100 text-orange-800 font-bold border border-orange-200 flex items-center gap-2">
+                            <div className="px-6 py-2 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 font-bold border border-orange-200 dark:border-orange-800 flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5" /> Improve: {orange}
                             </div>
-                            <div className="px-6 py-2 rounded-full bg-red-100 text-red-800 font-bold border border-red-200 flex items-center gap-2">
+                            <div className="px-6 py-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 font-bold border border-red-200 dark:border-red-800 flex items-center gap-2">
                                 <XCircle className="w-5 h-5" /> Concern: {red}
                             </div>
                         </div>
@@ -184,7 +184,7 @@ export default function FinancialHealthCheck() {
                                     <h3 className="text-lg font-bold text-red-600 flex items-center gap-2"><XCircle className="w-5 h-5" /> Areas of Concern</h3>
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#EC1212" && r.hint).map(r => (
-                                            <li key={r.questionId} className="p-3 bg-red-50 text-red-900 rounded-lg text-sm border-l-4 border-red-500 shadow-sm">
+                                            <li key={r.questionId} className="p-3 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100 rounded-lg text-sm border-l-4 border-red-500 shadow-sm">
                                                 <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
@@ -197,7 +197,7 @@ export default function FinancialHealthCheck() {
                                     <h3 className="text-lg font-bold text-orange-600 flex items-center gap-2"><AlertTriangle className="w-5 h-5" /> Areas to Improve</h3>
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#907326" && r.hint).map(r => (
-                                            <li key={r.questionId} className="p-3 bg-orange-50 text-orange-900 rounded-lg text-sm border-l-4 border-orange-500 shadow-sm">
+                                            <li key={r.questionId} className="p-3 bg-orange-50 dark:bg-orange-900/20 text-orange-900 dark:text-orange-200 rounded-lg text-sm border-l-4 border-orange-500 shadow-sm">
                                                 <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
@@ -210,7 +210,7 @@ export default function FinancialHealthCheck() {
                                     <h3 className="text-lg font-bold text-green-600 flex items-center gap-2"><CheckCircle2 className="w-5 h-5" /> Good Health</h3>
                                     <ul className="space-y-2">
                                         {Object.values(responses).filter(r => r.scoreColor === "#008A29" && r.hint).map(r => (
-                                            <li key={r.questionId} className="p-3 bg-green-50 text-green-900 rounded-lg text-sm border-l-4 border-green-500 shadow-sm">
+                                            <li key={r.questionId} className="p-3 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-200 rounded-lg text-sm border-l-4 border-green-500 shadow-sm">
                                                 <div dangerouslySetInnerHTML={{ __html: r.hint }} className="[&>a]:underline [&>a]:font-semibold" />
                                             </li>
                                         ))}
@@ -219,7 +219,7 @@ export default function FinancialHealthCheck() {
                             )}
                         </div>
                     </CardContent>
-                    <CardFooter className="justify-center bg-slate-50 p-6">
+                    <CardFooter className="justify-center bg-slate-50 dark:bg-gray-900 p-6">
                         <Button variant="outline" onClick={() => setCurrentStep(0)} className="mr-4">Reset</Button>
                     </CardFooter>
                 </Card>
@@ -242,9 +242,9 @@ export default function FinancialHealthCheck() {
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium text-muted-foreground">{history.length} / 14</span>
-                            <span className="text-xs px-2 py-1 bg-slate-100 rounded ml-2">{Math.round((history.length / 14) * 100)}% Completed</span>
+                            <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-gray-800 rounded ml-2">{Math.round((history.length / 14) * 100)}% Completed</span>
                         </div>
-                        <CardTitle className="text-xl leading-relaxed">{currentQuestion.question}</CardTitle>
+                        <CardTitle className="text-xl leading-relaxed text-gray-900 dark:text-gray-100">{currentQuestion.question}</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="flex-1 pt-6 space-y-4">
@@ -255,13 +255,13 @@ export default function FinancialHealthCheck() {
                             <div key={idx}
                                 onClick={() => handleOptionSelect(idx, opt)}
                                 className={cn(
-                                    "flex items-center space-x-3 border p-4 rounded-lg transition-all cursor-pointer hover:bg-slate-50",
-                                    isSelected ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600" : "border-gray-200"
+                                    "flex items-center space-x-3 border p-4 rounded-lg transition-all cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-800",
+                                    isSelected ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-900/10 ring-1 ring-indigo-600" : "border-gray-200 dark:border-gray-800"
                                 )}>
-                                <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center", isSelected ? "border-indigo-600" : "border-gray-300")}>
+                                <div className={cn("w-4 h-4 rounded-full border flex items-center justify-center", isSelected ? "border-indigo-600" : "border-gray-300 dark:border-gray-600")}>
                                     {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600" />}
                                 </div>
-                                <Label className="flex-1 cursor-pointer font-medium text-gray-700">{opt}</Label>
+                                <Label className="flex-1 cursor-pointer font-medium text-gray-700 dark:text-gray-300">{opt}</Label>
                             </div>
                         )
                     })}
@@ -269,9 +269,9 @@ export default function FinancialHealthCheck() {
                     {/* Live Hint Feedback */}
                     {currentResponse?.hint && (
                         <div className={cn("mt-6 p-4 rounded-lg flex gap-3 text-sm animate-in fade-in slide-in-from-top-2",
-                            currentResponse.scoreColor === "#008A29" ? "bg-green-50 text-green-800 border border-green-200" :
-                                currentResponse.scoreColor === "#907326" ? "bg-orange-50 text-orange-800 border border-orange-200" :
-                                    "bg-red-50 text-red-800 border border-red-200"
+                            currentResponse.scoreColor === "#008A29" ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800" :
+                                currentResponse.scoreColor === "#907326" ? "bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 border border-orange-200 dark:border-orange-800" :
+                                    "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800"
                         )}>
                             {currentResponse.scoreColor === "#008A29" ? <CheckCircle2 className="w-5 h-5 shrink-0" /> :
                                 currentResponse.scoreColor === "#907326" ? <AlertTriangle className="w-5 h-5 shrink-0" /> : <XCircle className="w-5 h-5 shrink-0" />}
@@ -279,7 +279,7 @@ export default function FinancialHealthCheck() {
                         </div>
                     )}
                 </CardContent>
-                <CardFooter className="flex justify-between border-t p-6 bg-slate-50">
+                <CardFooter className="flex justify-between border-t border-gray-100 dark:border-gray-800 p-6 bg-slate-50 dark:bg-gray-900">
                     <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1 && history.length === 1}>
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>

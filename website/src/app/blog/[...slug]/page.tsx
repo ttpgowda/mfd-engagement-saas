@@ -55,10 +55,10 @@ export default async function BlogPost({ params }: PageProps) {
                         {format(new Date(post.date), 'MMMM d, yyyy')}
                     </time>
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-4">
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl mb-4">
                     {post.title}
                 </h1>
-                <p className="text-xl text-gray-600">
+                <p className="text-xl text-gray-600 dark:text-gray-300">
                     {post.description}
                 </p>
             </header>
@@ -80,29 +80,29 @@ export default async function BlogPost({ params }: PageProps) {
             </div>
 
             {/* Recommendation Engine */}
-            <div className="mt-16 border-t border-gray-100 pt-16 max-w-3xl">
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 mb-8">
+            <div className="mt-16 border-t border-gray-100 dark:border-gray-800 pt-16 max-w-3xl">
+                <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-8">
                     Recommended for You
                 </h3>
                 <div className="grid gap-8 sm:grid-cols-2">
                     {getRelatedPosts(post).map((relatedPost) => (
-                        <article key={relatedPost.slug} className="flex flex-col items-start bg-white rounded-2xl p-6 shadow-sm ring-1 ring-gray-200">
+                        <article key={relatedPost.slug} className="flex flex-col items-start bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm ring-1 ring-gray-200 dark:ring-gray-800">
                             <div className="flex items-center gap-x-4 text-xs">
-                                <time dateTime={relatedPost.date} className="text-gray-500">
+                                <time dateTime={relatedPost.date} className="text-gray-500 dark:text-gray-400">
                                     {format(new Date(relatedPost.date), 'MMM d, yyyy')}
                                 </time>
-                                <span className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">
+                                <span className="relative z-10 rounded-full bg-gray-50 dark:bg-gray-800 px-3 py-1.5 font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     {relatedPost.category}
                                 </span>
                             </div>
                             <div className="group relative">
-                                <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                                <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100 group-hover:text-gray-600 dark:group-hover:text-gray-300">
                                     <Link href={`/blog/${relatedPost.slug}`}>
                                         <span className="absolute inset-0" />
                                         {relatedPost.title}
                                     </Link>
                                 </h3>
-                                <p className="mt-5 line-clamp-2 text-sm leading-6 text-gray-600">
+                                <p className="mt-5 line-clamp-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
                                     {relatedPost.description}
                                 </p>
                             </div>

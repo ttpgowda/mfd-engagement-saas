@@ -100,30 +100,30 @@ export default function RiskProfiler() {
         return (
             <div className="max-w-4xl mx-auto">
                 <Card className={cn("max-w-2xl mx-auto border-t-4 border-t-indigo-600 shadow-xl transition-all duration-500", isTransitioning ? "opacity-0 translate-y-4" : "opacity-100")}>
-                    <CardHeader className="text-center pb-2 bg-gradient-to-b from-indigo-50 to-transparent">
-                        <div className="mx-auto bg-indigo-100 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
-                            <TrendingUp className="w-10 h-10 text-indigo-600" />
+                    <CardHeader className="text-center pb-2 bg-gradient-to-b from-indigo-50 to-transparent dark:from-indigo-900/20 dark:to-transparent">
+                        <div className="mx-auto bg-indigo-100 dark:bg-indigo-900 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
+                            <TrendingUp className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
                         </div>
-                        <CardTitle className="text-3xl font-black text-slate-800">Risk Profiler</CardTitle>
-                        <CardDescription className="text-lg mt-2 max-w-md mx-auto">
+                        <CardTitle className="text-3xl font-black text-slate-800 dark:text-gray-100">Risk Profiler</CardTitle>
+                        <CardDescription className="text-lg mt-2 max-w-md mx-auto text-gray-600 dark:text-gray-400">
                             Understand your investment personality. Are you a daredevil or a guardian of capital?
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-8 pt-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-xl border border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
                                 <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-                                <h3 className="font-bold text-slate-700">Safety</h3>
+                                <h3 className="font-bold text-slate-700 dark:text-gray-200">Safety</h3>
                                 <p className="text-xs text-muted-foreground mt-1">Gauge your comfort with loss</p>
                             </div>
-                            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-xl border border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
                                 <Wallet className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-                                <h3 className="font-bold text-slate-700">Capacity</h3>
+                                <h3 className="font-bold text-slate-700 dark:text-gray-200">Capacity</h3>
                                 <p className="text-xs text-muted-foreground mt-1">Analyze financial ability</p>
                             </div>
-                            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-xl border border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
                                 <TrendingUp className="w-8 h-8 text-indigo-500 mx-auto mb-2" />
-                                <h3 className="font-bold text-slate-700">Growth</h3>
+                                <h3 className="font-bold text-slate-700 dark:text-gray-200">Growth</h3>
                                 <p className="text-xs text-muted-foreground mt-1">Find your growth target</p>
                             </div>
                         </div>
@@ -145,8 +145,8 @@ export default function RiskProfiler() {
         return (
             <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <Card className="border-t-4 border-t-indigo-500 shadow-2xl overflow-hidden mb-12">
-                    <CardHeader className="text-center relative border-b bg-slate-50/50">
-                        <CardTitle className="text-2xl font-bold">Your Risk Profile</CardTitle>
+                    <CardHeader className="text-center relative border-b dark:border-gray-800 bg-slate-50/50 dark:bg-gray-900/50">
+                        <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">Your Risk Profile</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
                         <RiskGauge score={score} category={category} />
@@ -160,7 +160,7 @@ export default function RiskProfiler() {
                             </p>
                         </div>
                     </CardContent>
-                    <CardFooter className="justify-center bg-slate-50 p-6">
+                    <CardFooter className="justify-center bg-slate-50 dark:bg-gray-900 p-6">
                         <Button variant="outline" onClick={() => setCurrentStep(0)} className="mr-4">Retake Assessment</Button>
                     </CardFooter>
                 </Card>
@@ -184,10 +184,10 @@ export default function RiskProfiler() {
                         <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Question {currentStep} of {questions.length}</span>
                         <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
                     </div>
-                    <div className="w-full bg-slate-100 rounded-full h-1.5 mb-4">
+                    <div className="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-1.5 mb-4">
                         <div className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
                     </div>
-                    <CardTitle className="text-xl font-bold leading-tight">{currentQuestion.question}</CardTitle>
+                    <CardTitle className="text-xl font-bold leading-tight text-gray-900 dark:text-gray-100">{currentQuestion.question}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 pt-2 space-y-3">
                     {currentQuestion.options.map((opt, idx) => {
@@ -201,18 +201,18 @@ export default function RiskProfiler() {
                                 className={cn(
                                     "relative flex items-center p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md",
                                     isSelected
-                                        ? "border-indigo-600 bg-indigo-50/50 shadow-md"
-                                        : "border-slate-100 hover:border-indigo-200"
+                                        ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/20 shadow-md"
+                                        : "border-slate-100 dark:border-gray-800 hover:border-indigo-200 dark:hover:border-indigo-800"
                                 )}>
                                 <div className={cn("w-4 h-4 rounded-full border mr-3 flex items-center justify-center", isSelected ? "border-indigo-600" : "border-slate-300")}>
                                     {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600" />}
                                 </div>
                                 <div className="flex-1">
-                                    <Label className="cursor-pointer font-medium text-slate-700 block">
+                                    <Label className="cursor-pointer font-medium text-slate-700 dark:text-gray-200 block">
                                         {opt}
                                     </Label>
                                     {hint && (
-                                        <p className={cn("text-xs mt-1 font-normal", isSelected ? "text-indigo-700" : "text-muted-foreground")}>
+                                        <p className={cn("text-xs mt-1 font-normal", isSelected ? "text-indigo-700 dark:text-indigo-300" : "text-muted-foreground")}>
                                             {hint}
                                         </p>
                                     )}
@@ -222,7 +222,7 @@ export default function RiskProfiler() {
                         );
                     })}
                 </CardContent>
-                <CardFooter className="flex justify-between border-t p-6 bg-slate-50/50">
+                <CardFooter className="flex justify-between border-t border-gray-100 dark:border-gray-800 p-6 bg-slate-50/50 dark:bg-gray-900/50">
                     <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1} className="text-slate-500 hover:text-slate-800">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back
                     </Button>
