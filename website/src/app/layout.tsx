@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TheWealthWeb - Smart Investing for India",
-  description: "Expert guidance on Mutual Funds, SIPs, and personal finance.",
+  description: "TheWealthWeb offers expert financial tools, mutual fund calculators, and comprehensive investment surveys to help Indian investors make smart, data-driven financial decisions.",
 };
 
 export default function RootLayout({
