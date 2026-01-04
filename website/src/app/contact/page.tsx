@@ -17,7 +17,7 @@ export default function ContactPage() {
                     <div className="mx-auto max-w-2xl lg:mx-0">
                         <h2 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">Get in touch</h2>
                         <p className="mt-6 text-lg leading-8 text-indigo-100">
-                            We'd love to hear from you. Our team is always here to chat.
+                            We&#39;d love to hear from you. Our team is always here to chat.
                         </p>
                     </div>
                 </div>
@@ -36,12 +36,12 @@ export default function ContactPage() {
                             For support, feedback, or inquiries.
                         </p>
                         <a href="mailto:info@thewealthweb.in" className="mt-4 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
-                            people@thewealthweb.in <span aria-hidden="true">&rarr;</span>
+                            info@thewealthweb.in <span aria-hidden="true">&rarr;</span>
                         </a>
                     </div>
 
                     {/* Office Card */}
-                    <div className="flex flex-col bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 h-full hover:shadow-lg transition-all duration-300">
+                    {/*<div className="flex flex-col bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 h-full hover:shadow-lg transition-all duration-300">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/30">
                             <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                         </div>
@@ -56,10 +56,10 @@ export default function ContactPage() {
                         <a href="mailto:info@thewealthweb.in?subject=Meeting Request" className="mt-4 text-sm font-semibold leading-6 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 flex items-center gap-2">
                             Request Meeting <span aria-hidden="true">&rarr;</span>
                         </a>
-                    </div>
+                    </div>*/}
 
                     {/* Phone Card */}
-                    <div className="flex flex-col bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 h-full hover:shadow-lg transition-all duration-300">
+                    {/*<div className="flex flex-col bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 h-full hover:shadow-lg transition-all duration-300">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/30">
                             <Phone className="h-6 w-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                         </div>
@@ -70,7 +70,7 @@ export default function ContactPage() {
                         <a href="tel:+919876543210" className="mt-8 text-sm font-semibold leading-6 text-blue-600 dark:text-blue-400 hover:text-blue-500 flex items-center gap-2">
                             +91 (987) 654-3210 <span aria-hidden="true">&rarr;</span>
                         </a>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
         </div>
