@@ -99,7 +99,15 @@ export default function GoalReadiness() {
         });
 
         // Avoid division by zero
-        if (totalMaxWeightedScore === 0) return { percentage: 0, status: "Not Ready" };
+        if (totalMaxWeightedScore === 0) return {
+            percentage: 0,
+            status: "Not Ready",
+            note: "",
+            actions: [],
+            color: "text-red-600",
+            bgColor: "bg-red-50",
+            borderColor: "border-red-200"
+        };
 
         const percentage = Math.round((totalWeightedScore / totalMaxWeightedScore) * 100);
 

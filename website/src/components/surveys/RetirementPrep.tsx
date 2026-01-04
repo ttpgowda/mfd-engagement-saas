@@ -81,7 +81,15 @@ export default function RetirementPrep() {
             totalMaxWeightedScore += r.maxOriginalScore * r.weight;
         });
 
-        if (totalMaxWeightedScore === 0) return { percentage: 0, status: "Not Prepared" };
+        if (totalMaxWeightedScore === 0) return {
+            percentage: 0,
+            status: "Not Prepared",
+            note: "",
+            actions: [],
+            color: "text-red-600",
+            bgColor: "bg-red-50",
+            borderColor: "border-red-200"
+        };
 
         const percentage = Math.round((totalWeightedScore / totalMaxWeightedScore) * 100);
 
