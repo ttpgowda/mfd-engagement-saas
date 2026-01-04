@@ -15,8 +15,8 @@ export default function SurveysIndexPage() {
     return (
         <div className="container py-10 mx-auto px-4 max-w-7xl">
             <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold tracking-tight mb-4 text-gray-900">Financial Assessments</h1>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <h1 className="text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-gray-100">Financial Assessments</h1>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                     Discover your investment personality and financial health with our interactive surveys.
                 </p>
             </div>
@@ -24,7 +24,7 @@ export default function SurveysIndexPage() {
             <div className="space-y-12">
                 {categories.map((category) => (
                     <div key={category}>
-                        <h2 className="text-2xl font-semibold mb-6 flex items-center text-gray-800 border-b pb-2">
+                        <h2 className="text-2xl font-semibold mb-6 flex items-center text-gray-800 dark:text-gray-200 border-b dark:border-gray-800 pb-2">
                             {category}
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -37,12 +37,12 @@ export default function SurveysIndexPage() {
                                                 <div className="p-3 rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                                                     <Icon className="w-6 h-6" />
                                                 </div>
-                                                <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                                     {survey.title}
                                                 </CardTitle>
                                             </CardHeader>
                                             <CardContent>
-                                                <p className="text-gray-500 leading-relaxed text-sm">
+                                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-sm">
                                                     {survey.description}
                                                 </p>
                                             </CardContent>

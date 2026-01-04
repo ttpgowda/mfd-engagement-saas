@@ -61,8 +61,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex h-[calc(100vh-80px)] w-full items-center justify-center px-4 bg-gray-50/50">
-            <Card className="w-full max-w-sm shadow-xl border-gray-200">
+        <div className="flex h-[calc(100vh-80px)] w-full items-center justify-center px-4 bg-gray-50/50 dark:bg-black">
+            <Card className="w-full max-w-sm shadow-xl border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
                 <CardHeader>
                     <CardTitle className="text-2xl">Find your Workspace</CardTitle>
                     <CardDescription>
@@ -80,13 +80,13 @@ export default function LoginPage() {
                                     placeholder="your-company"
                                     value={workspace}
                                     onChange={(e) => setWorkspace(e.target.value)}
-                                    className="rounded-r-none border-r-0 focus-visible:ring-0 focus-visible:ring-offset-0 z-10 relative"
+                                    className="rounded-r-none border-r-0 focus-visible:ring-0 focus-visible:ring-offset-0 z-10 relative text-gray-900 dark:text-gray-100"
                                 />
-                                <div className="h-10 px-3 bg-gray-100 border border-l-0 border-gray-200 rounded-r-md flex items-center text-sm text-gray-500 whitespace-nowrap">
+                                <div className="h-10 px-3 bg-gray-100 dark:bg-gray-800 border border-l-0 border-gray-200 dark:border-gray-800 rounded-r-md flex items-center text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                     {domainSuffix}
                                 </div>
                             </div>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 You will be redirected to your workspace login page.
                             </div>
                             {error && (
