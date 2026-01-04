@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>:: SEBI Investor | How to Spot a Scam ::</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://investor.sebi.gov.in/assets/fonts.css" rel="stylesheet" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/layouts/layout3/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/global/plugins/font-aws/css/font-awesome.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="https://investor.sebi.gov.in/newcss/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/global/plugins/bootstrap-v5/css/bootstrap.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/global/plugins/cubeportfolio/css/cubeportfolio.css" rel="stylesheet"
+        type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/global/css/components-md.min.css" rel="stylesheet"
+        id="style_components" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/global/css/plugins-md.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/layouts/layout3/css/layout.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="https://investor.sebi.gov.in/assets/layouts/layout3/css/themes/default.min.css" rel="stylesheet"
+        type="text/css" id="style_color" />
+    <link href="https://investor.sebi.gov.in/newcss/owl.carousel.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico" />
+    <style>
+        /*body {
+          font-family: sans-serif;
+        }*/
+        .portlet.light {
+            border-radius: 30px;
+            box-shadow: 10px 10px 5px 12px lightblue;
+        }
+
+        .traffic {
+            background-color: #2c3e50;
+            border-radius: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 15px 0;
+            height: 175px;
+            width: 70px;
+            min-width: 70px;
+        }
+
+        .circle {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 100%;
+            position: relative;
+            height: 40px;
+            width: 40px;
+        }
+
+        .circle::after {
+            border-right: 4px solid rgba(255, 255, 255, 0.6);
+            border-radius: 100%;
+            content: ' ';
+            position: absolute;
+            top: 5px;
+            left: 0px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .circle.red {
+            background-color: #c0392b;
+            box-shadow: 0 0 20px 5px #c0392b;
+        }
+
+        .circle.yellow {
+            background-color: #FFFF00;
+            box-shadow: 0 0 20px 5px #FFFF00;
+        }
+
+        .circle.green {
+            background-color: #2ecc71;
+            box-shadow: 0 0 20px 5px #2ecc71;
+        }
+
+        .top-social-links ul {
+            margin-bottom: 0px !important;
+        }
+
+        .top-social-links3 ul {
+            margin-bottom: 0px !important;
+        }
+
+        a {
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+            outline: none !important;
+        }
+
+        a:active,
+        a:hover {
+            text-decoration: none;
+            outline: 0 none;
+        }
+
+        .animate-top {
+            text-transform: uppercase;
+            background-image: linear-gradient(-225deg, #231557 0%, #ff005e 29%, #242c42 67%, #fff800 100%);
+            background-size: 50% auto;
+            color: #fff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textclip 2s linear infinite;
+            display: inline-block;
+            font-size: 19px;
+            text-align: center;
+        }
+
+        @keyframes textclip {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        /*.col-md-6{
+            background-color: #fff;
+            padding-top: 30px;
+        }*/
+        .img {
+            border: 1px solid #000;
+        }
+
+        .page-content {
+            padding: 25px 0 !important;
+            background-color: #e9eef0;
+        }
+
+        .btn_center {
+            position: relative;
+            left: 50%;
+            top: 10px;
+        }
+
+        .btn {
+            margin: 0px 0px 0px 20px;
+        }
+
+        .mr-10 {
+            margin-top: 10px;
+        }
+
+        .required {
+            color: #e02222;
+            font-size: 12px;
+            padding-left: 2px;
+        }
+
+        #error {
+            color: #e91b1b;
+        }
+
+        a {
+            text-shadow: none;
+            color: #337ab7;
+            /*            font-weight: 600 !important;*/
+        }
+
+        .text-color {
+            color: #2e3292;
+            font-weight: 700 !important;
+        }
+
+        #show_blocks {
+            display: none;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+        }
+
+        #show_blocks_content {
+            margin: 10px;
+            font-style: italic;
+            text-align: justify;
+        }
+
+        .text-color-red {
+            color: #ff0000;
+            font-size: 24px;
+        }
+
+        .text-color-orange {
+            color: #f1c40f;
+            font-size: 24px;
+        }
+
+        .text-color-green {
+            color: #00FF00;
+            font-size: 24px;
+        }
+
+        #report_red {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #report_orange {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #report_green {
+            /*            border-bottom: 1px solid #000;*/
+            margin: 20px 10px 20px 10px;
+        }
+
+        #rep_subdata {
+            line-height: 2;
+            font-size: 20px;
+        }
+
+        #json-holder {
+            font-size: 20px;
+        }
+
+        #show_blocks {
+            font-size: 20px;
+        }
+
+        #results {
+            font-size: 20px;
+            margin: 30px 10px 10px 10px;
+        }
+
+        .blink_green {
+            animation: blink_green 1s infinite;
+        }
+
+        .blink_red {
+            animation: blink_red 1s infinite;
+        }
+
+        .blink_yellow {
+            animation: blink_yellow 1s infinite;
+        }
+
+        #hint {
+            color: #2e3292;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @keyframes blink_green {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #00FF00;
+            }
+        }
+
+        @keyframes blink_red {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #ff0000;
+            }
+        }
+
+        @keyframes blink_yellow {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                color: #f1c40f;
+            }
+        }
+
+        .list_tag li {
+            list-style: none;
+            line-height: 2;
+            font-size: 18px;
+            margin: 12px 0px 0px 20px;
+            text-align: justify;
+        }
+
+        .list_tag li:before {
+            content: "\f024";
+            font-family: "FontAwesome";
+            position: absolute;
+            left: 10%;
+            color: red;
+            font-size: 18px;
+            animation: blink_red 2s infinite;
+        }
+
+        select {
+            margin: 40px;
+            background: #ff0000;
+            color: #000;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        option:not(:checked) {
+            background-color: #FFF;
+        }
+
+        .form-select {
+            width: 100% !important;
+        }
+
+        select {
+            width: 100%;
+            /*overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  -webkit-appearance: none;*/
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+        }
+
+        option {
+            -moz-white-space: pre-wrap;
+            -o-white-space: pre-wrap;
+            white-space: pre-wrap;
+            font-size: 14px !important;
+        }
+
+        /*#sel *{
+    overflow-wrap: break-word;
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}*/
+    </style>
+
+<body class="page-container-bg-solid page-md page-header-menu-fixed">
+    <form name="homeForm" method="post" onsubmit="return false;">
+        <nav class="navbar navbar-expand-lg">
+            <div class="page-wrapper">
+                <div class="page-wrapper-row">
+                    <script src="assets/header.js"></script>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper-row full-height">
+            <div class="page-wrapper-middle">
+                <!-- BEGIN CONTAINER -->
+                <div class="page-container">
+                    <!-- BEGIN CONTENT -->
+                    <div class="page-content-wrapper">
+                        <!-- BEGIN CONTENT BODY -->
+                        <!-- BEGIN PAGE HEAD-->
+                        <div class="page-head">
+                            <div class="container">
+                                <!-- BEGIN PAGE TITLE -->
+                                <ol class="page-breadcrumb breadcrumb" tabindex="0">
+                                    <li>
+                                        <a href="index.html">Home</a>
+                                        <i class="fa fa-circle"></i>
+                                    </li>
+                                    <li>
+                                        <span tabindex="0">How to Spot a Scam</span>
+                                    </li>
+                                </ol>
+                                <!-- <div class="page-title">
+                                <h1>How to Spot a Scam</h1>
+                            </div> -->
+                                <!-- END PAGE TITLE -->
+                            </div>
+                        </div>
+                        <!-- END PAGE HEAD-->
+                        <!-- BEGIN PAGE CONTENT BODY -->
+                        <div class="page-content">
+                            <div class="container">
+                                <!-- BEGIN PAGE CONTENT INNER -->
+                                <div class="page-content-inner">
+                                    <div class="row">
+                                        <div class="portlet light media-section clearfix" tabindex="0">
+                                            <div id="ques_wrap">
+                                                <div id="ques_start">
+                                                    <h1 class="text-color" tabindex="0">How to Spot a Scam</h1>
+                                                    <div class="row mr-10" tabindex="0">
+                                                        <div class="col-md-12">
+                                                            <span id="json-holder" class="text-color"
+                                                                tabindex="0"></span>
+                                                            <!-- <span id="required_icon" class="required" aria-required="true" style="display:none;">*</span> -->
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <span id="hint"></span>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <select class="form-select text-color" id="sel"
+                                                                style="display:none;border: 1px solid #2e3292;margin: 20px 0 15px 0;border-radius: 10px;overflow-wrap: break-word;">
+                                                            </select>
+                                                            <span id="error"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mr-10">
+                                                        <div class="col-md-12">
+
+                                                            <span id="show_blocks">
+                                                                <!-- <span id="show_blocks_traffic"></span> -->
+                                                                <span id="show_blocks_content"></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="row mr-10">
+                                                    <div style="justify-content: center;display: flex;">
+                                                        <input type="submit" class="btn green" value="Prev"
+                                                            id="prev_btn" data-qid="0" style="display:none;">
+                                                        <input type="submit" class="btn green" value="Start"
+                                                            id="next_btn" data-qid="0">
+
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div id="preconsolidated_report" style="display:none;">
+                                                <div id="prereport_head_response">
+                                                    <h2 class="text-color" style="text-align:left;">Your scam check is
+                                                        complete!</h2>
+                                                </div>
+                                                <div id="prereport_head">
+                                                    <div id="totalOptHead">
+                                                        <span>Total Number of Red Flag : </span>
+                                                        <i style="color:red; font-size:14px"
+                                                            class="fa fa-flag blink_red">
+                                                            <span id="totalOpt"></span>
+                                                            red <!-- remove red text -->
+                                                        </i>
+                                                    </div>
+                                                    <div style="justify-content: center;display: flex;">
+                                                        <div id="guidline" onclick="guidline()" class="btn green">
+                                                            Guidelines</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="consolidated_report" style="display:none;">
+                                                <div id="report_head_response" style="display:none;">
+                                                    <h2 class="text-color" style="text-align:left;">Your scam check is
+                                                        complete!</h2>
+                                                </div>
+                                                <div id="report_head" style="color: #114c69;">
+                                                    <h3 class="text-color" style="text-align:center;font-size: 30px;">
+                                                        Guidelines for Spotting a Scam</h3>
+                                                    <ul class="list_tag">
+                                                        <li><b> High returns / Quick Daily Returns:</b> Be suspicious of
+                                                            anyone who guarantees that an investment will give
+                                                            assured/guaranteed/near-certain returns. All securities
+                                                            market related investments carry some degree of risk.</li>
+                                                        <li><b> Unregistered Entities:</b> Most investment scams involve
+                                                            unregistered entities selling investment product/ strategy.
+                                                            Check if entities offering/promoting investment
+                                                            product/strategy are regulated by SEBI.</li>
+                                                        <li><b> False promises of quick high returns:</b> Any investment
+                                                            that provides remarkably high returns regardless of market
+                                                            conditions should raise suspicion.</li>
+                                                        <li><b> Teaching Complex Strategies:</b> Be wary of anyone who
+                                                            credits a highly complex investing technique for their
+                                                            success. Legitimate professionals should be able to explain
+                                                            clearly what they are doing. It is critical that you fully
+                                                            understand the risks associated with the investment.</li>
+                                                        <li><b> Documentation:</b> Check for proper documentation before
+                                                            investing. In addition, it is important to do proper
+                                                            research about the entity offering the investment product
+                                                            and their track record from credible sources.</li>
+                                                        <li><b> Pushy Salesperson:</b> No reputable investment
+                                                            professional should push you to make an immediate decision
+                                                            about an investment, or tell you that you have to "act now".
+                                                            Fraudsters often use high-pressure tactics to push you into
+                                                            making quick investment decisions. Do not take hasty
+                                                            decisions while investing.</li>
+                                                    </ul>
+                                                    <p style="font-size: 12px;">* Please Note: product/scheme/strategy
+                                                        are used interchangeably.</p>
+                                                </div>
+                                            </div>
+                                            <div id="results" style="display:none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END PAGE CONTENT INNER -->
+                            </div>
+                        </div>
+                        <!-- END PAGE CONTENT BODY -->
+                        <!-- END CONTENT BODY -->
+                    </div>
+                    <!-- END CONTENT -->
+                </div>
+                <!-- END CONTAINER -->
+
+            </div>
+        </div>
+        <div class="page-wrapper-row">
+            <script src="assets/footer.js" type="text/javascript"></script>
+        </div>
+        <!-- BEGIN QUICK NAV -->
+        <script src="assets/share.js" type="text/javascript"></script>
+        <script src="assets/emailtofriend.js" type="text/javascript"></script>
+        <!-- END QUICK NAV -->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="newjs/jquery.min.js" type="text/javascript"></script>
+        <script src="newjs/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap-v5/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="newjs/js.cookie.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="newjs/jquery.blockUI.min.js" type="text/javascript"></script>
+
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="newjs/app.min.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src="assets/layouts/layout3/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/layout3/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+        <script src="assets/layouts/global/scripts/quick-nav.min.js" type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <script src="assets/marquee.js" type="text/javascript"></script>
+        <script src="assets/jquery.jfontsize.js" type="text/javascript"></script>
+        <script src="assets/custom.js" type="text/javascript"></script>
+        <script src="assets/common.js" type="text/javascript"></script>
+        <script src="assets/commonsite.js" type="text/javascript"></script>
+
+        <script>
+            var jsonobj =
+            {
+                "data": {
+                    "questions": [
+                        {
+                            "ques_id": 1,
+                            "question": "What does the securities market investment scheme/product/strategy offer?",
+                            "options": ["Select", "Guaranteed Returns/ Assured Returns/ High degree of certainty of returns", "High returns / Quick Daily Returns at low or no risk", "Offers to teach strategies or tricks to earn quick money, often using derivatives (futures & options)"],
+                            "optionsHint": ["Recommendation: All investments carry some degree of risk, so the returns cannot be near-guaranteed or assured for securities market investments.", "Recommendation: All investments carry some degree of risk. Be wary of anyone promising high returns with low or no risk for securities market investments.", "Recommendation: Investment strategies should be based on sound financial principles and market research. Be cautious of schemes that promise shortcuts or tricks for quick money. Consider educating yourself or consulting with a registered investment advisor to make informed investment decisions. Note that SEBI research shows that 9 in 10 retail participants in F&O lose money."],
+                            "optionsColor": ["", "#0bbd0b", "#0bbd0b", "#0bbd0b"],
+                            "hints": "* Please Note: product/scheme/strategy are used interchangeably.",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 2,
+                            "question": "How did you come to know about the securities market investment product/scheme/strategy?",
+                            "options": ["Select", "Experts or Investment Gurus from Social Media Platforms (Facebook, Instagram etc.) and Messaging Platforms (Telegram, WhatsApp etc.)", "Unsolicited Phone Call, SMS or email", "Physically approached by Agents of established savings avenues like post office, banks etc.", "Relative or a friend who got to know from another relative or friend", "Free seminar/meeting with food arranged in a seminar venue"],
+                            "optionsHint": ["Recommendation: There are many scammers on social media and messaging platforms. They may pose as investment experts and promise high returns with low risk. If you see an investment opportunity on social media or a messaging platform, it is important to do proper research about the product and the entity offering the investment product along with their track record from credible sources.", "Recommendation: Be cautious when receiving unsolicited communications regarding investment opportunity. Don’t engage with such entities and never give them any personal information.", "Recommendation: Ask the agent for their credentials and contact information to ensure that agent is not ‘fly by night’ operator. It is important to do your research and <a href='https://investor.sebi.gov.in/investment-thingsbeforeinv.html' target='_blank'>consider these factors before Investing.</a>", "Recommendation: Suggestions from friends or relatives should be complimented with your independent research. Verify the legitimacy of the investment product. Ensure investment suits your risk profile and meets your investment goals. <a href='https://investor.sebi.gov.in/investment-thingsbeforeinv.html' target='_blank'> Consider these factors before Investing.</a>", "Recommendation: While such seminars can offer educational opportunities, there is no such thing as a free lunch! Promotion of any specific product or strategy or service during the seminar may require careful evaluation. Ensure that product and the entity is regulated and investment suits your risk profile. <a href='https://investor.sebi.gov.in/investment-thingsbeforeinv.html' target='_blank'> Consider these factors before Investing.</a>"],
+                            "optionsColor": ["", "#0bbd0b", "#0bbd0b", "#0bbd0b", "#0bbd0b", "#0bbd0b"],
+                            "hints": "* Please Note: product/scheme/strategy are used interchangeably.",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 3,
+                            "question": "Did you hear any of the following from the sales person or from the one who introduced the securities market investment scheme/product/strategy? ",
+                            "options": ["Select", "Limited Time Offer/ Offer is valid only for few hours/days/weeks (claiming you'll save Rs. 5,000-10,000 if you sign up immediately)", "Life changing Rags to Riches stories - Testimonials from so called earlier investors claiming 'fantastic’, ‘amazing' or such overly positive performance of the product/scheme", "Promising life-altering transformations through online courses on securities market investment", "Assurance given that securities market related investment products are managed by experts from reputed brokerage firms, investment management companies, etc. <br>with several years of experience", "The business idea is presented as the 'Next Big Thing' in securities market investment"],
+                            "optionsHint": ["Recommendation: Take your time to carefully evaluate any investment opportunity. Avoid making hasty decisions. Even regulated entities offering legitimate investment product/scheme should not pressurize you into immediate action.", "Recommendation: Such testimonials can be easily faked and should not be relied upon as evidence of an investment's performance. Check whether such product or scheme is regulated, go through product or scheme documents, conduct your independent research and verify the authenticity of such claims In addition, it is important to do proper research about the entity offering the investment product and their track record from credible sources.", "Recommendation: Be cautious of schemes that promise dramatic life-altering transformations. Research about the said investment scheme or product to ensure it is legitimate, suits your risk profile and meets your investment goals. ", "Recommendation: Check for proper documentation before investing. In addition, it is important to do proper research about the entity offering the investment product and their track record from credible sources. Ensure that such are registered with SEBI and/or their products are regulated by SEBI.", "Recommendation: Approach any investment opportunity that is marketed as the 'Next Big Thing' with skepticism. Conduct thorough research and due diligence before making any investments. If you don’t understand something, the answer should usually be 'no'. "],
+                            "optionsColor": ["", "#0bbd0b", "#0bbd0b", "#0bbd0b", "#0bbd0b", "#0bbd0b", "#0bbd0b"],
+                            "hints": "* Please Note: product/scheme/strategy are used interchangeably.",
+                            "tabindex": "0"
+                        },
+                        {
+                            "ques_id": 4,
+                            "question": "Is the entity authorised/regulated by SEBI to offer securities market investment products/schemes?",
+                            "options": ["Select", "Yes", "No", "Don’t Know"],
+                            "optionsHint": ["Recommendation: Invest only in securities market products/schemes offered by entities that are regulated by Regulatory authority. Verify whether the entity is registered on <a href='https://www.sebi.gov.in/intermediaries.html' target='_blank'>SEBI website.</a>", "Recommendation: Invest only in securities market products/schemes offered by entities that are regulated by Regulatory authority. Verify whether the entity is registered on <a href='https://www.sebi.gov.in/intermediaries.html' target='_blank'>SEBI website.</a>", "Recommendation: Invest only in securities market products/schemes offered by entities that are regulated by Regulatory authority. Verify whether the entity is registered on <a href='https://www.sebi.gov.in/intermediaries.html' target='_blank'>SEBI website.</a>"],
+                            "optionsColor": ["", "#0bbd0b", "#0bbd0b", "#0bbd0b"],
+                            "hints": "* Please Note: product/scheme/strategy are used interchangeably.",
+                            "tabindex": "0"
+                        }
+                    ],
+                    "results": ""
+                }
+            };
+
+
+            $(document).ready(function () {
+                var response = [], qres = [];
+                var qlen = jsonobj['data']['questions'].length;
+                var qidHist = [], selOptions = [], selHintsRed = [], selHintsGreen = [], selHintsOrange = [];
+                var trafficStruct = '<div class="traffic"> <div class="circle" color="red"></div> <div class="circle" color="yellow"></div> <div class="circle" color="green"></div> </div>';
+                $("#next_btn").click(function () {
+                    $("#consolidated_report,#show_blocks").hide();
+                    $("#ques_wrap").show();
+                    $("#error").html("");
+                    $("#show_blocks").html("");
+
+                    var qid = parseInt($("#next_btn").data('qid'));
+                    var optSel = parseInt($("#sel").val());
+                    console.log(qid, optSel);
+                    if (optSel > 0 || qid == 0) {
+                        // saving current question records
+                        if (optSel > 0) {
+                            qres = [];
+                            //selOptions.push($("#sel").val());
+                            var jsonQues = jsonobj['data']['questions'][qid - 1]; // array setting for jsonobj 
+                            qres['ques_id'] = $("#next_btn").data("qid");
+                            qres['question'] = jsonQues['question'];
+                            qres['optionVal'] = $("#sel").val();
+                            qres['optionsText'] = $("#sel option:selected").text();
+                            qres['optionsHint'] = jsonQues['optionsHint'][optSel - 1];
+                            qres['optionsColor'] = jsonQues['optionsColor'][optSel];
+                            response.push(qres)
+                        }
+                        console.log(response);
+                        if (qid == 1) $("#prev_btn").show();
+                        // Next question parsing
+                        qid++;
+                        if (qlen >= qid) {
+                            //logic for jumping
+                            // if(qid==2 && optSel==2){
+                            //     console.log("qid = jump"+qid);
+                            //     qid=3;
+                            // }
+                            // else if(qid==4 && optSel==1){
+                            //     console.log("qid = jump"+qid);
+                            //     qid=5;
+                            // }
+
+                            // last question for submit
+                            if (qlen == qid) $(this).val("Submit");
+                            else $(this).val("Next");
+
+                            displayQid(qid);
+                        }
+                        else { // Consolidated report formation
+                            $("#consolidated_report").show();
+                            $("#results").show();
+                            $("#ques_wrap").hide();
+                            console.log(response);
+
+                            $.each(response, function (key, val) {
+                                if (val['optionsHint'] != "" && val['optionsHint'] != undefined) {
+                                    if (val['optionsColor'] == "#ff0000") {
+                                        $("#report_red").show();
+                                        $("#report_red #rep_subdata").append('<i class="fa fa-times blink_red" aria-hidden="true"  style="color: #ff0000;"></i>&nbsp;' + val["optionsHint"] + "<br>");
+                                    }
+                                    else if (val['optionsColor'] == "#f1c40f") {
+                                        $("#report_orange").show();
+                                        $("#report_orange #rep_subdata").append('<i class="fa fa-circle-o blink_yellow" aria-hidden="true" style="color: #f1c40f;"></i>&nbsp;' + val["optionsHint"] + "<br>");
+                                    }
+                                    else if (val['optionsColor'] == "#00FF00") {
+                                        $("#report_green").show();
+                                        $("#report_green #rep_subdata").append('<i class="fa fa-check blink_green" aria-hidden="true" style="color: #00FF00;"></i>&nbsp;' + val["optionsHint"] + "<br>");
+                                    }
+                                }
+                            });
+                            $("#results").html(jsonobj['data']['results']).show();
+                            // $(this).val("Start");
+                            // $(this).data('qid',0);
+                        }
+                    }
+                    else {
+                        $("#error").html("Please Select any options");
+                    }
+                });
+
+                $("#prev_btn").click(function () {
+                    if (response.length > 0) {
+                        var prevQues = response.pop();
+                        // if(qid == $("#next_btn").data("qid")) qid = qidHist.pop();
+                        displayQid(prevQues['ques_id']);
+                        $("#sel").val(prevQues['optionVal']).trigger("change");
+                        if (response.length == 0) $("#prev_btn").hide();
+                        else $("#prev_btn").show();
+                    }
+                    else {
+                        $("#prev_btn").hide();
+                    }
+                });
+
+                $("#sel").change(function () {
+                    $("#error").html("");
+                    $("#show_blocks").html("");
+                    var qid = parseInt($("#next_btn").data('qid'));
+                    var optSel = $(this).val();
+                    var color = jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel];
+                    var optHint = jsonobj['data']['questions'][qid - 1]['optionsHint'][optSel - 1];
+                    console.log(qid, color);
+                    // Option hint formation if available
+                    if (optHint != "" && optHint != undefined) {
+                        var hintOptHTML = "";
+                        if (optHint != "") {
+                            // hintOptHTML = trafficStruct;
+                            hintOptHTML = "";
+                            $("#show_blocks").html(hintOptHTML + "<div id='show_blocks_content'>" + optHint + "</div>");
+                            console.log(color);
+                            if (color == "#ff0000") $("#show_blocks .traffic .circle").eq(0).addClass("red blink_red");
+                            else if (color == "#f1c40f") $("#show_blocks .traffic .circle").eq(1).addClass("yellow blink_yellow");
+                            else if (color == "#00FF00") $("#show_blocks .traffic .circle").eq(2).addClass("green blink_green");
+                        }
+
+                        $("#show_blocks").attr("style", 'color: ' + jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel] + ';border: 1px solid  ' + jsonobj['data']['questions'][qid - 1]['optionsColor'][optSel] + ';display:flex;border-radius: 15px;padding: 10px;gap: 20px;');
+                    }
+                    else {
+                        $("#show_blocks").hide();
+                    }
+                });
+
+                function displayQid(qid) {
+                    // $('#required_icon').show();
+                    // $("#json-holder").attr("data-id");
+                    $("#json-holder").html(jsonobj['data']['questions'][qid - 1]['question']);
+                    $('#sel').show().html("");
+                    var optionList = jsonobj['data']['questions'][qid - 1]["options"]
+                    $.each(optionList, function (k, v) {
+                        $('#sel').append("<option value=" + (k) + ">" + v + "</option>");
+                    });
+                    $("#hint").html(jsonobj['data']['questions'][qid - 1]["hints"]);
+                    $("#next_btn").data('qid', qid);
+                    $("#ques_start").show();
+                    $("#results").hide();
+                }
+
+            });
+
+        </script>
+        <script>
+            const circles = document.querySelectorAll('.circle')
+            let activeLight = 0;
+
+            // setInterval(() => {
+            //   changeLight();
+            // }, 1000);
+
+            function changeLight() {
+                circles[activeLight].className = 'circle';
+                activeLight++;
+
+                if (activeLight > 2) {
+                    activeLight = 0;
+                }
+
+                const currentLight = circles[activeLight]
+
+                currentLight.classList.add(currentLight.getAttribute('color'));
+            }
+
+        </script>
+    </form>
+</body>
+
+</html>
