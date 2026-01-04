@@ -103,7 +103,7 @@ export function Footer() {
                     <p className="text-xs text-gray-500 dark:text-gray-500">
                         &copy; 2026 TheWealthWeb. All rights reserved.
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-600 italic">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 italic">
                         Not a SEBI Registered Investment Advisor. For educational purposes only.
                     </p>
                 </div>
