@@ -29,7 +29,7 @@ export const tools: Tool[] = [
     {
         slug: 'sip-calculator',
         title: 'SIP Calculator',
-        description: 'Calculate returns on your monthly Systematic Investment Plans (SIP).',
+        description: 'Calculate the future value of your Systematic Investment Plan (SIP) investments. See how small regular contributions can grow into a large corpus over time.',
         icon: Calculator,
         component: SipCalculator,
         category: 'Investment'
@@ -37,7 +37,7 @@ export const tools: Tool[] = [
     {
         slug: 'lumpsum-calculator',
         title: 'Lumpsum Calculator',
-        description: 'Estimate the future value of your one-time investment.',
+        description: 'Estimate the potential returns on your one-time mutual fund investment. Understand the power of compounding for lumpsum amounts invested for the long term.',
         icon: Coins,
         component: LumpsumCalculator,
         category: 'Investment'
@@ -45,7 +45,7 @@ export const tools: Tool[] = [
     {
         slug: 'step-up-sip-calculator',
         title: 'Step Up SIP Calculator',
-        description: 'Calculate returns if you increase your SIP amount annually.',
+        description: 'Project your wealth creation by increasing your SIP amount annually. See the massive impact of topping up your investments as your income grows over time.',
         icon: TrendingUp,
         component: StepUpSip,
         category: 'Investment'
@@ -53,7 +53,7 @@ export const tools: Tool[] = [
     {
         slug: 'sip-vs-lumpsum-calculator',
         title: 'SIP vs Lumpsum',
-        description: 'Compare returns between monthly SIP and one-time investment.',
+        description: 'Compare the outcome of investing via SIP versus a one-time Lumpsum. Analyze which strategy works better for your specific financial situation and goals.',
         icon: ArrowUpRight,
         component: SipVsLumpsum,
         category: 'Analysis'
@@ -61,7 +61,7 @@ export const tools: Tool[] = [
     {
         slug: 'swp-calculator',
         title: 'SWP Calculator',
-        description: 'Plan your Systematic Withdrawal Plan for regular income.',
+        description: 'Plan your regular income stream with a Systematic Withdrawal Plan. Determine how long your corpus will last while providing steady monthly withdrawals.',
         icon: PiggyBank,
         component: SwpCalculator,
         category: 'Investment'
@@ -69,7 +69,7 @@ export const tools: Tool[] = [
     {
         slug: 'child-education-planning',
         title: 'Child Education Planner',
-        description: 'Estimate and plan for your child\'s higher education expenses.',
+        description: 'Estimate the future cost of your child\'s higher education. Account for inflation and calculate the monthly investment needed to secure their future dreams.',
         icon: GraduationCap,
         component: ChildEducation,
         category: 'Planning'
@@ -77,7 +77,7 @@ export const tools: Tool[] = [
     {
         slug: 'retirement-planning',
         title: 'Retirement Planner',
-        description: 'Calculate the corpus needed for a stress-free retirement.',
+        description: 'Calculate the exact corpus you need for a stress-free retirement. Factor in inflation, life expectancy, and current expenses to build a solid retirement plan.',
         icon: User,
         component: RetirementPlanning,
         category: 'Planning'
@@ -85,7 +85,7 @@ export const tools: Tool[] = [
     {
         slug: 'goal-planner',
         title: 'Goal Planner',
-        description: 'Plan investments to achieve your financial goals.',
+        description: 'Create a customized investment plan for any financial goal. Determine how much you need to save monthly to achieve your target amount within your specific timeline.',
         icon: Target,
         component: GoalPlanner,
         category: 'Planning'
@@ -93,7 +93,7 @@ export const tools: Tool[] = [
     {
         slug: 'cost-of-delay',
         title: 'Cost of Delay',
-        description: 'Understand how delaying investments affects your wealth.',
+        description: 'Quantify the financial loss of delaying your investments. See how waiting just a few years can significantly reduce your final wealth due to lost compounding.',
         icon: Clock,
         component: CostOfDelay,
         category: 'Analysis'
@@ -101,7 +101,7 @@ export const tools: Tool[] = [
     {
         slug: 'emergency-fund-calculator',
         title: 'Emergency Fund',
-        description: 'Determine the safety net you need for unexpected expenses.',
+        description: 'Calculate the ideal size for your emergency safety net. Ensure you have enough liquid funds to cover 6-12 months of expenses during unexpected life events.',
         icon: ShieldAlert,
         component: EmergencyFund,
         category: 'Planning'
@@ -109,7 +109,7 @@ export const tools: Tool[] = [
     {
         slug: 'inflation-impact-calculator',
         title: 'Inflation Impact',
-        description: 'Visualize how inflation erodes the value of money over time.',
+        description: 'Visualize how inflation erodes your purchasing power over time. Understand why keeping money idle is risky and see the real future value of your current savings.',
         icon: ArrowUpRight,
         component: InflationImpact,
         category: 'Analysis'
@@ -117,7 +117,7 @@ export const tools: Tool[] = [
     {
         slug: 'sip-delay-cost-calculator',
         title: 'SIP Delay Cost',
-        description: 'Calculate the loss incurred by delaying your SIP start.',
+        description: 'Calculate the specific monetary loss incurred by delaying your SIP start date. Understand the penalty of procrastination on your long-term wealth creation.',
         icon: Clock,
         component: SipDelayCost,
         category: 'Analysis'
